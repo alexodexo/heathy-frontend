@@ -1,5 +1,6 @@
 // pages/index.js
 import Head from 'next/head'
+import React from 'react'
 import { motion } from 'framer-motion'
 import StatusCard from '@/components/StatusCard'
 import { useEM3Data, useTemperatureData, useWeatherData } from '@/hooks/useRealtimeData'
