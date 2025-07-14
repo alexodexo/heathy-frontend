@@ -10,7 +10,7 @@ export default async function handler(req, res) {
   try {
     // Get the latest EM3 data
     const { data, error } = await supabase
-      .from('em3Data')
+      .from('em3data')
       .select('*')
       .order('created_at', { ascending: false })
       .limit(1)

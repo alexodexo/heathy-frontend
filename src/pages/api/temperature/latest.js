@@ -9,7 +9,7 @@ export default async function handler(req, res) {
   try {
     // Get the latest temperature data
     const { data, error } = await supabase
-      .from('temperatureSensors')
+      .from('temperature_data')
       .select('*')
       .order('created_at', { ascending: false })
       .limit(1)
