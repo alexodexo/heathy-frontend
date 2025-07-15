@@ -1,3 +1,6 @@
+sudo pm2 start "npx next start -p 80" --name heathy-frontend
+
+
 # Heizungssteuerung 2025
 
 Eine moderne, mobile-optimierte Web-App zur intelligenten Steuerung von Heizung und Warmwasser mit PV-Integration und Wettervorhersage.
