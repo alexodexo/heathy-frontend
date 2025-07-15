@@ -1,8 +1,10 @@
-// components/Layout.js
+// src/components/Layout.js
 import { useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { motion, AnimatePresence } from 'framer-motion'
+import { ToastProvider } from '@/components/ToastProvider'
+import { useSystemHealth } from '@/hooks/useBackendData'
 import {
   HomeIcon,
   BeakerIcon,
@@ -11,10 +13,12 @@ import {
   Cog6ToothIcon,
   Bars3Icon,
   XMarkIcon,
+  ExclamationTriangleIcon,
+  CheckCircleIcon,
 } from '@heroicons/react/24/outline'
 
 const navigation = [
-  { name: 'Übersicht', href: '/', icon: HomeIcon },
+  { name: 'Dashboard', href: '/', icon: HomeIcon },
   { name: 'Warmwasser', href: '/warmwater', icon: BeakerIcon },
   { name: 'Heizung', href: '/heating', icon: FireIcon },
   { name: 'Statistiken', href: '/statistics', icon: ChartBarIcon },
@@ -24,9 +28,23 @@ const navigation = [
 export default function Layout({ children }) {
   const router = useRouter()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const { data: systemHealth } = useSystemHealth()
+
+  const getSystemStatusIcon = () => {
+    if (!systemHealth) return null
+    
+    if (systemHealth.status === 'healthy') {
+      return <CheckCircleIcon className="w-5 h-5 text-green-500" />
+    } else {
+      return <ExclamationTriangleIcon className="w-5 h-5 text-red-500" />
+    }
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">
+      {/* Toast Provider */}
+      <ToastProvider />
+      
       {/* Header */}
       <header className="glass sticky top-0 z-50 safe-top">
         <div className="px-4 sm:px-6 lg:px-8">
@@ -37,8 +55,25 @@ export default function Layout({ children }) {
               </div>
               <div>
                 <h1 className="text-lg font-semibold text-gray-900">Heizungssteuerung</h1>
-                <p className="text-xs text-gray-500">Smart Home Control</p>
+                <p className="text-xs text-gray-500 flex items-center gap-1">
+                  Smart Home Control
+                  {getSystemStatusIcon()}
+                </p>
               </div>
+            </div>
+
+            {/* System Status Indicator */}
+            <div className="hidden md:flex items-center gap-3">
+              {systemHealth && (
+                <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-gray-100">
+                  <span className={`status-dot ${
+                    systemHealth.status === 'healthy' ? 'status-active' : 'status-warning'
+                  }`} />
+                  <span className="text-sm font-medium text-gray-700">
+                    {systemHealth.status === 'healthy' ? 'Online' : 'Warnung'}
+                  </span>
+                </div>
+              )}
             </div>
 
             {/* Mobile menu button */}
@@ -106,6 +141,22 @@ export default function Layout({ children }) {
                     <XMarkIcon className="w-6 h-6 text-white" />
                   </button>
                 </div>
+                
+                {/* System Status in Mobile Menu */}
+                {systemHealth && (
+                  <div className="mb-6 p-3 rounded-xl bg-white/10">
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className={`status-dot ${
+                        systemHealth.status === 'healthy' ? 'status-active' : 'status-warning'
+                      }`} />
+                      <span className="text-sm font-medium text-white">System Status</span>
+                    </div>
+                    <p className="text-xs text-gray-300">
+                      {systemHealth.status === 'healthy' ? 'Alle Systeme online' : 'Warnung erkannt'}
+                    </p>
+                  </div>
+                )}
+                
                 <nav className="space-y-1">
                   {navigation.map((item) => {
                     const isActive = router.pathname === item.href
