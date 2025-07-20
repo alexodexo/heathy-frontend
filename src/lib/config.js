@@ -3,7 +3,7 @@
 
 export const API_CONFIG = {
   // Backend API Basis-URL
-  BASE_URL: process.env.NEXT_PUBLIC_BACKEND_URL || 'http://127.0.0.1:12345',
+  BASE_URL: process.env.NEXT_PUBLIC_BACKEND_URL || 'http://192.168.178.82:12345',
   
   // Refresh-Intervalle in Millisekunden
   REFRESH_INTERVALS: {
