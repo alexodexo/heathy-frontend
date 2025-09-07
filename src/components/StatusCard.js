@@ -8,7 +8,8 @@ export default function StatusCard({
   icon: Icon, 
   color = 'primary',
   trend = null,
-  loading = false 
+  loading = false,
+  topRight = null,
 }) {
   const colorClasses = {
     primary: 'from-primary-400 to-primary-600',
@@ -43,7 +44,9 @@ export default function StatusCard({
             <Icon className="w-5 h-5" />
           </div>
         )}
-        {trend !== null && (
+        {topRight ? (
+          <div>{topRight}</div>
+        ) : trend !== null && (
           <div className={`text-sm font-medium ${trend >= 0 ? 'text-success' : 'text-error'}`}>
             {trend >= 0 ? '↑' : '↓'} {Math.abs(trend)}%
           </div>
