@@ -14,15 +14,11 @@ import {
 import { backendAPI } from '@/lib/api'
 import {
   BeakerIcon,
-  SunIcon,
   BoltIcon,
   PowerIcon,
   FireIcon,
   CurrencyEuroIcon,
-  ExclamationTriangleIcon,
   CheckCircleIcon,
-  StopIcon,
-  PlayIcon,
 } from '@heroicons/react/24/outline'
 
 export default function WarmwaterControlCenter() {
@@ -32,11 +28,41 @@ export default function WarmwaterControlCenter() {
   const { data: warmwaterSettings, isLoading: settingsLoading } = useWarmwaterSettings()
   
   const [isChangingMode, setIsChangingMode] = useState(false)
-  const [emergencyStopConfirm, setEmergencyStopConfirm] = useState(false)
 
   // Get available modes from backend
   const availableModes = heatingModes?.modes ? Object.values(heatingModes.modes) : []
   const activeMode = heatingModes?.active_mode
+
+  // Dummy-Daten für 4,5KW Power-Modus (Modus 5) bis Backend erweitert wird
+  const dummyPowerMode = {
+    id: 5,
+    name: "4,5KW Power-Modus",
+    description: "Hochleistungsmodus für maximale Heizleistung",
+    pwm_value: 255,
+    estimated_power: 4500,
+    output_voltage: 24,
+    estimated_cost_hour: 0.85,
+    target_temp: 70,
+    active_heating: true,
+    reason: "Hochleistungsbetrieb"
+  }
+
+  // Dummy-Daten für Gäste-Modus (Modus 6) bis Backend erweitert wird
+  const dummyGuestMode = {
+    id: 6,
+    name: "Gäste-Modus",
+    description: "Spezieller Modus für Gäste mit reduzierter Leistung",
+    pwm_value: 128,
+    estimated_power: 2000,
+    output_voltage: 12,
+    estimated_cost_hour: 0.45,
+    target_temp: 55,
+    active_heating: true,
+    reason: "Gästebetrieb"
+  }
+
+  // Kombiniere echte Modi mit Dummy-Modi
+  const allModes = [...availableModes, dummyPowerMode, dummyGuestMode]
 
   // Mode change handler
   const handleModeChange = useCallback(async (modeId) => {
@@ -58,23 +84,7 @@ export default function WarmwaterControlCenter() {
     }
   }, [refreshModes, refreshStatus])
 
-  // Emergency stop handler
-  const handleEmergencyStop = useCallback(async () => {
-    try {
-      const response = await backendAPI.emergencyStop()
-      if (response.success) {
-        toast.success('Notfall-Stop ausgeführt')
-        setEmergencyStopConfirm(false)
-        await refreshStatus()
-        await refreshModes()
-      } else {
-        toast.error('Notfall-Stop fehlgeschlagen')
-      }
-    } catch (error) {
-      console.error('Error executing emergency stop:', error)
-      toast.error('Fehler beim Notfall-Stop')
-    }
-  }, [refreshStatus, refreshModes])
+  
 
   // Calculate current efficiency and costs
   const getEfficiencyData = () => {
@@ -118,13 +128,7 @@ export default function WarmwaterControlCenter() {
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-bold text-gray-900">Warmwasser Schaltzentrale</h1>
-            <p className="text-gray-600 mt-1">Live-Steuerung und Überwachung</p>
-          </div>
-          <div className="flex items-center gap-3">
-            <span className={`status-dot ${efficiencyData?.isHeating ? 'status-active' : 'status-inactive'}`} />
-            <span className="text-sm font-medium text-gray-700">
-              {efficiencyData?.isHeating ? 'Heizung aktiv' : 'Heizung inaktiv'}
-            </span>
+            <p className="text-gray-600 mt-1">Live-Steuerung und Monitoring</p>
           </div>
         </div>
 
@@ -145,67 +149,34 @@ export default function WarmwaterControlCenter() {
             icon={BoltIcon}
             color="primary"
             loading={currentLoading}
+            topRight={(
+              <div className="flex items-center gap-2">
+                <span className={`status-dot ${efficiencyData?.isHeating ? 'status-active' : 'status-inactive'}`} />
+                <span className="text-xs font-medium text-gray-700">
+                  {efficiencyData?.isHeating ? 'Heizung ein' : 'Heizung aus'}
+                </span>
+              </div>
+            )}
           />
           <StatusCard
-            title="Kosten/Stunde"
-            value={`€${efficiencyData?.estimatedCostPerHour || '0.00'}`}
+            title="PV-Strom"
+            value={efficiencyData?.efficiency || 0}
+            unit="W"
+            icon={BoltIcon}
+            color={efficiencyData?.efficiency > 70 ? 'success' : 'error'}
+            loading={currentLoading}
+          />
+          <StatusCard
+            title="Kosten/Monat"
+            value={efficiencyData?.estimatedCostPerHour || '0.00'}
+            unit="€"
             icon={CurrencyEuroIcon}
             color="warning"
             loading={statusLoading}
           />
-          <StatusCard
-            title="Effizienz"
-            value={`${efficiencyData?.efficiency || 0}%`}
-            icon={CheckCircleIcon}
-            color={efficiencyData?.efficiency > 70 ? 'success' : 'error'}
-            loading={currentLoading}
-          />
         </div>
 
-        {/* Emergency Stop */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="card p-6 border-red-200 bg-red-50"
-        >
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="p-2 bg-red-500 rounded-xl text-white">
-                <StopIcon className="w-5 h-5" />
-              </div>
-              <div>
-                <h3 className="font-semibold text-red-900">Notfall-Stop</h3>
-                <p className="text-sm text-red-700">Heizung sofort ausschalten</p>
-              </div>
-            </div>
-            
-            {!emergencyStopConfirm ? (
-              <button
-                onClick={() => setEmergencyStopConfirm(true)}
-                className="btn bg-red-500 text-white hover:bg-red-600"
-              >
-                <StopIcon className="w-4 h-4" />
-                Notfall-Stop
-              </button>
-            ) : (
-              <div className="flex gap-2">
-                <button
-                  onClick={() => setEmergencyStopConfirm(false)}
-                  className="btn-secondary text-sm"
-                >
-                  Abbrechen
-                </button>
-                <button
-                  onClick={handleEmergencyStop}
-                  className="btn bg-red-600 text-white hover:bg-red-700 text-sm"
-                >
-                  <ExclamationTriangleIcon className="w-4 h-4" />
-                  Bestätigen
-                </button>
-              </div>
-            )}
-          </div>
-        </motion.div>
+        
 
         {/* Mode Selection Control Center */}
         <motion.div
@@ -214,12 +185,63 @@ export default function WarmwaterControlCenter() {
           transition={{ delay: 0.1 }}
           className="card p-6"
         >
-          <h2 className="text-lg font-semibold text-gray-900 mb-6">Betriebsmodus Steuerung</h2>
+          {/* Überschrift und aktuelle Werte in einer Zeile */}
+          <div className="flex items-center justify-between mb-4 p-3 bg-gray-50 rounded-lg">
+            <h2 className="text-lg font-semibold text-gray-900">Betriebsmodus Steuerung</h2>
+            
+                        <div className="flex items-center gap-8">
+              <div className="text-center">
+                <p className="text-sm font-semibold text-gray-700">PWM</p>
+                <p className="text-lg font-semibold text-gray-900">
+                  {availableModes.find(mode => mode.id === activeMode)?.pwm_value || '--'}
+                </p>
+              </div>
+              <div className="text-center">
+                <p className="text-sm font-semibold text-gray-700">Spannung</p>
+                <p className="text-lg font-semibold text-gray-900">
+                  {availableModes.find(mode => mode.id === activeMode)?.output_voltage || '--'}
+                  <span className="text-gray-500 font-normal"> V</span>
+                </p>
+              </div>
+              <div className="text-center">
+                <p className="text-sm font-semibold text-gray-700">Leistung</p>
+                <p className="text-lg font-semibold text-gray-900">
+                  {availableModes.find(mode => mode.id === activeMode)?.estimated_power || '--'}
+                  <span className="text-gray-500 font-normal"> W</span>
+                </p>
+              </div>
+            </div>
+          </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {availableModes.map((mode) => {
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {allModes
+              .sort((a, b) => {
+                // Debug: Zeige die Sortierung
+                console.log('Sorting:', a.id, b.id, a.name, b.name);
+                // Korrekte Reihenfolge basierend auf Namen, nicht IDs
+                const nameOrder = {
+                  'Normalbetrieb + PV-Strom': 1,
+                  'Nur PV-Strom': 2,
+                  '4,5KW Power-Modus': 3,
+                  'Gäste-Modus': 4,
+                  'Vollständig EIN': 5,
+                  'Vollständig AUS': 6
+                };
+                return (nameOrder[a.name] || 999) - (nameOrder[b.name] || 999);
+              })
+              .map((mode, index) => {
               const isActive = mode.id === activeMode
               const isRecommended = mode.id === 4 // Normalbetrieb + PV is recommended
+              const displayNumber = (() => {
+                // Spezielle Nummerierung: "Normalbetrieb + PV-Strom" wird Modus 1
+                if (mode.name === 'Normalbetrieb + PV-Strom') return 1;
+                if (mode.name === 'Nur PV-Strom') return 2;
+                if (mode.name === '4,5KW Power-Modus') return 3;
+                if (mode.name === 'Gäste-Modus') return 4;
+                if (mode.name === 'Vollständig EIN') return 5;
+                if (mode.name === 'Vollständig AUS') return 6;
+                return mode.id; // Fallback
+              })()
               
               return (
                 <motion.button
@@ -266,151 +288,69 @@ export default function WarmwaterControlCenter() {
                     </div>
                     <div>
                       <h3 className="font-semibold text-gray-900">{mode.name}</h3>
-                      <p className="text-xs text-gray-500">Modus {mode.id}</p>
+                      <p className="text-xs text-gray-500">Modus {displayNumber}</p>
                     </div>
                   </div>
                   
-                  <p className="text-sm text-gray-600 mb-3">{mode.description}</p>
-                  
-                  <div className="grid grid-cols-2 gap-3 text-xs">
-                    <div>
-                      <p className="text-gray-500">PWM</p>
-                      <p className="font-semibold">{mode.pwm_value}</p>
-                    </div>
-                    <div>
-                      <p className="text-gray-500">Leistung</p>
-                      <p className="font-semibold">{mode.estimated_power}W</p>
-                    </div>
-                    <div>
-                      <p className="text-gray-500">Spannung</p>
-                      <p className="font-semibold">{mode.output_voltage}V</p>
-                    </div>
-                    <div>
-                      <p className="text-gray-500">Kosten/h</p>
-                      <p className="font-semibold">€{mode.estimated_cost_hour}</p>
-                    </div>
-                  </div>
-                  
-                  {mode.reason && (
-                    <div className="mt-3 p-2 bg-gray-50 rounded-lg">
-                      <p className="text-xs text-gray-600">
-                        <strong>Status:</strong> {mode.reason}
+                  {/* Ausschalttemperatur nur für Normalbetrieb + PV-Strom */}
+                  {mode.name === 'Normalbetrieb + PV-Strom' && (
+                    <div className="mt-2 ml-11">
+                      <p className="text-sm font-medium text-gray-900">
+                        Ausschalttemperatur: {warmwaterSettings?.warmwater?.switchon || '--'}°C
                       </p>
                     </div>
                   )}
+                  
+                  {/* Ausschalttemperatur nur für Nur PV-Strom */}
+                  {mode.name === 'Nur PV-Strom' && (
+                    <div className="mt-2 ml-11">
+                      <p className="text-sm font-medium text-gray-900">
+                        Ausschalttemperatur: {warmwaterSettings?.warmwater?.switchoff || '--'}°C
+                      </p>
+                    </div>
+                  )}
+                  
+                  {/* Ausschalttemperatur nur für Vollständig EIN */}
+                  {mode.name === 'Vollständig EIN' && (
+                    <div className="mt-2 ml-11">
+                      <p className="text-sm font-medium text-gray-900">
+                        Ausschalttemperatur: {warmwaterSettings?.warmwater?.switchoff || '--'}°C
+                      </p>
+                    </div>
+                  )}
+                  
+                  {/* Ausschalttemperatur nur für 4,5KW Power-Modus */}
+                  {mode.name === '4,5KW Power-Modus' && (
+                    <div className="mt-2 ml-11">
+                      <p className="text-sm font-medium text-gray-900">
+                        Ausschalttemperatur: --
+                      </p>
+                    </div>
+                  )}
+                  
+                  {/* Ausschalttemperatur nur für Gäste-Modus */}
+                  {mode.name === 'Gäste-Modus' && (
+                    <div className="mt-2 ml-11">
+                      <p className="text-sm font-medium text-gray-900">
+                        Ausschalttemperatur: --
+                      </p>
+                    </div>
+                  )}
+                  
+
+                  
+
+                  
+
                 </motion.button>
               )
             })}
           </div>
         </motion.div>
 
-        {/* Current Settings Display */}
-        {warmwaterSettings && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-            className="card p-6"
-          >
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">Aktuelle Warmwasser-Einstellungen</h2>
-            
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              <div className="bg-gray-50 rounded-xl p-4">
-                <p className="text-sm text-gray-600 mb-1">Einschalttemperatur</p>
-                <p className="text-2xl font-bold text-gray-900">
-                  {warmwaterSettings.warmwater?.switchon || '--'}°C
-                </p>
-              </div>
-              <div className="bg-gray-50 rounded-xl p-4">
-                <p className="text-sm text-gray-600 mb-1">Ausschalttemperatur</p>
-                <p className="text-2xl font-bold text-gray-900">
-                  {warmwaterSettings.warmwater?.switchoff || '--'}°C
-                </p>
-              </div>
-              <div className="bg-gray-50 rounded-xl p-4">
-                <p className="text-sm text-gray-600 mb-1">Sonnenreduzierung</p>
-                <p className="text-2xl font-bold text-gray-900">
-                  {warmwaterSettings.warmwater?.sunshine_reduction || '--'}°C
-                </p>
-              </div>
-              <div className="bg-gray-50 rounded-xl p-4">
-                <p className="text-sm text-gray-600 mb-1">Sonnen-Schwelle</p>
-                <p className="text-2xl font-bold text-gray-900">
-                  {(warmwaterSettings.warmwater?.sunshine_activation * 100) || '--'}%
-                </p>
-              </div>
-            </div>
-          </motion.div>
-        )}
 
-        {/* System Health Indicator */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3 }}
-          className="card p-6"
-        >
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">System-Gesundheit</h2>
-          
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className={`p-4 rounded-xl ${
-              heatingStatus?.data_status?.temperature_data?.available 
-                ? 'bg-green-50 border border-green-200' 
-                : 'bg-red-50 border border-red-200'
-            }`}>
-              <div className="flex items-center gap-2 mb-2">
-                <span className={`status-dot ${
-                  heatingStatus?.data_status?.temperature_data?.available ? 'status-active' : 'status-warning'
-                }`} />
-                <h3 className="font-medium text-gray-900">Temperaturdaten</h3>
-              </div>
-              <p className="text-sm text-gray-600">
-                {heatingStatus?.data_status?.temperature_data?.available 
-                  ? `Verfügbar (${Math.abs(Math.round(currentData?.data_age?.temp_data_age_minutes || 0))} min alt)`
-                  : 'Nicht verfügbar'
-                }
-              </p>
-            </div>
-            
-            <div className={`p-4 rounded-xl ${
-              heatingStatus?.data_status?.em3_data?.available 
-                ? 'bg-green-50 border border-green-200' 
-                : 'bg-red-50 border border-red-200'
-            }`}>
-              <div className="flex items-center gap-2 mb-2">
-                <span className={`status-dot ${
-                  heatingStatus?.data_status?.em3_data?.available ? 'status-active' : 'status-warning'
-                }`} />
-                <h3 className="font-medium text-gray-900">Stromdaten</h3>
-              </div>
-              <p className="text-sm text-gray-600">
-                {heatingStatus?.data_status?.em3_data?.available 
-                  ? `Verfügbar (${Math.abs(Math.round(currentData?.data_age?.em3_data_age_minutes || 0))} min alt)`
-                  : 'Nicht verfügbar'
-                }
-              </p>
-            </div>
-            
-            <div className={`p-4 rounded-xl ${
-              heatingStatus?.pwm_status?.server_reachable 
-                ? 'bg-green-50 border border-green-200' 
-                : 'bg-red-50 border border-red-200'
-            }`}>
-              <div className="flex items-center gap-2 mb-2">
-                <span className={`status-dot ${
-                  heatingStatus?.pwm_status?.server_reachable ? 'status-active' : 'status-warning'
-                }`} />
-                <h3 className="font-medium text-gray-900">PWM Server</h3>
-              </div>
-              <p className="text-sm text-gray-600">
-                {heatingStatus?.pwm_status?.server_reachable 
-                  ? `Verbunden (PWM: ${heatingStatus?.pwm_status?.current_pwm_server || 0})`
-                  : 'Nicht erreichbar'
-                }
-              </p>
-            </div>
-          </div>
-        </motion.div>
+
+
       </div>
     </>
   )
