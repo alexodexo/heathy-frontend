@@ -181,7 +181,7 @@ export default function SystemSettings() {
       })
       setLocalSettings(defaultSettings)
     }
-  }, [allSettings, heatingCurveRows])
+  }, [allSettings, heatingCurveRows, defaultHeatingCurve])
 
   // Update individual setting
   const updateSetting = useCallback(async (key, value) => {
@@ -311,7 +311,7 @@ export default function SystemSettings() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Modus 1 "Normalbetrieb + PV-Strom" (°C)
+                Modus 1 &quot;Normalbetrieb + PV-Strom&quot; (°C)
               </label>
               <input
                 type="number"
@@ -335,7 +335,7 @@ export default function SystemSettings() {
             
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Modus 2 "Nur PV-Strom" (°C)
+                Modus 2 &quot;Nur PV-Strom&quot; (°C)
               </label>
               <input
                 type="number"
@@ -359,7 +359,7 @@ export default function SystemSettings() {
             
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Modus 3 "4,5KW Power-Modus" (°C)
+                Modus 3 &quot;4,5KW Power-Modus&quot; (°C)
               </label>
               <input
                 type="number"
@@ -383,7 +383,7 @@ export default function SystemSettings() {
             
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Modus 4 "Gäste-Modus" (°C)
+                Modus 4 &quot;Gäste-Modus&quot; (°C)
               </label>
               <input
                 type="number"
@@ -407,7 +407,7 @@ export default function SystemSettings() {
             
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Modus 5 "Vollständig EIN" (°C)
+                Modus 5 &quot;Vollständig EIN&quot; (°C)
               </label>
               <input
                 type="number"
