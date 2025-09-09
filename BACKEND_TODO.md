@@ -4,11 +4,11 @@
 
 ### 1. Neue Betriebsmodi
 
-#### Modus 5: "4,5KW Power-Modus"
+#### Modus 5: "Power-Modus 4.5 kW"
 ```json
 {
   "id": 5,
-  "name": "4,5KW Power-Modus",
+  "name": "Power-Modus 4.5 kW",
   "description": "Hochleistungsmodus für maximale Heizleistung",
   "pwm_value": 255,
   "estimated_power": 4500,
@@ -45,7 +45,7 @@
   "switchoff": "Ausschalttemperatur für Modus 2 und Modus 3",
   "modus4_switchoff": "Ausschaltemperatur für Modus 4",
   "guest_switchoff": "Ausschaltemperatur für Gäste-Modus",
-  "power_mode_switchoff": "Ausschaltemperatur für 4,5KW Power-Modus",
+  "power_mode_switchoff": "Ausschaltemperatur für Power-Modus 4.5 kW",
   "heater_power": "Leistung Heizstab (Default: 380W)"
 }
 ```

@@ -13,6 +13,7 @@ import {
   CloudIcon,
   ExclamationTriangleIcon,
   CheckCircleIcon,
+  ChartBarIcon,
 } from '@heroicons/react/24/outline'
 
 export default function Dashboard() {
@@ -119,18 +120,25 @@ export default function Dashboard() {
             loading={currentLoading}
           />
           <StatusCard
-            title="Aktueller Modus"
-            value={heatingModes?.active_mode || '--'}
-            unit=""
-            icon={SunIcon}
-            color={activeModeInfo?.active_heating ? 'success' : 'error'}
-            loading={modesLoading}
+            title="Außentemperatur"
+            value={currentData?.temperatures?.outdoor_temp?.toFixed(1) || '--'}
+            unit="°C"
+            icon={() => (
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6">
+                <path d="M14 4v10.54a4 4 0 1 1-4 0V4a2 2 0 0 1 4 0Z"/>
+                <path d="M12 18a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z"/>
+                <path d="M16 8h2"/>
+                <path d="M16 12h2"/>
+              </svg>
+            )}
+            color="primary"
+            loading={currentLoading}
           />
           <StatusCard
             title="System Status"
             value={systemHealth?.status === 'healthy' ? '✓' : '⚠️'}
             unit=""
-            icon={CheckCircleIcon}
+            icon={SunIcon}
             color={systemHealth?.status === 'healthy' ? 'success' : 'warning'}
             loading={healthLoading}
           />
@@ -151,7 +159,7 @@ export default function Dashboard() {
           className="card p-6"
         >
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-semibold text-gray-900">Aktueller Stromverbrauch</h2>
+            <h2 className="text-lg font-semibold text-gray-900">Energie-Monitoring</h2>
             <BoltIcon className="w-5 h-5 text-gray-400" />
           </div>
           
@@ -170,19 +178,19 @@ export default function Dashboard() {
                 </p>
               </div>
               <div className="bg-gray-50 rounded-xl p-4">
-                <p className="text-sm text-gray-600 mb-1">Phase A</p>
+                <p className="text-sm text-gray-600 mb-1">PV-Einspeisung</p>
                 <p className="text-xl font-semibold text-gray-700">
                   {currentData?.power?.a_power?.toFixed(0) || 0} W
                 </p>
               </div>
               <div className="bg-gray-50 rounded-xl p-4">
-                <p className="text-sm text-gray-600 mb-1">Phase B</p>
+                <p className="text-sm text-gray-600 mb-1">Heizung</p>
                 <p className="text-xl font-semibold text-gray-700">
                   {currentData?.power?.b_power?.toFixed(0) || 0} W
                 </p>
               </div>
               <div className="bg-gray-50 rounded-xl p-4">
-                <p className="text-sm text-gray-600 mb-1">Phase C</p>
+                <p className="text-sm text-gray-600 mb-1">Warmwasser</p>
                 <p className="text-xl font-semibold text-gray-700">
                   {currentData?.power?.c_power?.toFixed(0) || 0} W
                 </p>

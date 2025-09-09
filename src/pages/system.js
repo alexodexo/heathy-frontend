@@ -25,19 +25,11 @@ import {
   useAllSettings, 
   useSensorSettings, 
   useWarmwaterSettings, 
-  useSystemHealth,
-  useSystemStats
 } from '@/hooks/useBackendData'
 import { backendAPI } from '@/lib/api'
 import {
-  Cog6ToothIcon,
   CurrencyEuroIcon,
   ArrowPathIcon,
-  ExclamationTriangleIcon,
-  CheckCircleIcon,
-  WrenchScrewdriverIcon,
-  ServerIcon,
-  ChartBarIcon,
   Bars3Icon,
   TrashIcon,
   BeakerIcon,
@@ -73,21 +65,29 @@ function SortableRow({ rowId, index, localSettings, setLocalSettings, allSetting
           >
             <Bars3Icon className="w-4 h-4" />
           </button>
+          <span className="text-gray-700 font-medium">≤</span>
           <input
             type="number"
             step="0.1"
-            value={localSettings[`heating_curve_outdoor_${rowId}`] || ''}
+            value={
+              typeof localSettings[`heating_curve_outdoor_${rowId}`] === 'string' 
+                ? localSettings[`heating_curve_outdoor_${rowId}`].replace('<=', '') 
+                : (localSettings[`heating_curve_outdoor_${rowId}`] !== undefined 
+                    ? localSettings[`heating_curve_outdoor_${rowId}`] 
+                    : (defaultHeatingCurve[index]?.outdoor ?? ''))
+            }
             onChange={(e) => {
-              const value = Number(e.target.value)
+              const value = `<=${e.target.value}`
               setLocalSettings(prev => ({ ...prev, [`heating_curve_outdoor_${rowId}`]: value }))
             }}
             onBlur={(e) => {
-              const value = Number(e.target.value)
-              if (value !== allSettings?.settings?.[`heating_curve_outdoor_${rowId}`]) {
+              const value = `<=${e.target.value}`
+              const currentSetting = allSettings?.settings?.[`heating_curve_outdoor_${rowId}`]
+              if (value !== currentSetting) {
                 updateSetting(`heating_curve_outdoor_${rowId}`, value)
               }
             }}
-            className="w-full px-2 py-1 text-sm border border-gray-300 rounded focus:ring-blue-500 focus:border-blue-500"
+            className="input text-gray-900"
             placeholder={defaultHeatingCurve[index]?.outdoor?.toString() || ""}
             disabled={isSaving}
           />
@@ -97,7 +97,7 @@ function SortableRow({ rowId, index, localSettings, setLocalSettings, allSetting
         <input
           type="number"
           step="0.1"
-          value={localSettings[`heating_curve_flow_${rowId}`] || ''}
+          value={localSettings[`heating_curve_flow_${rowId}`] !== undefined ? localSettings[`heating_curve_flow_${rowId}`] : (defaultHeatingCurve[index]?.flow ?? '')}
           onChange={(e) => {
             const value = Number(e.target.value)
             setLocalSettings(prev => ({ ...prev, [`heating_curve_flow_${rowId}`]: value }))
@@ -108,7 +108,7 @@ function SortableRow({ rowId, index, localSettings, setLocalSettings, allSetting
               updateSetting(`heating_curve_flow_${rowId}`, value)
             }
           }}
-          className="w-full px-2 py-1 text-sm border border-gray-300 rounded focus:ring-blue-500 focus:border-blue-500"
+          className="input text-gray-900"
           placeholder={defaultHeatingCurve[index]?.flow?.toString() || ""}
           disabled={isSaving}
         />
@@ -132,8 +132,6 @@ export default function SystemSettings() {
   const { data: allSettings, isLoading: settingsLoading, refresh: refreshSettings } = useAllSettings()
   const { data: sensorSettings, refresh: refreshSensorSettings } = useSensorSettings()
   const { data: warmwaterSettings, refresh: refreshWarmwaterSettings } = useWarmwaterSettings()
-  const { data: systemHealth } = useSystemHealth()
-  const { data: systemStats } = useSystemStats()
   
   const [isSaving, setIsSaving] = useState(false)
   const [localSettings, setLocalSettings] = useState({})
@@ -159,12 +157,7 @@ export default function SystemSettings() {
     { outdoor: -20, flow: 70 },  // -20°C → 70°C
   ]
   
-  // Initialize local settings when data loads
-  useState(() => {
-    if (allSettings?.settings) {
-      setLocalSettings(allSettings.settings)
-    }
-  }, [allSettings])
+  // Initialize local settings when data loads (handled by useEffect below)
 
   // Update local settings when backend data changes
   useEffect(() => {
@@ -209,6 +202,13 @@ export default function SystemSettings() {
   const addHeatingCurveRow = useCallback(() => {
     const newRowId = Math.max(...heatingCurveRows, -1) + 1
     setHeatingCurveRows(prev => [...prev, newRowId])
+    
+    // Set default values for the new row with operators
+    setLocalSettings(prev => ({
+      ...prev,
+      [`heating_curve_outdoor_${newRowId}`]: `<=-25`,  // Default: -25°C
+      [`heating_curve_flow_${newRowId}`]: 75  // Default: 75°C Vorlauf
+    }))
   }, [heatingCurveRows])
 
   // Remove heating curve row
@@ -272,6 +272,7 @@ export default function SystemSettings() {
       </Head>
 
       <div className="max-w-7xl mx-auto space-y-6">
+        {/* LiveStatus entfernt gemäss Wunsch */}
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
@@ -287,6 +288,8 @@ export default function SystemSettings() {
             Neu laden
           </button>
         </div>
+
+        {/* Systemstatus-Bereich entfernt */}
 
 
 
@@ -308,150 +311,261 @@ export default function SystemSettings() {
           
           <div className="p-6">
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Modus 1 &quot;Normalbetrieb + PV-Strom&quot; (°C)
-              </label>
-              <input
-                type="number"
-                value={localSettings.warmwater_switchon || ''}
-                onChange={(e) => {
-                  const value = Number(e.target.value)
-                  setLocalSettings(prev => ({ ...prev, warmwater_switchon: value }))
-                }}
-                onBlur={(e) => {
-                  const value = Number(e.target.value)
-                  if (value !== allSettings?.settings?.warmwater_switchon) {
-                    updateSetting('warmwater_switchon', value)
-                  }
-                }}
-                className="input"
-                min="20"
-                max="60"
-                disabled={isSaving}
-              />
+          <div className="space-y-6">
+            {/* Modus 1 */}
+            <div className="bg-gray-50 p-4 rounded-lg">
+              <h3 className="text-md font-semibold text-gray-900 mb-4">Modus 1 "Normalbetrieb + PV-Strom"</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Einschalten ≤ °C</label>
+                  <input
+                    type="number"
+                    value={
+                      typeof localSettings.warmwater_mode1_switchon === 'string' 
+                        ? localSettings.warmwater_mode1_switchon.replace('<=', '') 
+                        : (localSettings.warmwater_mode1_switchon ?? 44)
+                    }
+                    onChange={(e) => {
+                      const value = `<=${e.target.value}`
+                      setLocalSettings(prev => ({ ...prev, warmwater_mode1_switchon: value }))
+                    }}
+                    onBlur={(e) => {
+                      const value = `<=${e.target.value}`
+                      const currentSetting = allSettings?.settings?.warmwater_mode1_switchon
+                      if (value !== currentSetting) {
+                        updateSetting('warmwater_mode1_switchon', value)
+                      }
+                    }}
+                    className="input text-gray-900"
+                    min="20"
+                    max="70"
+                    placeholder="44"
+                    disabled={isSaving}
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Ausschalten ≥ °C</label>
+                  <input
+                    type="number"
+                    value={
+                      typeof localSettings.warmwater_mode1_switchoff === 'string' 
+                        ? localSettings.warmwater_mode1_switchoff.replace('>=', '') 
+                        : (localSettings.warmwater_mode1_switchoff ?? 45.1)
+                    }
+                    onChange={(e) => {
+                      const value = `>=${e.target.value}`
+                      setLocalSettings(prev => ({ ...prev, warmwater_mode1_switchoff: value }))
+                    }}
+                    onBlur={(e) => {
+                      const value = `>=${e.target.value}`
+                      const currentSetting = allSettings?.settings?.warmwater_mode1_switchoff
+                      if (value !== currentSetting) {
+                        updateSetting('warmwater_mode1_switchoff', value)
+                      }
+                    }}
+                    className="input text-gray-900"
+                    min="20"
+                    max="80"
+                    placeholder="45.1"
+                    step="0.1"
+                    disabled={isSaving}
+                  />
+                </div>
+              </div>
             </div>
-            
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Modus 2 &quot;Nur PV-Strom&quot; (°C)
-              </label>
-              <input
-                type="number"
-                value={localSettings.warmwater_switchoff || ''}
-                onChange={(e) => {
-                  const value = Number(e.target.value)
-                  setLocalSettings(prev => ({ ...prev, warmwater_switchoff: value }))
-                }}
-                onBlur={(e) => {
-                  const value = Number(e.target.value)
-                  if (value !== allSettings?.settings?.warmwater_switchoff) {
-                    updateSetting('warmwater_switchoff', value)
-                  }
-                }}
-                className="input"
-                min="30"
-                max="70"
-                disabled={isSaving}
-              />
+
+            {/* Modus 2 + Modus 3 in einer Zeile */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="bg-gray-50 p-4 rounded-lg">
+                <h3 className="text-md font-semibold text-gray-900 mb-4">Modus 2 "Nur PV-Strom"</h3>
+                <div className="grid grid-cols-1 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Ausschalten ≥ °C</label>
+                    <input
+                      type="number"
+                      value={
+                        typeof localSettings.warmwater_mode2_switchoff === 'string' 
+                          ? localSettings.warmwater_mode2_switchoff.replace('>=', '') 
+                          : (localSettings.warmwater_mode2_switchoff ?? 66)
+                      }
+                      onChange={(e) => {
+                        const value = `>=${e.target.value}`
+                        setLocalSettings(prev => ({ ...prev, warmwater_mode2_switchoff: value }))
+                      }}
+                      onBlur={(e) => {
+                        const value = `>=${e.target.value}`
+                        const currentSetting = allSettings?.settings?.warmwater_mode2_switchoff
+                        if (value !== currentSetting) {
+                          updateSetting('warmwater_mode2_switchoff', value)
+                        }
+                      }}
+                      className="input text-gray-900"
+                      min="20"
+                      max="80"
+                      placeholder="66"
+                      disabled={isSaving}
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-gray-50 p-4 rounded-lg">
+                <h3 className="text-md font-semibold text-gray-900 mb-4">Modus 3 "Power-Modus 4.5kW"</h3>
+                <div className="grid grid-cols-1 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Ausschalten ≥ °C</label>
+                    <input
+                      type="number"
+                      value={
+                        typeof localSettings.warmwater_mode3_switchoff === 'string' 
+                          ? localSettings.warmwater_mode3_switchoff.replace('>=', '') 
+                          : (localSettings.warmwater_mode3_switchoff ?? 45.1)
+                      }
+                      onChange={(e) => {
+                        const value = `>=${e.target.value}`
+                        setLocalSettings(prev => ({ ...prev, warmwater_mode3_switchoff: value }))
+                      }}
+                      onBlur={(e) => {
+                        const value = `>=${e.target.value}`
+                        const currentSetting = allSettings?.settings?.warmwater_mode3_switchoff
+                        if (value !== currentSetting) {
+                          updateSetting('warmwater_mode3_switchoff', value)
+                        }
+                      }}
+                      className="input text-gray-900"
+                      min="20"
+                      max="80"
+                      placeholder="45.1"
+                      step="0.1"
+                      disabled={isSaving}
+                    />
+                  </div>
+                </div>
+              </div>
             </div>
-            
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Modus 3 &quot;4,5KW Power-Modus&quot; (°C)
-              </label>
-              <input
-                type="number"
-                value={localSettings.warmwater_power_mode_switchoff || ''}
-                onChange={(e) => {
-                  const value = Number(e.target.value)
-                  setLocalSettings(prev => ({ ...prev, warmwater_power_mode_switchoff: value }))
-                }}
-                onBlur={(e) => {
-                  const value = Number(e.target.value)
-                  if (value !== allSettings?.settings?.warmwater_power_mode_switchoff) {
-                    updateSetting('warmwater_power_mode_switchoff', value)
-                  }
-                }}
-                className="input"
-                min="30"
-                max="70"
-                disabled={isSaving}
-              />
+
+            {/* Modus 4 */}
+            <div className="bg-gray-50 p-4 rounded-lg">
+              <h3 className="text-md font-semibold text-gray-900 mb-4">Modus 4 "Gäste-Modus"</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Einschalten ≤ °C</label>
+                  <input
+                    type="number"
+                    value={
+                      typeof localSettings.warmwater_mode4_switchon === 'string' 
+                        ? localSettings.warmwater_mode4_switchon.replace('<=', '') 
+                        : (localSettings.warmwater_mode4_switchon ?? 44)
+                    }
+                    onChange={(e) => {
+                      const value = `<=${e.target.value}`
+                      setLocalSettings(prev => ({ ...prev, warmwater_mode4_switchon: value }))
+                    }}
+                    onBlur={(e) => {
+                      const value = `<=${e.target.value}`
+                      const currentSetting = allSettings?.settings?.warmwater_mode4_switchon
+                      if (value !== currentSetting) {
+                        updateSetting('warmwater_mode4_switchon', value)
+                      }
+                    }}
+                    className="input text-gray-900"
+                    min="20"
+                    max="80"
+                    placeholder="44"
+                    disabled={isSaving}
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Ausschalten ≥ °C</label>
+                  <input
+                    type="number"
+                    value={
+                      typeof localSettings.warmwater_mode4_switchoff === 'string' 
+                        ? localSettings.warmwater_mode4_switchoff.replace('>=', '') 
+                        : (localSettings.warmwater_mode4_switchoff ?? 50)
+                    }
+                    onChange={(e) => {
+                      const value = `>=${e.target.value}`
+                      setLocalSettings(prev => ({ ...prev, warmwater_mode4_switchoff: value }))
+                    }}
+                    onBlur={(e) => {
+                      const value = `>=${e.target.value}`
+                      const currentSetting = allSettings?.settings?.warmwater_mode4_switchoff
+                      if (value !== currentSetting) {
+                        updateSetting('warmwater_mode4_switchoff', value)
+                      }
+                    }}
+                    className="input text-gray-900"
+                    min="20"
+                    max="80"
+                    placeholder="50"
+                    disabled={isSaving}
+                  />
+                </div>
+              </div>
             </div>
-            
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Modus 4 &quot;Gäste-Modus&quot; (°C)
-              </label>
-              <input
-                type="number"
-                value={localSettings.warmwater_guest_switchoff || ''}
-                onChange={(e) => {
-                  const value = Number(e.target.value)
-                  setLocalSettings(prev => ({ ...prev, warmwater_guest_switchoff: value }))
-                }}
-                onBlur={(e) => {
-                  const value = Number(e.target.value)
-                  if (value !== allSettings?.settings?.warmwater_guest_switchoff) {
-                    updateSetting('warmwater_guest_switchoff', value)
-                  }
-                }}
-                className="input"
-                min="30"
-                max="70"
-                disabled={isSaving}
-              />
-            </div>
-            
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Modus 5 &quot;Vollständig EIN&quot; (°C)
-              </label>
-              <input
-                type="number"
-                value={localSettings.warmwater_switchoff || ''}
-                onChange={(e) => {
-                  const value = Number(e.target.value)
-                  setLocalSettings(prev => ({ ...prev, warmwater_switchoff: value }))
-                }}
-                onBlur={(e) => {
-                  const value = Number(e.target.value)
-                  if (value !== allSettings?.settings?.warmwater_switchoff) {
-                    updateSetting('warmwater_switchoff', value)
-                  }
-                }}
-                className="input"
-                min="30"
-                max="70"
-                disabled={isSaving}
-              />
-            </div>
-            
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Leistung Heizstab (Watt)
-              </label>
-              <input
-                type="number"
-                value={localSettings.warmwater_heater_power || ''}
-                onChange={(e) => {
-                  const value = Number(e.target.value)
-                  setLocalSettings(prev => ({ ...prev, warmwater_heater_power: value }))
-                }}
-                onBlur={(e) => {
-                  const value = Number(e.target.value)
-                  if (value !== allSettings?.settings?.warmwater_heater_power) {
-                    updateSetting('warmwater_heater_power', value)
-                  }
-                }}
-                className="input"
-                min="100"
-                max="1000"
-                step="10"
-                disabled={isSaving}
-              />
+
+            {/* Modus 5 + Leistung Heizstab in separaten Boxen */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {/* Modus 5: Vollständig EIN */}
+              <div className="bg-gray-50 p-4 rounded-lg">
+                <h3 className="text-md font-semibold text-gray-900 mb-4">Modus 5 „Vollständig EIN"</h3>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Ausschalten ≥ °C</label>
+                  <input
+                    type="number"
+                    value={
+                      typeof localSettings.warmwater_mode5_switchoff === 'string' 
+                        ? localSettings.warmwater_mode5_switchoff.replace('>=', '') 
+                        : (localSettings.warmwater_mode5_switchoff ?? 55)
+                    }
+                    onChange={(e) => {
+                      const value = `>=${e.target.value}`
+                      setLocalSettings(prev => ({ ...prev, warmwater_mode5_switchoff: value }))
+                    }}
+                    onBlur={(e) => {
+                      const value = `>=${e.target.value}`
+                      const currentSetting = allSettings?.settings?.warmwater_mode5_switchoff
+                      if (value !== currentSetting) {
+                        updateSetting('warmwater_mode5_switchoff', value)
+                      }
+                    }}
+                    className="input text-gray-900"
+                    min="20"
+                    max="80"
+                    placeholder="55"
+                    disabled={isSaving}
+                  />
+                </div>
+              </div>
+
+              {/* Leistung Heizstab */}
+              <div className="bg-gray-50 p-4 rounded-lg">
+                <h3 className="text-md font-semibold text-gray-900 mb-4">Leistung Heizstab</h3>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Leistung Heizstab (Watt)</label>
+                  <input
+                    type="number"
+                    value={localSettings.warmwater_heater_power ?? 380}
+                    onChange={(e) => {
+                      const value = Number(e.target.value)
+                      setLocalSettings(prev => ({ ...prev, warmwater_heater_power: value }))
+                    }}
+                    onBlur={(e) => {
+                      const value = Number(e.target.value)
+                      if (value !== allSettings?.settings?.warmwater_heater_power) {
+                        updateSetting('warmwater_heater_power', value)
+                      }
+                    }}
+                    className="input text-gray-900"
+                    min="100"
+                    max="2000"
+                    step="10"
+                    placeholder="380"
+                    disabled={isSaving}
+                  />
+                </div>
+              </div>
             </div>
           </div>
           </div>
@@ -478,27 +592,10 @@ export default function SystemSettings() {
         {/* Heating Time Control */}
         <div className="bg-gray-50 p-4 rounded-lg">
           {/* Header Banner */}
-          <div className="bg-gradient-to-br from-primary-400 to-primary-600 text-white px-4 py-3 rounded-lg mb-6">
+          <div className="bg-gradient-to-r from-green-500 to-green-600 text-white px-4 py-3 rounded-lg mb-6">
             <h2 className="text-lg font-semibold">Heizungs-Zeitsteuerung</h2>
           </div>
 
-          {/* Activation Checkbox */}
-          <div className="mb-6">
-            <label className="flex items-center gap-3 cursor-pointer">
-              <input
-                type="checkbox"
-                checked={localSettings.heating_time_control_enabled || false}
-                onChange={(e) => {
-                  const value = e.target.checked
-                  setLocalSettings(prev => ({ ...prev, heating_time_control_enabled: value }))
-                  updateSetting('heating_time_control_enabled', value)
-                }}
-                className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-                disabled={isSaving}
-              />
-              <span className="text-sm font-medium text-gray-700">Zeitsteuerung aktivieren</span>
-            </label>
-          </div>
 
           {/* Simple Time Settings */}
           <div className="space-y-6">
@@ -523,7 +620,7 @@ export default function SystemSettings() {
                         updateSetting('heating_weekday_start', value)
                       }
                     }}
-                    className="input"
+                    className="input text-gray-900"
                     disabled={isSaving}
                   />
                 </div>
@@ -544,7 +641,7 @@ export default function SystemSettings() {
                         updateSetting('heating_weekday_end', value)
                       }
                     }}
-                    className="input"
+                    className="input text-gray-900"
                     disabled={isSaving}
                   />
                 </div>
@@ -572,7 +669,7 @@ export default function SystemSettings() {
                         updateSetting('heating_weekend_start', value)
                       }
                     }}
-                    className="input"
+                    className="input text-gray-900"
                     disabled={isSaving}
                   />
                 </div>
@@ -593,75 +690,23 @@ export default function SystemSettings() {
                         updateSetting('heating_weekend_end', value)
                       }
                     }}
-                    className="input"
+                    className="input text-gray-900"
                     disabled={isSaving}
                   />
                 </div>
               </div>
             </div>
 
-                         {/* Temperature Reduction */}
-             <div className="bg-gray-50 p-4 rounded-lg">
-               <h3 className="text-md font-semibold text-gray-900 mb-4">Sonnenschein-Absenkung</h3>
-               
-               {/* Activation Checkbox */}
-               <div className="mb-4">
-                 <label className="flex items-center gap-3 cursor-pointer">
-                   <input
-                     type="checkbox"
-                     checked={localSettings.sunshine_reduction_enabled || false}
-                     onChange={(e) => {
-                       const value = e.target.checked
-                       setLocalSettings(prev => ({ ...prev, sunshine_reduction_enabled: value }))
-                       updateSetting('sunshine_reduction_enabled', value)
-                     }}
-                     className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-                     disabled={isSaving}
-                   />
-                   <span className="text-sm font-medium text-gray-700">Sonnenschein-Absenkung aktivieren</span>
-                 </label>
-               </div>
-               
-               <div className="flex items-center gap-4">
-                 <div className="flex-1">
-                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                     Temperaturreduzierung bei Sonnenschein
-                   </label>
-                   <input
-                     type="number"
-                     value={localSettings.heating_temperature_reduction || ''}
-                     onChange={(e) => {
-                       const value = Number(e.target.value)
-                       setLocalSettings(prev => ({ ...prev, heating_temperature_reduction: value }))
-                     }}
-                     onBlur={(e) => {
-                       const value = Number(e.target.value)
-                       if (value !== allSettings?.settings?.heating_temperature_reduction) {
-                         updateSetting('heating_temperature_reduction', value)
-                       }
-                     }}
-                     className="input"
-                     min="0"
-                     max="10"
-                     step="0.5"
-                     placeholder="z.B. 3"
-                     disabled={isSaving}
-                   />
-                 </div>
-                 <div className="text-sm text-gray-600 mt-6">
-                   °C
-                 </div>
-               </div>
-             </div>
+            {/* Sonnenschein-Absenkung entfernt (Duplikat) */}
           </div>
 
-                     {/* Summary */}
-           <div className="mt-6 p-4 bg-blue-50 rounded-lg">
-             <h4 className="text-sm font-semibold text-blue-900 mb-2">Zusammenfassung:</h4>
-             <div className="text-sm text-blue-800 space-y-1">
+                      {/* Summary */}
+           <div className="mt-6 p-4 bg-green-50 rounded-lg">
+             <h4 className="text-sm font-semibold text-green-900 mb-2">Zusammenfassung:</h4>
+             <div className="text-sm text-green-800 space-y-1">
                <p>• <strong>Wochentage:</strong> Heizung {localSettings.heating_weekday_start || '06:00'} - {localSettings.heating_weekday_end || '22:00'}</p>
                <p>• <strong>Wochenende:</strong> Heizung {localSettings.heating_weekend_start || '07:00'} - {localSettings.heating_weekend_end || '22:00'}</p>
-               <p>• <strong>Sonnenschein-Absenkung:</strong> {(localSettings.heating_temperature_reduction || 0)}°C bei Sonnenschein</p>
+               <p>• <strong>Sonnenschein-Absenkung:</strong> {(localSettings.sunshine_temperature_reduction || 0)}°C bei Sonnenschein</p>
              </div>
            </div>
         </div>
@@ -669,27 +714,10 @@ export default function SystemSettings() {
         {/* Weather-based Control */}
         <div className="bg-gray-50 p-4 rounded-lg">
           {/* Header Banner */}
-          <div className="bg-gradient-to-br from-primary-400 to-primary-600 text-white px-4 py-3 rounded-lg mb-6">
+          <div className="bg-gradient-to-r from-green-500 to-green-600 text-white px-4 py-3 rounded-lg mb-6">
             <h2 className="text-lg font-semibold">Sonnenbasierte Steuerung</h2>
           </div>
 
-          {/* Activation Checkbox */}
-          <div className="mb-6">
-            <label className="flex items-center gap-3 cursor-pointer">
-              <input
-                type="checkbox"
-                checked={localSettings.weather_adaptation_enabled || false}
-                onChange={(e) => {
-                  const value = e.target.checked
-                  setLocalSettings(prev => ({ ...prev, weather_adaptation_enabled: value }))
-                  updateSetting('weather_adaptation_enabled', value)
-                }}
-                className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-                disabled={isSaving}
-              />
-              <span className="text-sm font-medium text-gray-700">Sonnenanpassung aktivieren</span>
-            </label>
-          </div>
 
           {/* Weather Control Settings */}
           <div className="grid grid-cols-1 lg:grid-cols-1 gap-6">
@@ -697,14 +725,14 @@ export default function SystemSettings() {
             <div className="bg-gray-50 p-4 rounded-lg">
               <h3 className="text-md font-semibold text-gray-900 mb-4">Temperaturreduzierung bei Sonnenschein</h3>
               
-              <div className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Reduzierung um (°C):
+                    Reduzierung um °C:
                   </label>
                   <input
                     type="number"
-                    value={localSettings.sunshine_temperature_reduction || ''}
+                    value={localSettings.sunshine_temperature_reduction ?? 3}
                     onChange={(e) => {
                       const value = Number(e.target.value)
                       setLocalSettings(prev => ({ ...prev, sunshine_temperature_reduction: value }))
@@ -715,7 +743,7 @@ export default function SystemSettings() {
                         updateSetting('sunshine_temperature_reduction', value)
                       }
                     }}
-                    className="input"
+                    className="input text-gray-900"
                     min="0"
                     max="10"
                     step="0.5"
@@ -730,7 +758,7 @@ export default function SystemSettings() {
                   </label>
                   <input
                     type="number"
-                    value={localSettings.sunshine_threshold || ''}
+                    value={localSettings.sunshine_threshold ?? 70}
                     onChange={(e) => {
                       const value = Number(e.target.value)
                       setLocalSettings(prev => ({ ...prev, sunshine_threshold: value }))
@@ -741,7 +769,7 @@ export default function SystemSettings() {
                         updateSetting('sunshine_threshold', value)
                       }
                     }}
-                    className="input"
+                    className="input text-gray-900"
                     min="0"
                     max="100"
                     step="5"
@@ -757,27 +785,10 @@ export default function SystemSettings() {
         {/* Custom Heating Curve */}
         <div className="bg-gray-50 p-4 rounded-lg">
           {/* Header Banner */}
-          <div className="bg-gradient-to-br from-primary-400 to-primary-600 text-white px-4 py-3 rounded-lg mb-6">
+          <div className="bg-gradient-to-r from-green-500 to-green-600 text-white px-4 py-3 rounded-lg mb-6">
             <h2 className="text-lg font-semibold">Eigene Heizkurve</h2>
           </div>
 
-          {/* Activation Checkbox */}
-          <div className="mb-6">
-            <label className="flex items-center gap-3 cursor-pointer">
-              <input
-                type="checkbox"
-                checked={localSettings.custom_heating_curve_enabled || false}
-                onChange={(e) => {
-                  const value = e.target.checked
-                  setLocalSettings(prev => ({ ...prev, custom_heating_curve_enabled: value }))
-                  updateSetting('custom_heating_curve_enabled', value)
-                }}
-                className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-                disabled={isSaving}
-              />
-              <span className="text-sm font-medium text-gray-700">Eigene Heizkurve aktivieren</span>
-            </label>
-          </div>
 
           {/* Heating Curve Table */}
           <div className="bg-gray-50 p-4 rounded-lg">
@@ -793,10 +804,10 @@ export default function SystemSettings() {
                   <thead>
                     <tr className="bg-gray-100">
                       <th className="border border-gray-300 px-3 py-2 text-left text-sm font-medium text-gray-700">
-                        Außentemperatur [°C]
+                        Außentemperatur °C
                       </th>
                       <th className="border border-gray-300 px-3 py-2 text-left text-sm font-medium text-gray-700">
-                        Vorlauftemperatur [°C]
+                        Vorlauftemperatur °C
                       </th>
                       <th className="border border-gray-300 px-3 py-2 text-center text-sm font-medium text-gray-700">
                         Aktion
@@ -839,8 +850,8 @@ export default function SystemSettings() {
             </div>
 
             {/* Info Text */}
-            <div className="mt-4 p-3 bg-blue-50 rounded-lg">
-              <p className="text-sm text-blue-800">
+            <div className="mt-4 p-3 bg-green-50 rounded-lg">
+              <p className="text-sm text-green-800">
                 <strong>Hinweis:</strong> Die Heizkurve definiert die Vorlauftemperatur basierend auf der Außentemperatur. 
                 Bei niedrigeren Außentemperaturen wird eine höhere Vorlauftemperatur benötigt.
               </p>
@@ -886,7 +897,7 @@ export default function SystemSettings() {
                     updateSetting('electricity_price', value)
                   }
                 }}
-                className="input"
+                className="input text-gray-900"
                 step="0.01"
                 min="0"
                 max="1"
@@ -915,7 +926,7 @@ export default function SystemSettings() {
                         updateSetting('warmwater_meter_reading', value)
                       }
                     }}
-                    className="input"
+                    className="input text-gray-900"
                     min="0"
                     step="0.1"
                     disabled={isSaving}
@@ -939,7 +950,7 @@ export default function SystemSettings() {
                         updateSetting('warmwater_meter_date', value)
                       }
                     }}
-                    className="input"
+                    className="input text-gray-900"
                     disabled={isSaving}
                   />
                 </div>
@@ -967,7 +978,7 @@ export default function SystemSettings() {
                         updateSetting('ht_meter_reading', value)
                       }
                     }}
-                    className="input"
+                    className="input text-gray-900"
                     min="0"
                     step="0.1"
                     disabled={isSaving}
@@ -991,7 +1002,7 @@ export default function SystemSettings() {
                         updateSetting('nt_meter_reading', value)
                       }
                     }}
-                    className="input"
+                    className="input text-gray-900"
                     min="0"
                     step="0.1"
                     disabled={isSaving}
@@ -1015,7 +1026,7 @@ export default function SystemSettings() {
                         updateSetting('electricity_meter_date', value)
                       }
                     }}
-                    className="input"
+                    className="input text-gray-900"
                     disabled={isSaving}
                   />
                 </div>

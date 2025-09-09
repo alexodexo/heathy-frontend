@@ -126,9 +126,9 @@ export default function HeatingControl() {
             loading={statusLoading}
             topRight={
               <div className="flex items-center gap-2">
-                <span className={`status-dot ${heatingData?.isHeating ? 'status-active' : 'status-inactive'}`} />
+                <span className={`status-dot ${currentData?.circulator_no1 ? 'status-active' : 'status-inactive'}`} />
                 <span className="text-xs font-medium text-gray-700">
-                  {heatingData?.isHeating ? 'Heizung ein' : 'Heizung aus'}
+                  {currentData?.circulator_no1 ? 'Pumpe ein' : 'Pumpe aus'}
                 </span>
               </div>
             }
@@ -147,19 +147,22 @@ export default function HeatingControl() {
               <h2 className="text-lg font-semibold text-gray-900">Betriebsmodus Steuerung</h2>
             </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {/* Dummy Mode 1 */}
             <motion.button
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
-              className="relative p-4 bg-white rounded-xl border-2 border-gray-200 hover:border-gray-300 transition-all duration-200 shadow-sm"
+              className="relative p-4 bg-blue-50 rounded-xl border-2 border-blue-200 hover:border-blue-300 transition-all duration-200 shadow-sm"
             >
               <div className="flex items-center justify-between mb-2">
-                <span className="text-sm font-semibold text-gray-700">Modus 1</span>
-                <span className="status-dot status-active"></span>
+                <span className="text-sm font-semibold text-blue-700">Modus 1</span>
+                <div className="flex items-center gap-2">
+                  <span className="text-xs font-medium text-green-600 bg-green-100 px-2 py-1 rounded">Empfohlen</span>
+                  <span className="status-dot status-active"></span>
+                </div>
               </div>
-              <h3 className="text-lg font-bold text-gray-900 mb-1">Normalbetrieb</h3>
-              <p className="text-sm text-gray-600">Standard Heizung mit Zeitsteuerung</p>
+              <h3 className="text-lg font-bold text-blue-900 mb-1">Normalbetrieb</h3>
+              <p className="text-sm text-blue-600">Mit Heizkurve und Zeitsteuerung</p>
             </motion.button>
 
             {/* Dummy Mode 2 */}
@@ -172,8 +175,8 @@ export default function HeatingControl() {
                 <span className="text-sm font-semibold text-gray-700">Modus 2</span>
                 <span className="status-dot status-inactive"></span>
               </div>
-              <h3 className="text-lg font-bold text-gray-900 mb-1">Eco-Modus</h3>
-              <p className="text-sm text-gray-600">Energiesparender Betrieb</p>
+              <h3 className="text-lg font-bold text-gray-900 mb-1">Dauerbetrieb</h3>
+              <p className="text-sm text-gray-600">Mit Heizkurve ohne Zeitsteuerung</p>
             </motion.button>
 
             {/* Dummy Mode 3 */}
@@ -186,8 +189,8 @@ export default function HeatingControl() {
                 <span className="text-sm font-semibold text-gray-700">Modus 3</span>
                 <span className="status-dot status-inactive"></span>
               </div>
-              <h3 className="text-lg font-bold text-gray-900 mb-1">Power-Modus</h3>
-              <p className="text-sm text-gray-600">Maximale Heizleistung</p>
+              <h3 className="text-lg font-bold text-gray-900 mb-1">Aus</h3>
+              <p className="text-sm text-gray-600">Heizung vollständig aus</p>
             </motion.button>
 
             {/* Dummy Mode 4 */}
@@ -200,8 +203,8 @@ export default function HeatingControl() {
                 <span className="text-sm font-semibold text-gray-700">Modus 4</span>
                 <span className="status-dot status-inactive"></span>
               </div>
-              <h3 className="text-lg font-bold text-gray-900 mb-1">Gäste-Modus</h3>
-              <p className="text-sm text-gray-600">Erhöhte Temperatur</p>
+              <h3 className="text-lg font-bold text-gray-900 mb-1">1.5 kW Dauerbetrieb</h3>
+              <p className="text-sm text-gray-600">Zieltemperatur 45°C</p>
             </motion.button>
 
             {/* Dummy Mode 5 */}
@@ -214,8 +217,8 @@ export default function HeatingControl() {
                 <span className="text-sm font-semibold text-gray-700">Modus 5</span>
                 <span className="status-dot status-inactive"></span>
               </div>
-              <h3 className="text-lg font-bold text-gray-900 mb-1">Vollbetrieb</h3>
-              <p className="text-sm text-gray-600">Komplett eingeschaltet</p>
+              <h3 className="text-lg font-bold text-gray-900 mb-1">3.0 kW Dauerbetrieb</h3>
+              <p className="text-sm text-gray-600">Zieltemperatur 50°C</p>
             </motion.button>
 
             {/* Dummy Mode 6 */}
@@ -228,8 +231,8 @@ export default function HeatingControl() {
                 <span className="text-sm font-semibold text-gray-700">Modus 6</span>
                 <span className="status-dot status-inactive"></span>
               </div>
-              <h3 className="text-lg font-bold text-gray-900 mb-1">Aus</h3>
-              <p className="text-sm text-gray-600">Heizung komplett aus</p>
+              <h3 className="text-lg font-bold text-gray-900 mb-1">4.5 kW Dauerbetrieb</h3>
+              <p className="text-sm text-gray-600">Zieltemperatur 55°C</p>
             </motion.button>
           </div>
         </motion.div>
