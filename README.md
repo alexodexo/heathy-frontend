@@ -1,4 +1,4 @@
-sudo pm2 start "npx next start -p 80" --name heathy-frontend
+
 
 
 # Heizungssteuerung 2025
