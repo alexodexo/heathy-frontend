@@ -4,11 +4,11 @@
 
 ### 1. Neue Betriebsmodi
 
-#### Modus 5: "4,5KW Power-Modus"
+#### Modus 5: "Power-Modus 4.5 kW"
 ```json
 {
   "id": 5,
-  "name": "4,5KW Power-Modus",
+  "name": "Power-Modus 4.5 kW",
   "description": "Hochleistungsmodus für maximale Heizleistung",
   "pwm_value": 255,
   "estimated_power": 4500,
@@ -45,7 +45,7 @@
   "switchoff": "Ausschalttemperatur für Modus 2 und Modus 3",
   "modus4_switchoff": "Ausschaltemperatur für Modus 4",
   "guest_switchoff": "Ausschaltemperatur für Gäste-Modus",
-  "power_mode_switchoff": "Ausschaltemperatur für 4,5KW Power-Modus",
+  "power_mode_switchoff": "Ausschaltemperatur für Power-Modus 4.5 kW",
   "heater_power": "Leistung Heizstab (Default: 380W)"
 }
 ```
@@ -152,3 +152,36 @@
 - Zeitbasierte Automatisierung
 - Wetterabhängige Steuerung
 - Energiepreis-Optimierung
+
+## Dashboard-Erweiterungen
+
+### 1. Neue Variablen für Status-Anzeigen
+
+#### Pumpen-Status:
+```json
+{
+  "circulator_no1": "Boolean - Status Pumpe 1 (Heizkreislauf)",
+  "recirc_pump_no2": "Boolean - Status Pumpe 2 (Zirkulationspumpe)"
+}
+```
+
+#### Kostendaten:
+```json
+{
+  "costs": {
+    "heating_week": "Number - Heizungskosten der letzten Woche in Euro (z.B. 12.45)"
+  }
+}
+```
+
+### 2. Automatisierte Pumpen-Wartung
+- **Aufgabe**: Beide Pumpen täglich um 14:00 Uhr für 1 Minute automatisch einschalten
+- **Zweck**: Festsetzschutz und Wartung
+- **Implementation**: Cron-Job oder Timer im Backend
+
+### 3. Wetter-API Integration
+- **Standort**: Latitude 50.1109, Longitude 8.6821 (Einbauort der Heizung)
+- **Benötigte Daten**: 
+  - Sonnenschein-Forecast
+  - Außentemperatur
+- **Verwendung**: Für Sonnenschein-Anpassung und Temperatur-Monitoring

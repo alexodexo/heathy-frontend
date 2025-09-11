@@ -142,3 +142,45 @@ export function useSensorSettings() {
     refresh: mutate,
   }
 }
+
+export function usePlugsData() {
+  const { data, error, isLoading, mutate } = useSWR(
+    'plugs-data',
+    async () => {
+      const response = await fetch('/api/plugs/latest')
+      if (!response.ok) throw new Error('Failed to fetch plugs data')
+      return response.json()
+    },
+    {
+      refreshInterval: API_CONFIG.REFRESH_INTERVALS.CURRENT_DATA, // Same refresh as current data
+    }
+  )
+
+  return {
+    data: data || null,
+    isLoading,
+    isError: error,
+    refresh: mutate,
+  }
+}
+
+export function useParameterSettings() {
+  const { data, error, isLoading, mutate } = useSWR(
+    'parameter-settings-v2', // Changed cache key to force reload
+    () => backendAPI.getParameterSettings(),
+    {
+      refreshInterval: API_CONFIG.REFRESH_INTERVALS.SETTINGS,
+      revalidateOnFocus: true, // Force reload when window focused
+    }
+  )
+
+  // Debug logging
+  console.log('useParameterSettings:', { data, error, isLoading })
+
+  return {
+    data: data?.data || null,
+    isLoading,
+    isError: error,
+    refresh: mutate,
+  }
+}

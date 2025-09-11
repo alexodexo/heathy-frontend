@@ -9,7 +9,7 @@ import {
   useCurrentData, 
   useHeatingStatus, 
   useHeatingModes, 
-  useWarmwaterSettings 
+  useWarmwaterSettings,
 } from '@/hooks/useBackendData'
 import { backendAPI } from '@/lib/api'
 import {
@@ -33,10 +33,10 @@ export default function WarmwaterControlCenter() {
   const availableModes = heatingModes?.modes ? Object.values(heatingModes.modes) : []
   const activeMode = heatingModes?.active_mode
 
-  // Dummy-Daten für 4,5KW Power-Modus (Modus 5) bis Backend erweitert wird
+  // Dummy-Daten für Power-Modus 4.5 kW (Modus 3) bis Backend erweitert wird
   const dummyPowerMode = {
-    id: 5,
-    name: "4,5KW Power-Modus",
+    id: 3,
+    name: "Power-Modus 4.5 kW",
     description: "Hochleistungsmodus für maximale Heizleistung",
     pwm_value: 255,
     estimated_power: 4500,
@@ -49,7 +49,7 @@ export default function WarmwaterControlCenter() {
 
   // Dummy-Daten für Gäste-Modus (Modus 6) bis Backend erweitert wird
   const dummyGuestMode = {
-    id: 6,
+    id: 4,
     name: "Gäste-Modus",
     description: "Spezieller Modus für Gäste mit reduzierter Leistung",
     pwm_value: 128,
@@ -62,7 +62,12 @@ export default function WarmwaterControlCenter() {
   }
 
   // Kombiniere echte Modi mit Dummy-Modi
-  const allModes = [...availableModes, dummyPowerMode, dummyGuestMode]
+  // Vermeide Duplikate (falls Backend später gleiche IDs liefert)
+  const byId = new Map()
+  ;[...availableModes, dummyPowerMode, dummyGuestMode].forEach(m => {
+    if (!byId.has(m.id)) byId.set(m.id, m)
+  })
+  const allModes = Array.from(byId.values())
 
   // Mode change handler
   const handleModeChange = useCallback(async (modeId) => {
@@ -106,6 +111,40 @@ export default function WarmwaterControlCenter() {
 
   const efficiencyData = getEfficiencyData()
 
+  const formatNumber = (value, decimals = 0) => {
+    const num = typeof value === 'number' ? value : Number(value)
+    return Number.isFinite(num) ? num.toFixed(decimals) : '--'
+  }
+
+  // Spannung aus Backend ableiten (ohne Modus-Fallback)
+  const extractVoltage = (status, current) => {
+    const candidates = []
+    if (status && typeof status === 'object') {
+      candidates.push(status.output_voltage)
+      candidates.push(status.voltage)
+      candidates.push(status.out_voltage)
+      candidates.push(status.v_out)
+    }
+    if (current && typeof current === 'object') {
+      candidates.push(current.output_voltage)
+      candidates.push(current.voltage)
+      candidates.push(current?.power?.output_voltage)
+      candidates.push(current?.power?.voltage)
+    }
+    return candidates.find(v => typeof v === 'number')
+  }
+
+  // Live-Werte: PWM aus HeatingStatus, Spannung/Leistung nur aus Backend-Daten
+  const livePwm = typeof heatingStatus?.last_sent_pwm === 'number'
+    ? heatingStatus.last_sent_pwm
+    : undefined
+
+  const liveVoltage = extractVoltage(heatingStatus, currentData)
+
+  const livePower = typeof currentData?.power?.total_power === 'number'
+    ? currentData.power.total_power
+    : undefined
+
   if (currentLoading && statusLoading && modesLoading) {
     return (
       <div className="max-w-7xl mx-auto p-6">
@@ -123,28 +162,28 @@ export default function WarmwaterControlCenter() {
         <title>Warmwasser Schaltzentrale - Heizungssteuerung</title>
       </Head>
 
-      <div className="max-w-7xl mx-auto space-y-6">
+      <div className="max-w-7xl mx-auto space-y-6 px-4 md:px-8">
         {/* Header */}
         <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold text-gray-900">Warmwasser Schaltzentrale</h1>
-            <p className="text-gray-600 mt-1">Live-Steuerung und Monitoring</p>
+          <div className="text-center md:text-left">
+            <h1 className="text-3xl md:text-4xl font-bold text-gray-900">Warmwasser Schaltzentrale</h1>
+            <p className="text-lg md:text-xl text-gray-600 mt-2">Live-Steuerung und Monitoring</p>
           </div>
         </div>
 
         {/* Live Status Cards */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           <StatusCard
             title="Warmwasser"
-            value={efficiencyData?.waterTemp?.toFixed(1) || '--'}
+            value={formatNumber(efficiencyData?.waterTemp, 1)}
             unit="°C"
             icon={BeakerIcon}
-            color={efficiencyData?.waterTemp > 50 ? 'success' : 'warning'}
+            color={Number(efficiencyData?.waterTemp) > 50 ? 'success' : 'warning'}
             loading={currentLoading}
           />
           <StatusCard
             title="Aktuelle Leistung"
-            value={efficiencyData?.currentPower?.toFixed(0) || '--'}
+            value={formatNumber(livePower, 0)}
             unit="W"
             icon={BoltIcon}
             color="primary"
@@ -160,15 +199,15 @@ export default function WarmwaterControlCenter() {
           />
           <StatusCard
             title="PV-Strom"
-            value={efficiencyData?.efficiency || 0}
-            unit="W"
+            value={formatNumber(efficiencyData?.efficiency, 0)}
+            unit="%"
             icon={BoltIcon}
-            color={efficiencyData?.efficiency > 70 ? 'success' : 'error'}
+            color={Number(efficiencyData?.efficiency) > 70 ? 'success' : 'error'}
             loading={currentLoading}
           />
           <StatusCard
             title="Kosten/Monat"
-            value={efficiencyData?.estimatedCostPerHour || '0.00'}
+            value={formatNumber(efficiencyData?.estimatedCostPerHour, 2)}
             unit="€"
             icon={CurrencyEuroIcon}
             color="warning"
@@ -193,53 +232,53 @@ export default function WarmwaterControlCenter() {
               <div className="text-center">
                 <p className="text-sm font-semibold text-gray-700">PWM</p>
                 <p className="text-lg font-semibold text-gray-900">
-                  {availableModes.find(mode => mode.id === activeMode)?.pwm_value || '--'}
+                  {formatNumber(livePwm, 0)}
                 </p>
               </div>
               <div className="text-center">
                 <p className="text-sm font-semibold text-gray-700">Spannung</p>
                 <p className="text-lg font-semibold text-gray-900">
-                  {availableModes.find(mode => mode.id === activeMode)?.output_voltage || '--'}
+                  {formatNumber(liveVoltage, 0)}
                   <span className="text-gray-500 font-normal"> V</span>
                 </p>
               </div>
               <div className="text-center">
                 <p className="text-sm font-semibold text-gray-700">Leistung</p>
                 <p className="text-lg font-semibold text-gray-900">
-                  {availableModes.find(mode => mode.id === activeMode)?.estimated_power || '--'}
+                  {formatNumber(livePower, 0)}
                   <span className="text-gray-500 font-normal"> W</span>
                 </p>
               </div>
             </div>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {allModes
               .sort((a, b) => {
                 // Debug: Zeige die Sortierung
                 console.log('Sorting:', a.id, b.id, a.name, b.name);
                 // Korrekte Reihenfolge basierend auf Namen, nicht IDs
                 const nameOrder = {
-                  'Normalbetrieb + PV-Strom': 1,
-                  'Nur PV-Strom': 2,
-                  '4,5KW Power-Modus': 3,
-                  'Gäste-Modus': 4,
-                  'Vollständig EIN': 5,
-                  'Vollständig AUS': 6
+                  'Vollständig EIN': 1,
+                  'Vollständig AUS': 2,
+                  'Nur PV-Strom': 3,
+                  'Normalbetrieb + PV-Strom': 4,
+                  'Gäste-Modus': 5,
+                  'Power-Modus 4.5 kW': 6
                 };
                 return (nameOrder[a.name] || 999) - (nameOrder[b.name] || 999);
               })
               .map((mode, index) => {
               const isActive = mode.id === activeMode
-              const isRecommended = mode.id === 4 // Normalbetrieb + PV is recommended
+              const isRecommended = mode.name === 'Normalbetrieb + PV-Strom' // Modus 4 empfohlen
               const displayNumber = (() => {
-                // Spezielle Nummerierung: "Normalbetrieb + PV-Strom" wird Modus 1
-                if (mode.name === 'Normalbetrieb + PV-Strom') return 1;
-                if (mode.name === 'Nur PV-Strom') return 2;
-                if (mode.name === '4,5KW Power-Modus') return 3;
-                if (mode.name === 'Gäste-Modus') return 4;
-                if (mode.name === 'Vollständig EIN') return 5;
-                if (mode.name === 'Vollständig AUS') return 6;
+                // Spezielle Nummerierung: "Normalbetrieb + PV-Strom" wird Modus 4
+                if (mode.name === 'Normalbetrieb + PV-Strom') return 4;
+                if (mode.name === 'Nur PV-Strom') return 3;
+                if (mode.name === 'Power-Modus 4.5 kW') return 6;
+                if (mode.name === 'Gäste-Modus') return 5;
+                if (mode.name === 'Vollständig EIN') return 1;
+                if (mode.name === 'Vollständig AUS') return 2;
                 return mode.id; // Fallback
               })()
               
@@ -266,10 +305,20 @@ export default function WarmwaterControlCenter() {
                     </motion.div>
                   )}
                   
-                  {isRecommended && !isActive && (
+                  {isRecommended && (
                     <div className="absolute top-4 right-4">
                       <span className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full">
                         Empfohlen
+                      </span>
+                    </div>
+                  )}
+                  
+                  {/* Pumpen-Status für Power-Modus 4.5 kW rechts oben */}
+                  {mode.name === 'Power-Modus 4.5 kW' && (
+                    <div className="absolute top-4 right-4 flex items-center gap-2">
+                      <span className={`status-dot ${currentData?.recirc_pump_no2 ? 'status-active' : 'status-inactive'}`} />
+                      <span className="text-xs font-medium text-gray-700">
+                        {currentData?.recirc_pump_no2 ? 'Pumpe ein' : 'Pumpe aus'}
                       </span>
                     </div>
                   )}
@@ -319,8 +368,8 @@ export default function WarmwaterControlCenter() {
                     </div>
                   )}
                   
-                  {/* Ausschalttemperatur nur für 4,5KW Power-Modus */}
-                  {mode.name === '4,5KW Power-Modus' && (
+                  {/* Ausschalttemperatur nur für Power-Modus 4.5 kW */}
+                  {mode.name === 'Power-Modus 4.5 kW' && (
                     <div className="mt-2 ml-11">
                       <p className="text-sm font-medium text-gray-900">
                         Ausschalttemperatur: --
@@ -347,7 +396,6 @@ export default function WarmwaterControlCenter() {
             })}
           </div>
         </motion.div>
-
 
 
 
