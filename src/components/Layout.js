@@ -18,8 +18,9 @@ const navigation = [
   { name: 'Dashboard', href: '/', icon: HomeIcon },
   { name: 'Warmwasser', href: '/warmwater', icon: BeakerIcon },
   { name: 'Heizung', href: '/heating', icon: FireIcon },
-  { name: 'Statistiken', href: '/statistics', icon: ChartBarIcon },
   { name: 'System', href: '/system', icon: Cog6ToothIcon },
+  { name: 'Statistiken', href: '/statistics', icon: ChartBarIcon },
+
 ]
 
 export default function Layout({ children }) {
