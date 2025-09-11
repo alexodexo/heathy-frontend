@@ -180,11 +180,11 @@ export default function Statistics() {
         <title>Statistiken - Heizungssteuerung</title>
       </Head>
 
-      <div className="max-w-7xl mx-auto space-y-6">
+      <div className="max-w-7xl mx-auto space-y-6 px-4 md:px-8">
         {/* Header */}
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">Live-Statistiken</h1>
-          <p className="text-gray-600 mt-1">Detaillierte Analyse und Auswertungen</p>
+        <div className="text-center md:text-left">
+          <h1 className="text-3xl md:text-4xl font-bold text-gray-900">Live-Statistiken</h1>
+          <p className="text-lg md:text-xl text-gray-600 mt-2">Detaillierte Analyse und Auswertungen</p>
         </div>
 
         {/* Performance Overview */}
@@ -192,7 +192,7 @@ export default function Statistics() {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="grid grid-cols-2 md:grid-cols-4 gap-4"
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
           >
             <div className="card p-4">
               <div className="flex items-center gap-2 mb-2">
@@ -308,7 +308,7 @@ export default function Statistics() {
           </div>
           
           {chartData && (
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
               <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-xl p-4">
                 <h3 className="font-medium text-green-900 mb-1">Gesamtkosten ({selectedRange})</h3>
                 <p className="text-2xl font-bold text-green-700">€{chartData.costs.total.toFixed(2)}</p>
@@ -344,7 +344,7 @@ export default function Statistics() {
           </div>
           
           <div className="p-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               <div className="text-center p-4 bg-gray-50 rounded-xl">
                 <p className="text-sm text-gray-600 mb-1">Steuerungszyklen</p>
                 <p className="text-2xl font-bold text-gray-900">{performanceMetrics?.totalLoops || 0}</p>

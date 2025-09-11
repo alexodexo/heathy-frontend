@@ -3,7 +3,7 @@ import Head from 'next/head'
 import React from 'react'
 import { motion } from 'framer-motion'
 import StatusCard from '@/components/StatusCard'
-import { useCurrentData, useHeatingStatus, useHeatingModes, useSystemHealth } from '@/hooks/useBackendData'
+import { useCurrentData, useHeatingStatus, useHeatingModes, useSystemHealth, usePlugsData } from '@/hooks/useBackendData'
 import {
   BeakerIcon,
   FireIcon,
@@ -21,6 +21,7 @@ export default function Dashboard() {
   const { data: heatingStatus, isLoading: statusLoading } = useHeatingStatus()
   const { data: heatingModes, isLoading: modesLoading } = useHeatingModes()
   const { data: systemHealth, isLoading: healthLoading } = useSystemHealth()
+  const { data: plugsData, isLoading: plugsLoading } = usePlugsData()
 
   // Calculate daily costs based on current power and electricity price
   const calculateDailyCost = () => {
@@ -94,19 +95,30 @@ export default function Dashboard() {
         <title>Dashboard - Heizungssteuerung</title>
       </Head>
 
-      <div className="max-w-7xl mx-auto space-y-6">
+      <div className="max-w-7xl mx-auto space-y-6 px-4 md:px-8">
         {/* Header */}
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">Live Dashboard</h1>
-          <p className="text-gray-600 mt-1">Echtzeit-Übersicht aller Systeme</p>
+        <div className="text-center md:text-left">
+          <h1 className="text-3xl md:text-4xl font-bold text-gray-900">Live Dashboard</h1>
+          <p className="text-lg md:text-xl text-gray-600 mt-2">Echtzeit-Übersicht aller Systeme</p>
         </div>
 
         {/* Status Cards */}
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6">
           <StatusCard
             title="Warmwasser"
             value={currentData?.temperatures?.water_temp?.toFixed(1) || '--'}
             unit="°C"
+            secondaryValue={currentData?.warmwater?.target_temp?.toFixed(1) || '--'}
+            secondaryUnit="°C"
+            secondaryTitle="Ziel-Temperatur"
+            tertiaryValue={currentData?.warmwater?.power_w?.toFixed(0) || '--'}
+            tertiaryUnit="W"
+            tertiaryTitle="aktuelle Heizleistung"
+            quaternaryValue={currentData?.costs?.warmwater_week?.toFixed(2) || '--'}
+            quaternaryUnit="€"
+            quaternaryTitle="Warmwasserkosten rolling 7 days"
+            quinternaryValue={currentData?.recirc_pump_no2 ? 'ein' : 'aus'}
+            quinternaryTitle="Pumpe"
             icon={BeakerIcon}
             color="primary"
             loading={currentLoading}
@@ -115,6 +127,21 @@ export default function Dashboard() {
             title="Vorlauf Heizung"
             value={currentData?.temperatures?.vorlauf_temp?.toFixed(1) || '--'}
             unit="°C"
+            secondaryValue={
+              currentData?.temperatures?.vorlauf_temp && currentData?.temperatures?.ruecklauf_temp
+                ? (currentData.temperatures.vorlauf_temp - currentData.temperatures.ruecklauf_temp).toFixed(1)
+                : '--'
+            }
+            secondaryUnit="°C"
+            secondaryTitle="Temperaturdifferenz"
+            tertiaryValue={currentData?.heating?.power_kw?.toFixed(1) || '--'}
+            tertiaryUnit="kW"
+            tertiaryTitle="aktuelle Heizleistung"
+            quaternaryValue={currentData?.costs?.heating_week?.toFixed(2) || '--'}
+            quaternaryUnit="€"
+            quaternaryTitle="Heizungskosten rolling 7 days"
+            quinternaryValue={currentData?.circulator_no1 ? 'ein' : 'aus'}
+            quinternaryTitle="Pumpe"
             icon={FireIcon}
             color="warning"
             loading={currentLoading}
@@ -123,6 +150,12 @@ export default function Dashboard() {
             title="Außentemperatur"
             value={currentData?.temperatures?.outdoor_temp?.toFixed(1) || '--'}
             unit="°C"
+            secondaryValue={currentData?.weather?.forecast_temp?.toFixed(1) || '--'}
+            secondaryUnit="°C"
+            secondaryTitle="Prognose heute"
+            tertiaryValue={currentData?.weather?.sunshine_hours?.toFixed(1) || '--'}
+            tertiaryUnit="h"
+            tertiaryTitle="Sonnenstunden heute"
             icon={() => (
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6">
                 <path d="M14 4v10.54a4 4 0 1 1-4 0V4a2 2 0 0 1 4 0Z"/>
@@ -135,16 +168,15 @@ export default function Dashboard() {
             loading={currentLoading}
           />
           <StatusCard
-            title="System Status"
-            value={systemHealth?.status === 'healthy' ? '✓' : '⚠️'}
-            unit=""
-            icon={SunIcon}
-            color={systemHealth?.status === 'healthy' ? 'success' : 'warning'}
-            loading={healthLoading}
-          />
-          <StatusCard
-            title="Heutige Kosten"
+            title="Tageskosten"
             value={`€${calculateDailyCost()}`}
+            unit=""
+            secondaryValue={currentData?.costs?.warmwater_today?.toFixed(2) || '--'}
+            secondaryUnit="€"
+            secondaryTitle="Warmwasser"
+            tertiaryValue={currentData?.costs?.heating_today?.toFixed(2) || '--'}
+            tertiaryUnit="€"
+            tertiaryTitle="Heizung"
             icon={CurrencyEuroIcon}
             color="error"
             loading={currentLoading || statusLoading}
@@ -180,7 +212,7 @@ export default function Dashboard() {
               <div className="bg-gray-50 rounded-xl p-4">
                 <p className="text-sm text-gray-600 mb-1">PV-Einspeisung</p>
                 <p className="text-xl font-semibold text-gray-700">
-                  {currentData?.power?.a_power?.toFixed(0) || 0} W
+                  {plugsData?.apower?.toFixed(0) || 0} W
                 </p>
               </div>
               <div className="bg-gray-50 rounded-xl p-4">
@@ -200,125 +232,7 @@ export default function Dashboard() {
         </motion.div>
 
         {/* Active Mode Display */}
-        {activeModeInfo && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.25 }}
-            className="card p-6"
-          >
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-semibold text-gray-900">Aktiver Betriebsmodus</h2>
-              <span className={`status-dot ${activeModeInfo.active_heating ? 'status-active' : 'status-inactive'}`} />
-            </div>
-            
-            <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-6">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-xl font-bold text-blue-900">{activeModeInfo.name}</h3>
-                <div className="text-sm text-blue-600 bg-blue-200 px-3 py-1 rounded-full">
-                  Modus {heatingModes.active_mode}
-                </div>
-              </div>
-              
-              <p className="text-blue-700 mb-4">{activeModeInfo.description}</p>
-              
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <div>
-                  <p className="text-sm text-blue-600">PWM Wert</p>
-                  <p className="text-lg font-semibold text-blue-900">{activeModeInfo.pwm_value}</p>
-                </div>
-                <div>
-                  <p className="text-sm text-blue-600">Ausgangsspannung</p>
-                  <p className="text-lg font-semibold text-blue-900">{activeModeInfo.output_voltage}V</p>
-                </div>
-                <div>
-                  <p className="text-sm text-blue-600">Geschätzte Leistung</p>
-                  <p className="text-lg font-semibold text-blue-900">{activeModeInfo.estimated_power}W</p>
-                </div>
-                <div>
-                  <p className="text-sm text-blue-600">Kosten/Stunde</p>
-                  <p className="text-lg font-semibold text-blue-900">€{activeModeInfo.estimated_cost_hour}</p>
-                </div>
-              </div>
-              
-              {activeModeInfo.reason && (
-                <div className="mt-4 p-3 bg-blue-100 rounded-lg">
-                  <p className="text-sm text-blue-700">
-                    <strong>Grund:</strong> {activeModeInfo.reason}
-                  </p>
-                </div>
-              )}
-            </div>
-          </motion.div>
-        )}
 
-        {/* Status Overview Table */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3 }}
-          className="card overflow-hidden"
-        >
-          <div className="px-6 py-4 bg-gradient-to-r from-primary-500 to-primary-600">
-            <h2 className="text-lg font-semibold text-white">Live System-Status</h2>
-          </div>
-          
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead className="bg-gray-50 border-b border-gray-200">
-                <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Status
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Komponente
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Aktueller Wert
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Details
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
-                {statusItems.map((category) => (
-                  <React.Fragment key={category.category}>
-                    <tr className="bg-gray-50">
-                      <td colSpan="4" className="px-6 py-2 text-sm font-medium text-gray-700">
-                        {category.category}
-                      </td>
-                    </tr>
-                    {category.items.map((item, index) => (
-                      <tr key={index} className="hover:bg-gray-50 transition-colors">
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <span
-                            className={`status-dot ${
-                              item.status === 'active'
-                                ? 'status-active'
-                                : item.status === 'warning'
-                                ? 'status-warning'
-                                : 'status-inactive'
-                            }`}
-                          />
-                        </td>
-                        <td className="px-6 py-4 text-sm text-gray-900">
-                          {item.name}
-                        </td>
-                        <td className="px-6 py-4 text-sm text-gray-600">
-                          {item.function}
-                        </td>
-                        <td className="px-6 py-4 text-sm text-gray-600">
-                          {item.details}
-                        </td>
-                      </tr>
-                    ))}
-                  </React.Fragment>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </motion.div>
       </div>
     </>
   )

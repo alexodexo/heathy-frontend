@@ -162,17 +162,17 @@ export default function WarmwaterControlCenter() {
         <title>Warmwasser Schaltzentrale - Heizungssteuerung</title>
       </Head>
 
-      <div className="max-w-7xl mx-auto space-y-6">
+      <div className="max-w-7xl mx-auto space-y-6 px-4 md:px-8">
         {/* Header */}
         <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold text-gray-900">Warmwasser Schaltzentrale</h1>
-            <p className="text-gray-600 mt-1">Live-Steuerung und Monitoring</p>
+          <div className="text-center md:text-left">
+            <h1 className="text-3xl md:text-4xl font-bold text-gray-900">Warmwasser Schaltzentrale</h1>
+            <p className="text-lg md:text-xl text-gray-600 mt-2">Live-Steuerung und Monitoring</p>
           </div>
         </div>
 
         {/* Live Status Cards */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           <StatusCard
             title="Warmwasser"
             value={formatNumber(efficiencyData?.waterTemp, 1)}
@@ -252,33 +252,33 @@ export default function WarmwaterControlCenter() {
             </div>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {allModes
               .sort((a, b) => {
                 // Debug: Zeige die Sortierung
                 console.log('Sorting:', a.id, b.id, a.name, b.name);
                 // Korrekte Reihenfolge basierend auf Namen, nicht IDs
                 const nameOrder = {
-                  'Normalbetrieb + PV-Strom': 1,
-                  'Nur PV-Strom': 2,
-                  'Power-Modus 4.5 kW': 3,
-                  'Gäste-Modus': 4,
-                  'Vollständig EIN': 5,
-                  'Vollständig AUS': 6
+                  'Vollständig EIN': 1,
+                  'Vollständig AUS': 2,
+                  'Nur PV-Strom': 3,
+                  'Normalbetrieb + PV-Strom': 4,
+                  'Gäste-Modus': 5,
+                  'Power-Modus 4.5 kW': 6
                 };
                 return (nameOrder[a.name] || 999) - (nameOrder[b.name] || 999);
               })
               .map((mode, index) => {
               const isActive = mode.id === activeMode
-              const isRecommended = mode.name === 'Normalbetrieb + PV-Strom' // Modus 1 empfohlen
+              const isRecommended = mode.name === 'Normalbetrieb + PV-Strom' // Modus 4 empfohlen
               const displayNumber = (() => {
-                // Spezielle Nummerierung: "Normalbetrieb + PV-Strom" wird Modus 1
-                if (mode.name === 'Normalbetrieb + PV-Strom') return 1;
-                if (mode.name === 'Nur PV-Strom') return 2;
-                if (mode.name === 'Power-Modus 4.5 kW') return 3;
-                if (mode.name === 'Gäste-Modus') return 4;
-                if (mode.name === 'Vollständig EIN') return 5;
-                if (mode.name === 'Vollständig AUS') return 6;
+                // Spezielle Nummerierung: "Normalbetrieb + PV-Strom" wird Modus 4
+                if (mode.name === 'Normalbetrieb + PV-Strom') return 4;
+                if (mode.name === 'Nur PV-Strom') return 3;
+                if (mode.name === 'Power-Modus 4.5 kW') return 6;
+                if (mode.name === 'Gäste-Modus') return 5;
+                if (mode.name === 'Vollständig EIN') return 1;
+                if (mode.name === 'Vollständig AUS') return 2;
                 return mode.id; // Fallback
               })()
               

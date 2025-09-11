@@ -25,7 +25,8 @@
     "react-dom": "^19.0.0",
     "react-hot-toast": "^2.5.2",
     "swr": "^2.3.4",
-    "tailwindcss": "^3.4.17"
+    "tailwindcss": "^3.4.17",
+    "weather-icons-react": "^1.2.0"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",

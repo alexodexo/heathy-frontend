@@ -254,6 +254,31 @@ class BackendAPI {
     }
   }
 
+  async getParameterSettings() {
+    console.log('API: getParameterSettings called')
+    try {
+      // Fixed: Correct API path
+      const result = await this.request('/api/settings/parameter-settings')
+      console.log('API: getParameterSettings result:', result)
+      return result
+    } catch (error) {
+      console.error('API: getParameterSettings error:', error)
+      throw error
+    }
+  }
+
+  async updateParameterSetting(key, value) {
+    try {
+      return await this.request('/api/settings/parameter-settings', {
+        method: 'PUT',
+        body: JSON.stringify({ key, value }),
+      })
+    } catch (error) {
+      console.warn('Failed to update parameter setting:', error)
+      return { success: false, error: error.message }
+    }
+  }
+
   // System
   async getSystemHealth() {
     try {

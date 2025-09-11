@@ -82,17 +82,17 @@ export default function HeatingControl() {
         <title>Heizung - Heizungssteuerung</title>
       </Head>
 
-      <div className="max-w-7xl mx-auto space-y-6">
+      <div className="max-w-7xl mx-auto space-y-6 px-4 md:px-8">
         {/* Header */}
         <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold text-gray-900">Heizungs-Steuerung</h1>
-            <p className="text-gray-600 mt-1">Kontrolle und Monitoring der Heizungsanlage</p>
+          <div className="text-center md:text-left">
+            <h1 className="text-3xl md:text-4xl font-bold text-gray-900">Heizungs-Steuerung</h1>
+            <p className="text-lg md:text-xl text-gray-600 mt-2">Kontrolle und Monitoring der Heizungsanlage</p>
           </div>
         </div>
 
         {/* Status Cards */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           <StatusCard
             title="Vorlauf"
             value={heatingData?.vorlaufTemp?.toFixed(1) || '--'}
@@ -147,7 +147,7 @@ export default function HeatingControl() {
               <h2 className="text-lg font-semibold text-gray-900">Betriebsmodus Steuerung</h2>
             </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {/* Dummy Mode 1 */}
             <motion.button
               whileHover={{ scale: 1.02 }}
@@ -249,7 +249,7 @@ export default function HeatingControl() {
             <CurrencyEuroIcon className="w-5 h-5 text-gray-400" />
           </div>
           
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             <StatusCard
               title="Heute"
               value={costData.today}
