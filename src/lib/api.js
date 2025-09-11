@@ -255,11 +255,8 @@ class BackendAPI {
   }
 
   async getParameterSettings() {
-    console.log('API: getParameterSettings called')
     try {
-      // Fixed: Correct API path
       const result = await this.request('/api/settings/parameter-settings')
-      console.log('API: getParameterSettings result:', result)
       return result
     } catch (error) {
       console.error('API: getParameterSettings error:', error)

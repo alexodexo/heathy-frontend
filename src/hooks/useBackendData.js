@@ -174,8 +174,6 @@ export function useParameterSettings() {
     }
   )
 
-  // Debug logging
-  console.log('useParameterSettings:', { data, error, isLoading })
 
   return {
     data: data?.data || null,
