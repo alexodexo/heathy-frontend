@@ -138,7 +138,9 @@ export default function SystemSettings() {
   const [isSaving, setIsSaving] = useState(false)
   const [localSettings, setLocalSettings] = useState({})
   const [localParameterSettings, setLocalParameterSettings] = useState({})
-  const [heatingCurveRows, setHeatingCurveRows] = useState([0, 1, 2, 3, 4, 5, 6, 7]) // Start with 8 rows
+  // Stable heating curve rows - using useMemo to prevent re-render loops
+  const initialHeatingCurveRows = useMemo(() => [0, 1, 2, 3, 4, 5, 6, 7], [])
+  const [heatingCurveRows, setHeatingCurveRows] = useState(initialHeatingCurveRows)
   
   // Drag & Drop sensors
   const sensors = useSensors(
@@ -169,7 +171,7 @@ export default function SystemSettings() {
     } else {
       // Load default heating curve values if no settings exist
       const defaultSettings = {}
-      heatingCurveRows.forEach((rowId, index) => {
+      initialHeatingCurveRows.forEach((rowId, index) => {
         if (defaultHeatingCurve[index]) {
           defaultSettings[`heating_curve_outdoor_${rowId}`] = defaultHeatingCurve[index].outdoor
           defaultSettings[`heating_curve_flow_${rowId}`] = defaultHeatingCurve[index].flow
@@ -177,7 +179,7 @@ export default function SystemSettings() {
       })
       setLocalSettings(defaultSettings)
     }
-  }, [allSettings]) // Remove heatingCurveRows dependency to prevent re-render loops
+  }, [allSettings, defaultHeatingCurve, initialHeatingCurveRows]) // Include required dependencies
 
   // Update local parameter settings when data changes
   useEffect(() => {
@@ -349,7 +351,7 @@ export default function SystemSettings() {
           <div className="space-y-6">
             {/* Modus 1 */}
             <div className="bg-gray-50 p-4 rounded-lg">
-              <h3 className="text-md font-semibold text-gray-900 mb-4">Modus 4 "Normalbetrieb + PV-Strom"</h3>
+              <h3 className="text-md font-semibold text-gray-900 mb-4">Modus 4 &ldquo;Normalbetrieb + PV-Strom&rdquo;</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Einschalten ≤ °C</label>
@@ -403,7 +405,7 @@ export default function SystemSettings() {
             {/* Modus 2 + Modus 3 in einer Zeile */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               <div className="bg-gray-50 p-4 rounded-lg">
-                <h3 className="text-md font-semibold text-gray-900 mb-4">Modus 3 "Nur PV-Strom"</h3>
+                <h3 className="text-md font-semibold text-gray-900 mb-4">Modus 3 &ldquo;Nur PV-Strom&rdquo;</h3>
                 <div className="grid grid-cols-1 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">Ausschalten ≥ °C</label>
@@ -432,7 +434,7 @@ export default function SystemSettings() {
               </div>
 
               <div className="bg-gray-50 p-4 rounded-lg">
-                <h3 className="text-md font-semibold text-gray-900 mb-4">Modus 6 "Power-Modus 4.5kW"</h3>
+                <h3 className="text-md font-semibold text-gray-900 mb-4">Modus 6 &ldquo;Power-Modus 4.5kW&rdquo;</h3>
                 <div className="grid grid-cols-1 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">Ausschalten ≥ °C</label>
@@ -463,7 +465,7 @@ export default function SystemSettings() {
 
             {/* Modus 4 */}
             <div className="bg-gray-50 p-4 rounded-lg">
-              <h3 className="text-md font-semibold text-gray-900 mb-4">Modus 5 "Gäste-Modus"</h3>
+              <h3 className="text-md font-semibold text-gray-900 mb-4">Modus 5 &ldquo;Gäste-Modus&rdquo;</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Einschalten ≤ °C</label>
@@ -518,7 +520,7 @@ export default function SystemSettings() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {/* Modus 5: Vollständig EIN */}
               <div className="bg-gray-50 p-4 rounded-lg">
-                <h3 className="text-md font-semibold text-gray-900 mb-4">Modus 1 „Vollständig EIN"</h3>
+                <h3 className="text-md font-semibold text-gray-900 mb-4">Modus 1 &ldquo;Vollständig EIN&rdquo;</h3>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Ausschalten ≥ °C</label>
                   <input
