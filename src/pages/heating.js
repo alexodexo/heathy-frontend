@@ -162,7 +162,7 @@ export default function HeatingControl() {
                 </div>
               </div>
               <h3 className="text-lg font-bold text-blue-900 mb-1">Normalbetrieb</h3>
-              <p className="text-sm text-blue-600">Mit Heizkurve und Zeitsteuerung</p>
+              <p className="text-sm text-blue-600">Vorlauftemperatur --°C und Zeitsteuerung</p>
             </motion.button>
 
             {/* Dummy Mode 2 */}
@@ -175,8 +175,8 @@ export default function HeatingControl() {
                 <span className="text-sm font-semibold text-gray-700">Modus 2</span>
                 <span className="status-dot status-inactive"></span>
               </div>
-              <h3 className="text-lg font-bold text-gray-900 mb-1">Dauerbetrieb</h3>
-              <p className="text-sm text-gray-600">Mit Heizkurve ohne Zeitsteuerung</p>
+              <h3 className="text-lg font-bold text-gray-900 mb-1">Booster</h3>
+              <p className="text-sm text-gray-600">-- min mit --kW Boosterbetrieb</p>
             </motion.button>
 
             {/* Dummy Mode 3 */}
@@ -204,7 +204,7 @@ export default function HeatingControl() {
                 <span className="status-dot status-inactive"></span>
               </div>
               <h3 className="text-lg font-bold text-gray-900 mb-1">1.5 kW Dauerbetrieb</h3>
-              <p className="text-sm text-gray-600">Zieltemperatur 45°C</p>
+              <p className="text-sm text-gray-600">Vorlauftemperatur --°C</p>
             </motion.button>
 
             {/* Dummy Mode 5 */}
@@ -218,7 +218,7 @@ export default function HeatingControl() {
                 <span className="status-dot status-inactive"></span>
               </div>
               <h3 className="text-lg font-bold text-gray-900 mb-1">3.0 kW Dauerbetrieb</h3>
-              <p className="text-sm text-gray-600">Zieltemperatur 50°C</p>
+              <p className="text-sm text-gray-600">Vorlauftemperatur --°C</p>
             </motion.button>
 
             {/* Dummy Mode 6 */}
@@ -232,7 +232,7 @@ export default function HeatingControl() {
                 <span className="status-dot status-inactive"></span>
               </div>
               <h3 className="text-lg font-bold text-gray-900 mb-1">4.5 kW Dauerbetrieb</h3>
-              <p className="text-sm text-gray-600">Zieltemperatur 55°C</p>
+              <p className="text-sm text-gray-600">Vorlauftemperatur --°C</p>
             </motion.button>
           </div>
         </motion.div>
@@ -250,29 +250,29 @@ export default function HeatingControl() {
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <StatusCard
+                      title="heute"
+                      value={costData.today}
+                      unit="€"
+                      color="primary"
+                      loading={false}
+                    />
             <StatusCard
-              title="Heute"
-              value={costData.today}
-              unit="€"
-              color="primary"
-              loading={false}
-            />
-            <StatusCard
-              title="Letzte Woche"
+              title="letzten 7 Tage"
               value={costData.week}
               unit="€"
               color="primary"
               loading={false}
             />
             <StatusCard
-              title="Letzten Monat"
+              title="letzten 30 Tage"
               value={costData.month}
               unit="€"
               color="primary"
               loading={false}
             />
             <StatusCard
-              title="Letztes Jahr"
+              title="letzten 365 Tage"
               value={costData.year}
               unit="€"
               color="primary"

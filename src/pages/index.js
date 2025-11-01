@@ -9,7 +9,6 @@ import {
   FireIcon,
   SunIcon,
   BoltIcon,
-  CurrencyEuroIcon,
   CloudIcon,
   ExclamationTriangleIcon,
   CheckCircleIcon,
@@ -22,14 +21,6 @@ export default function Dashboard() {
   const { data: heatingModes, isLoading: modesLoading } = useHeatingModes()
   const { data: systemHealth, isLoading: healthLoading } = useSystemHealth()
   const { data: plugsData, isLoading: plugsLoading } = usePlugsData()
-
-  // Calculate daily costs based on current power and electricity price
-  const calculateDailyCost = () => {
-    if (!currentData?.power?.total_power || !heatingStatus) return '0.00'
-    const kWh = (currentData.power.total_power / 1000) * 24 // Rough daily estimate
-    const cost = kWh * (heatingStatus.electricity_price || 0.25)
-    return cost.toFixed(2)
-  }
 
   // Get current active mode info
   const getActiveModeInfo = () => {
@@ -103,26 +94,7 @@ export default function Dashboard() {
         </div>
 
         {/* Status Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6">
-          <StatusCard
-            title="Warmwasser"
-            value={currentData?.temperatures?.water_temp?.toFixed(1) || '--'}
-            unit="°C"
-            secondaryValue={currentData?.warmwater?.target_temp?.toFixed(1) || '--'}
-            secondaryUnit="°C"
-            secondaryTitle="Ziel-Temperatur"
-            tertiaryValue={currentData?.warmwater?.power_w?.toFixed(0) || '--'}
-            tertiaryUnit="W"
-            tertiaryTitle="aktuelle Heizleistung"
-            quaternaryValue={currentData?.costs?.warmwater_week?.toFixed(2) || '--'}
-            quaternaryUnit="€"
-            quaternaryTitle="Warmwasserkosten rolling 7 days"
-            quinternaryValue={currentData?.recirc_pump_no2 ? 'ein' : 'aus'}
-            quinternaryTitle="Pumpe"
-            icon={BeakerIcon}
-            color="primary"
-            loading={currentLoading}
-          />
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-4 gap-6">
           <StatusCard
             title="Vorlauf Heizung"
             value={currentData?.temperatures?.vorlauf_temp?.toFixed(1) || '--'}
@@ -140,10 +112,25 @@ export default function Dashboard() {
             quaternaryValue={currentData?.costs?.heating_week?.toFixed(2) || '--'}
             quaternaryUnit="€"
             quaternaryTitle="Heizungskosten rolling 7 days"
-            quinternaryValue={currentData?.circulator_no1 ? 'ein' : 'aus'}
-            quinternaryTitle="Pumpe"
             icon={FireIcon}
             color="warning"
+            loading={currentLoading}
+          />
+          <StatusCard
+            title="Warmwasser"
+            value={currentData?.temperatures?.water_temp?.toFixed(1) || '--'}
+            unit="°C"
+            secondaryValue={currentData?.warmwater?.target_temp?.toFixed(1) || '--'}
+            secondaryUnit="°C"
+            secondaryTitle="Ziel-Temperatur"
+            tertiaryValue={currentData?.warmwater?.power_w?.toFixed(0) || '--'}
+            tertiaryUnit="W"
+            tertiaryTitle="aktuelle Heizleistung"
+            quaternaryValue={currentData?.costs?.warmwater_week?.toFixed(2) || '--'}
+            quaternaryUnit="€"
+            quaternaryTitle="Warmwasserkosten rolling 7 days"
+            icon={BeakerIcon}
+            color="primary"
             loading={currentLoading}
           />
           <StatusCard
@@ -158,6 +145,26 @@ export default function Dashboard() {
             tertiaryTitle="Sonnenstunden heute"
             icon={() => (
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6">
+                <circle cx="12" cy="12" r="5"/>
+                <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+                <path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z" opacity="0.3"/>
+              </svg>
+            )}
+            color="primary"
+            loading={currentLoading}
+          />
+          <StatusCard
+            title="Wohnzimmer"
+            value={currentData?.temperatures?.room_wohnzimmer?.toFixed(1) || '--'}
+            unit="°C"
+            secondaryValue={currentData?.temperatures?.room_buero?.toFixed(1) || '--'}
+            secondaryUnit="°C"
+            secondaryTitle="Büro"
+            tertiaryValue={currentData?.temperatures?.room_bad?.toFixed(1) || '--'}
+            tertiaryUnit="°C"
+            tertiaryTitle="Bad"
+            icon={() => (
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6">
                 <path d="M14 4v10.54a4 4 0 1 1-4 0V4a2 2 0 0 1 4 0Z"/>
                 <path d="M12 18a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z"/>
                 <path d="M16 8h2"/>
@@ -166,20 +173,6 @@ export default function Dashboard() {
             )}
             color="primary"
             loading={currentLoading}
-          />
-          <StatusCard
-            title="Tageskosten"
-            value={`€${calculateDailyCost()}`}
-            unit=""
-            secondaryValue={currentData?.costs?.warmwater_today?.toFixed(2) || '--'}
-            secondaryUnit="€"
-            secondaryTitle="Warmwasser"
-            tertiaryValue={currentData?.costs?.heating_today?.toFixed(2) || '--'}
-            tertiaryUnit="€"
-            tertiaryTitle="Heizung"
-            icon={CurrencyEuroIcon}
-            color="error"
-            loading={currentLoading || statusLoading}
           />
         </div>
 
@@ -206,25 +199,25 @@ export default function Dashboard() {
               <div className="bg-gradient-to-br from-primary-50 to-primary-100 rounded-xl p-4">
                 <p className="text-sm text-primary-600 mb-1">Gesamt</p>
                 <p className="text-2xl font-bold text-primary-700">
-                  {currentData?.power?.total_power?.toFixed(0) || 0} W
+                  {(currentData?.power?.total_power !== null && currentData?.power?.total_power !== undefined) ? currentData.power.total_power.toFixed(0) : '--'} W
                 </p>
               </div>
               <div className="bg-gray-50 rounded-xl p-4">
                 <p className="text-sm text-gray-600 mb-1">PV-Einspeisung</p>
                 <p className="text-xl font-semibold text-gray-700">
-                  {plugsData?.apower?.toFixed(0) || 0} W
+                  {(plugsData?.apower !== null && plugsData?.apower !== undefined) ? plugsData.apower.toFixed(0) : '--'} W
                 </p>
               </div>
               <div className="bg-gray-50 rounded-xl p-4">
                 <p className="text-sm text-gray-600 mb-1">Heizung</p>
                 <p className="text-xl font-semibold text-gray-700">
-                  {currentData?.power?.b_power?.toFixed(0) || 0} W
+                  {(currentData?.power?.b_power !== null && currentData?.power?.b_power !== undefined) ? currentData.power.b_power.toFixed(0) : '--'} W
                 </p>
               </div>
               <div className="bg-gray-50 rounded-xl p-4">
                 <p className="text-sm text-gray-600 mb-1">Warmwasser</p>
                 <p className="text-xl font-semibold text-gray-700">
-                  {currentData?.power?.c_power?.toFixed(0) || 0} W
+                  {(currentData?.power?.c_power !== null && currentData?.power?.c_power !== undefined) ? currentData.power.c_power.toFixed(0) : '--'} W
                 </p>
               </div>
             </div>
