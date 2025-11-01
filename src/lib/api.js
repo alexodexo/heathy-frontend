@@ -116,25 +116,20 @@ class BackendAPI {
     } catch (error) {
       console.warn('Falling back to mocked heating modes (any error)')
       const modes = {
-        1: { id: 1, name: 'Normalbetrieb + PV-Strom', pwm_value: 128, estimated_power: 2000, output_voltage: 12, estimated_cost_hour: 0.35, target_temp: 55, active_heating: true },
-        2: { id: 2, name: 'Nur PV-Strom', pwm_value: 64, estimated_power: 1000, output_voltage: 6, estimated_cost_hour: 0.18, target_temp: 50, active_heating: false },
-        3: { id: 3, name: 'Power-Modus 4.5 kW', pwm_value: 255, estimated_power: 4500, output_voltage: 24, estimated_cost_hour: 0.85, target_temp: 70, active_heating: true },
-        4: { id: 4, name: 'Gäste-Modus', pwm_value: 128, estimated_power: 2000, output_voltage: 12, estimated_cost_hour: 0.45, target_temp: 55, active_heating: true },
-        5: { id: 5, name: 'Vollständig EIN', pwm_value: 255, estimated_power: 4500, output_voltage: 24, estimated_cost_hour: 0.85, target_temp: 70, active_heating: true },
-        6: { id: 6, name: 'Vollständig AUS', pwm_value: 0, estimated_power: 0, output_voltage: 0, estimated_cost_hour: 0, target_temp: 0, active_heating: false },
+        1: { id: 1, name: 'Vollständig EIN', pwm_value: 255, estimated_power: 4500, output_voltage: 24, estimated_cost_hour: 0.85, target_temp: 70, active_heating: true },
+        2: { id: 2, name: 'Vollständig AUS', pwm_value: 0, estimated_power: 0, output_voltage: 0, estimated_cost_hour: 0, target_temp: 0, active_heating: false },
       }
       return { success: true, data: { modes, active_mode: 1 } }
     }
   }
 
   async activateMode(modeId) {
-    // Nur Legacy-Endpoint verwenden, keine Aufrufe auf /api/heating/modes
+    // Korrekte API-Endpunkte gemäß Dokumentation
     const attempts = [
+      { endpoint: `/api/heating/modes/${modeId}/activate`, method: 'POST', body: { mode_id: modeId } },
+      { endpoint: `/api/heating/modes/${modeId}/activate`, method: 'POST', body: {} },
       { endpoint: '/api/heating/activate-mode', method: 'POST', body: { mode_id: modeId } },
       { endpoint: '/api/heating/activate-mode', method: 'POST', body: { id: modeId } },
-      { endpoint: '/api/heating/activate-mode', method: 'POST', body: { modeId } },
-      { endpoint: '/api/heating/activate-mode', method: 'POST', body: undefined },
-      { endpoint: `/api/heating/activate-mode?id=${modeId}`, method: 'GET' },
       { endpoint: `/api/heating/activate-mode?mode_id=${modeId}`, method: 'GET' },
     ]
 
@@ -153,17 +148,13 @@ class BackendAPI {
       }
     }
 
-    if (modeId === 1 || modeId === 5) {
+    if (modeId === 1 || modeId === 2) {
       throw lastError
     }
 
     const modeNames = {
-      1: 'Normalbetrieb + PV-Strom',
-      2: 'Nur PV-Strom',
-      3: 'Power-Modus 4.5 kW',
-      4: 'Gäste-Modus',
-      5: 'Vollständig EIN',
-      6: 'Vollständig AUS',
+      1: 'Vollständig EIN',
+      2: 'Vollständig AUS',
     }
     return { success: true, data: { mode_name: modeNames[modeId] || `Modus ${modeId}` } }
   }
@@ -177,7 +168,11 @@ class BackendAPI {
         success: true,
         data: {
           temperatures: { water_temp: 52.3 },
-          power: { total_power: 1350 },
+          power: { 
+            total_power: null,
+            b_power: null,
+            c_power: null
+          },
         },
       }
     }
@@ -256,11 +251,16 @@ class BackendAPI {
 
   async getParameterSettings() {
     try {
-      const result = await this.request('/api/settings/parameter-settings')
-      return result
+      return await this.request('/api/parameter-settings', { suppressLog: true })
     } catch (error) {
-      console.error('API: getParameterSettings error:', error)
-      throw error
+      console.warn('Falling back to mocked parameter settings')
+      const params = {}
+      Object.keys(this._loadMockSettings()).forEach(key => {
+        if (key.startsWith('mode_') || key === 'power_heathing_rod') {
+          params[key] = { value: this._getMockSetting(key), unit: '°C' }
+        }
+      })
+      return { success: true, data: params }
     }
   }
 
