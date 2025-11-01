@@ -1,5 +1,5 @@
 // src/pages/statistics.js
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Head from 'next/head'
 import useSWR from 'swr'
 import StatsSummaryCards from '@/components/statistics/StatsSummaryCards'
@@ -14,29 +14,45 @@ export default function Statistics() {
   const [selectedRange, setSelectedRange] = useState('24h')
 
   // Fetch data from our new API endpoints
-  const { data: summaryData, isLoading: summaryLoading } = useSWR(
+  const { data: summaryData, error: summaryError, isLoading: summaryLoading } = useSWR(
     '/api/statistics/summary',
     fetcher,
     { refreshInterval: 30000 } // Refresh every 30 seconds
   )
 
-  const { data: energyData, isLoading: energyLoading } = useSWR(
+  const { data: energyData, error: energyError, isLoading: energyLoading } = useSWR(
     `/api/statistics/energy?range=${selectedRange}`,
     fetcher,
     { refreshInterval: 60000 } // Refresh every minute
   )
 
-  const { data: temperatureData, isLoading: temperatureLoading } = useSWR(
+  const { data: temperatureData, error: temperatureError, isLoading: temperatureLoading } = useSWR(
     `/api/statistics/temperatures?range=${selectedRange}`,
     fetcher,
     { refreshInterval: 60000 }
   )
 
-  const { data: costsData, isLoading: costsLoading } = useSWR(
+  const { data: costsData, error: costsError, isLoading: costsLoading } = useSWR(
     `/api/statistics/costs?range=${selectedRange}`,
     fetcher,
     { refreshInterval: 60000 }
   )
+
+  // Debug: Log errors
+  useEffect(() => {
+    if (summaryError) console.error('Summary API Error:', summaryError)
+    if (energyError) console.error('Energy API Error:', energyError)
+    if (temperatureError) console.error('Temperature API Error:', temperatureError)
+    if (costsError) console.error('Costs API Error:', costsError)
+  }, [summaryError, energyError, temperatureError, costsError])
+
+  // Debug: Log data
+  useEffect(() => {
+    console.log('Summary Data:', summaryData)
+    console.log('Energy Data:', energyData)
+    console.log('Temperature Data:', temperatureData)
+    console.log('Costs Data:', costsData)
+  }, [summaryData, energyData, temperatureData, costsData])
 
   // Transform temperature data for chart component
   const transformTemperatureData = (tempData) => {
