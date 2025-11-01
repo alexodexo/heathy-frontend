@@ -396,7 +396,7 @@ export default function SystemSettings() {
                               WebkitAppearance: 'none'
                             }}
                           />
-                          <span className="text-xs text-gray-600">min. L2 zuschalten, wenn Vorlauftemperatur "Ausschalten" nicht erreicht wird.</span>
+                          <span className="text-xs text-gray-600">min. L2 zuschalten, wenn Vorlauftemperatur &quot;Ausschalten&quot; nicht erreicht wird.</span>
                         </div>
                       </div>
                       <div>
@@ -427,7 +427,7 @@ export default function SystemSettings() {
                               WebkitAppearance: 'none'
                             }}
                           />
-                          <span className="text-xs text-gray-600">min. L3 zuschalten, wenn Vorlauftemperatur "Ausschalten" nicht erreicht wird.</span>
+                          <span className="text-xs text-gray-600">min. L3 zuschalten, wenn Vorlauftemperatur &quot;Ausschalten&quot; nicht erreicht wird.</span>
                         </div>
                       </div>
                       
