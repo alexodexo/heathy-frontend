@@ -1,26 +1,13 @@
 // src/pages/heating.js
 import Head from 'next/head'
-import { motion } from 'framer-motion'
-import StatusCard from '@/components/StatusCard'
 import { 
   useCurrentData, 
   useHeatingStatus, 
   useSystemStats 
 } from '@/hooks/useBackendData'
-import {
-  FireIcon,
-  PowerIcon,
-  ArrowUpIcon,
-  ArrowDownIcon,
-  CloudIcon,
-  CurrencyEuroIcon,
-  CalendarIcon,
-  BoltIcon,
-  ExclamationTriangleIcon,
-  CheckCircleIcon,
-  ClockIcon,
-  CalendarDaysIcon,
-} from '@heroicons/react/24/outline'
+import HeatingStatusCards from '@/components/heating/HeatingStatusCards'
+import HeatingModeSelection from '@/components/heating/HeatingModeSelection'
+import HeatingCostOverview from '@/components/heating/HeatingCostOverview'
 
 export default function HeatingControl() {
   const { data: currentData, isLoading: currentLoading } = useCurrentData()
@@ -92,194 +79,18 @@ export default function HeatingControl() {
         </div>
 
         {/* Status Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          <StatusCard
-            title="Vorlauf"
-            value={heatingData?.vorlaufTemp?.toFixed(1) || '--'}
-            unit="°C"
-            icon={ArrowUpIcon}
-            color={heatingData?.vorlaufTemp > 40 ? 'success' : 'warning'}
-            loading={currentLoading}
-          />
-          <StatusCard
-            title="Rücklauf"
-            value={heatingData?.ruecklaufTemp?.toFixed(1) || '--'}
-            unit="°C"
-            icon={ArrowDownIcon}
-            color={heatingData?.ruecklaufTemp > 30 ? 'success' : 'warning'}
-            loading={currentLoading}
-          />
-          <StatusCard
-            title="Temperaturdifferenz"
-            value={heatingData?.tempDiff?.toFixed(1) || '--'}
-            unit="°C"
-            icon={FireIcon}
-            color={heatingData?.tempDiff > 5 ? 'success' : 'error'}
-            loading={currentLoading}
-          />
-          <StatusCard
-            title="Heizleistung"
-            value={heatingData?.heatingPower?.toString() || '--'}
-            unit="W"
-            icon={BoltIcon}
-            color="primary"
-            loading={statusLoading}
-            topRight={
-              <div className="flex items-center gap-2">
-                <span className={`status-dot ${currentData?.circulator_no1 ? 'status-active' : 'status-inactive'}`} />
-                <span className="text-xs font-medium text-gray-700">
-                  {currentData?.circulator_no1 ? 'Pumpe ein' : 'Pumpe aus'}
-                </span>
-              </div>
-            }
-          />
-        </div>
+        <HeatingStatusCards
+          heatingData={heatingData}
+          currentData={currentData}
+          currentLoading={currentLoading}
+          statusLoading={statusLoading}
+        />
 
         {/* Mode Selection Control Center */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1 }}
-          className="card p-6"
-        >
-                      {/* Überschrift und aktuelle Werte in einer Zeile */}
-            <div className="flex items-center justify-between mb-4 p-3 bg-gray-50 rounded-lg">
-              <h2 className="text-lg font-semibold text-gray-900">Betriebsmodus Steuerung</h2>
-            </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {/* Dummy Mode 1 */}
-            <motion.button
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              className="relative p-4 bg-blue-50 rounded-xl border-2 border-blue-200 hover:border-blue-300 transition-all duration-200 shadow-sm"
-            >
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-sm font-semibold text-blue-700">Modus 1</span>
-                <div className="flex items-center gap-2">
-                  <span className="text-xs font-medium text-green-600 bg-green-100 px-2 py-1 rounded">Empfohlen</span>
-                  <span className="status-dot status-active"></span>
-                </div>
-              </div>
-              <h3 className="text-lg font-bold text-blue-900 mb-1">Normalbetrieb</h3>
-              <p className="text-sm text-blue-600">Vorlauftemperatur --°C und Zeitsteuerung</p>
-            </motion.button>
-
-            {/* Dummy Mode 2 */}
-            <motion.button
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              className="relative p-4 bg-white rounded-xl border-2 border-gray-200 hover:border-gray-300 transition-all duration-200 shadow-sm"
-            >
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-sm font-semibold text-gray-700">Modus 2</span>
-                <span className="status-dot status-inactive"></span>
-              </div>
-              <h3 className="text-lg font-bold text-gray-900 mb-1">Booster</h3>
-              <p className="text-sm text-gray-600">-- min mit --kW Boosterbetrieb</p>
-            </motion.button>
-
-            {/* Dummy Mode 3 */}
-            <motion.button
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              className="relative p-4 bg-white rounded-xl border-2 border-gray-200 hover:border-gray-300 transition-all duration-200 shadow-sm"
-            >
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-sm font-semibold text-gray-700">Modus 3</span>
-                <span className="status-dot status-inactive"></span>
-              </div>
-              <h3 className="text-lg font-bold text-gray-900 mb-1">Aus</h3>
-              <p className="text-sm text-gray-600">Heizung vollständig aus</p>
-            </motion.button>
-
-            {/* Dummy Mode 4 */}
-            <motion.button
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              className="relative p-4 bg-white rounded-xl border-2 border-gray-200 hover:border-gray-300 transition-all duration-200 shadow-sm"
-            >
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-sm font-semibold text-gray-700">Modus 4</span>
-                <span className="status-dot status-inactive"></span>
-              </div>
-              <h3 className="text-lg font-bold text-gray-900 mb-1">1.5 kW Dauerbetrieb</h3>
-              <p className="text-sm text-gray-600">Vorlauftemperatur --°C</p>
-            </motion.button>
-
-            {/* Dummy Mode 5 */}
-            <motion.button
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              className="relative p-4 bg-white rounded-xl border-2 border-gray-200 hover:border-gray-300 transition-all duration-200 shadow-sm"
-            >
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-sm font-semibold text-gray-700">Modus 5</span>
-                <span className="status-dot status-inactive"></span>
-              </div>
-              <h3 className="text-lg font-bold text-gray-900 mb-1">3.0 kW Dauerbetrieb</h3>
-              <p className="text-sm text-gray-600">Vorlauftemperatur --°C</p>
-            </motion.button>
-
-            {/* Dummy Mode 6 */}
-            <motion.button
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              className="relative p-4 bg-white rounded-xl border-2 border-gray-200 hover:border-gray-300 transition-all duration-200 shadow-sm"
-            >
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-sm font-semibold text-gray-700">Modus 6</span>
-                <span className="status-dot status-inactive"></span>
-              </div>
-              <h3 className="text-lg font-bold text-gray-900 mb-1">4.5 kW Dauerbetrieb</h3>
-              <p className="text-sm text-gray-600">Vorlauftemperatur --°C</p>
-            </motion.button>
-          </div>
-        </motion.div>
+        <HeatingModeSelection />
 
         {/* Cost Overview */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3 }}
-          className="card p-6"
-        >
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-semibold text-gray-900">Heizungskosten</h2>
-            <CurrencyEuroIcon className="w-5 h-5 text-gray-400" />
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                    <StatusCard
-                      title="heute"
-                      value={costData.today}
-                      unit="€"
-                      color="primary"
-                      loading={false}
-                    />
-            <StatusCard
-              title="letzten 7 Tage"
-              value={costData.week}
-              unit="€"
-              color="primary"
-              loading={false}
-            />
-            <StatusCard
-              title="letzten 30 Tage"
-              value={costData.month}
-              unit="€"
-              color="primary"
-              loading={false}
-            />
-            <StatusCard
-              title="letzten 365 Tage"
-              value={costData.year}
-              unit="€"
-              color="primary"
-              loading={false}
-            />
-          </div>
-        </motion.div>
+        <HeatingCostOverview costData={costData} />
       </div>
     </>
   )
