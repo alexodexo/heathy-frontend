@@ -1,9 +1,9 @@
-// src/components/heating/HeatingCostOverview.js
+// src/components/warmwater/WarmwaterCostOverview.js
 import { motion } from 'framer-motion'
 import StatusCard from '@/components/StatusCard'
 import { CurrencyEuroIcon } from '@heroicons/react/24/outline'
 
-export default function HeatingCostOverview({ costData, consumptionData }) {
+export default function WarmwaterCostOverview({ costData, consumptionData }) {
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -12,7 +12,7 @@ export default function HeatingCostOverview({ costData, consumptionData }) {
       className="card p-4 md:p-6"
     >
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-lg font-semibold text-gray-900">Heizung - Kosten & Verbrauch</h2>
+        <h2 className="text-lg font-semibold text-gray-900">Warmwasser - Kosten & Verbrauch</h2>
         <CurrencyEuroIcon className="w-5 h-5 text-gray-400" />
       </div>
       

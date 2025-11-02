@@ -7,16 +7,19 @@ import {
   useHeatingStatus, 
   useHeatingModes, 
   useWarmwaterSettings,
+  useSystemStats,
 } from '@/hooks/useBackendData'
 import { backendAPI } from '@/lib/api'
 import WarmwaterStatusCards from '@/components/warmwater/WarmwaterStatusCards'
 import WarmwaterModeSelection from '@/components/warmwater/WarmwaterModeSelection'
+import WarmwaterCostOverview from '@/components/warmwater/WarmwaterCostOverview'
 
 export default function WarmwaterControlCenter() {
   const { data: currentData, isLoading: currentLoading, refresh: refreshCurrent } = useCurrentData()
   const { data: heatingStatus, isLoading: statusLoading, refresh: refreshStatus } = useHeatingStatus()
   const { data: heatingModes, isLoading: modesLoading, refresh: refreshModes } = useHeatingModes()
   const { data: warmwaterSettings, isLoading: settingsLoading } = useWarmwaterSettings()
+  const { data: systemStats } = useSystemStats()
   
   const [isChangingMode, setIsChangingMode] = useState(false)
 
@@ -65,15 +68,63 @@ export default function WarmwaterControlCenter() {
     if (!currentData || !heatingStatus) return null
     
     const waterTemp = currentData.temperatures?.water_temp || 0
-    const activeModeInfo = availableModes.find(mode => mode.id === activeMode)
+    
+    // Berechne aktuelle Heizleistung basierend auf aktiven Heizstäben
+    // Jeder Heizstab = 1500W
+    let heatingPower = 0
+    if (currentData.plugs) {
+      const plug1Active = currentData.plugs.plug_1?.state === 'on' || currentData.plugs.plug_1?.state === true
+      const plug2Active = currentData.plugs.plug_2?.state === 'on' || currentData.plugs.plug_2?.state === true
+      const plug3Active = currentData.plugs.plug_3?.state === 'on' || currentData.plugs.plug_3?.state === true
+      
+      if (plug1Active) heatingPower += 1500
+      if (plug2Active) heatingPower += 1500
+      if (plug3Active) heatingPower += 1500
+    }
     
     return {
       waterTemp,
-      estimatedCostPerHour: activeModeInfo?.estimated_cost_hour || 0,
+      heatingPower,
     }
   }
 
   const displayData = getDisplayData()
+
+  // Cost calculation for warmwater
+  const calculateWarmwaterCosts = () => {
+    if (!systemStats) return { today: '0.00', week: '0.00', month: '0.00', year: '0.00' }
+    
+    const hoursRunning = (systemStats.performance?.uptime_seconds || 0) / 3600
+    const costPerHour = 0
+    const totalCost = hoursRunning * costPerHour
+    
+    return {
+      today: (totalCost * 0.1).toFixed(2), // Rough estimation
+      week: (totalCost * 0.7).toFixed(2),
+      month: (totalCost * 3).toFixed(2),
+      year: totalCost.toFixed(2),
+    }
+  }
+
+  // Consumption calculation for warmwater (in kWh)
+  const calculateWarmwaterConsumption = () => {
+    if (!systemStats) return { today: '0.0', week: '0.0', month: '0.0', year: '0.0' }
+    
+    // Example calculation - Alex needs to implement real data from backend
+    const hoursRunning = (systemStats.performance?.uptime_seconds || 0) / 3600
+    const averagePower = 2.0 // kW - average warmwater heating power
+    const totalConsumption = hoursRunning * averagePower
+    
+    return {
+      today: (totalConsumption * 0.1).toFixed(1), // Rough estimation
+      week: (totalConsumption * 0.7).toFixed(1),
+      month: (totalConsumption * 3).toFixed(1),
+      year: totalConsumption.toFixed(1),
+    }
+  }
+
+  const costData = calculateWarmwaterCosts()
+  const consumptionData = calculateWarmwaterConsumption()
 
   if (currentLoading && statusLoading && modesLoading) {
     return (
@@ -92,19 +143,17 @@ export default function WarmwaterControlCenter() {
         <title>Warmwasser Schaltzentrale - Heizungssteuerung</title>
       </Head>
 
-      <div className="max-w-7xl mx-auto space-y-6 px-4 md:px-8">
+      <div className="max-w-7xl mx-auto space-y-4 md:space-y-6">
         {/* Header */}
-        <div className="flex items-center justify-between">
-          <div className="text-center md:text-left">
-            <h1 className="text-3xl md:text-4xl font-bold text-gray-900">Warmwasser Schaltzentrale</h1>
-            <p className="text-lg md:text-xl text-gray-600 mt-2">Live-Steuerung und Monitoring</p>
-          </div>
+        <div>
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900">Warmwasser Schaltzentrale</h1>
+          <p className="text-sm sm:text-base md:text-lg text-gray-600 mt-1 md:mt-2">Live-Steuerung und Monitoring</p>
         </div>
 
         {/* Live Status Cards */}
         <WarmwaterStatusCards
           waterTemp={displayData?.waterTemp}
-          estimatedCostPerHour={displayData?.estimatedCostPerHour}
+          heatingPower={displayData?.heatingPower}
           currentLoading={currentLoading}
           statusLoading={statusLoading}
         />
@@ -116,6 +165,9 @@ export default function WarmwaterControlCenter() {
           isChangingMode={isChangingMode}
           onModeChange={handleModeChange}
         />
+
+        {/* Cost & Consumption Overview */}
+        <WarmwaterCostOverview costData={costData} consumptionData={consumptionData} />
       </div>
     </>
   )

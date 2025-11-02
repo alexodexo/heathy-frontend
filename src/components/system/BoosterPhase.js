@@ -44,6 +44,14 @@ export default function BoosterPhase({
       desc: 'text-green-600',
       power: 'text-green-700',
       checkbox: 'text-green-600 focus:ring-green-500'
+    },
+    gray: {
+      bg: 'bg-white',
+      border: 'border-gray-300',
+      title: 'text-gray-900',
+      desc: 'text-gray-600',
+      power: 'text-gray-900',
+      checkbox: 'text-gray-600 focus:ring-gray-500'
     }
   }
 

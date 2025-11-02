@@ -1,0 +1,88 @@
+schema	table	ordinal_position	column_name	data_type	is_nullable	column_default	
+public	em3data	1	id	uuid	false	gen_random_uuid()	
+public	em3data	2	created_at	timestamp with time zone	true	now()	
+public	em3data	3	unix_time	bigint	false	null	
+public	em3data	4	total_power	numeric(10,2)	false	null	
+public	em3data	5	a_power	numeric(10,2)	false	null	
+public	em3data	6	b_power	numeric(10,2)	false	null	
+public	em3data	7	c_power	numeric(10,2)	false	null	
+public	heating_status	1	id	uuid	false	gen_random_uuid()	
+public	heating_status	2	created_at	timestamp with time zone	true	now()	
+public	heating_status	3	active_mode_id	integer	false	null	
+public	heating_status	4	active_mode_name	character varying(50)	false	null	
+public	heating_status	5	current_pwm	numeric(10,3)	false	null	
+public	heating_status	6	water_temp	numeric(10,3)	true	null	
+public	heating_status	7	vorlauf_temp	numeric(10,3)	true	null	
+public	heating_status	8	ruecklauf_temp	numeric(10,3)	true	null	
+public	heating_status	9	target_temp	numeric(10,3)	true	null	
+public	heating_status	10	total_power	numeric(10,3)	true	null	
+public	heating_status	11	a_power	numeric(10,3)	true	null	
+public	heating_status	12	b_power	numeric(10,3)	true	null	
+public	heating_status	13	c_power	numeric(10,3)	true	null	
+public	heating_status	14	pv_surplus	numeric(10,3)	true	null	
+public	heating_status	15	mode_simulations	jsonb	false	null	
+public	heating_status	16	calculation_time_ms	numeric(10,3)	true	null	
+public	heating_status	17	data_age_temp_minutes	numeric(10,3)	true	null	
+public	heating_status	18	data_age_em3_minutes	numeric(10,3)	true	null	
+public	heating_status	19	last_output_power	numeric(10,3)	true	0.0	
+public	parameter_settings	1	key	character varying(100)	false	null	
+public	parameter_settings	2	value	numeric(10,2)	false	null	
+public	parameter_settings	3	category	character varying(50)	true	null	
+public	parameter_settings	4	description	text	true	null	
+public	parameter_settings	5	unit	character varying(20)	true	null	
+public	parameter_settings	6	updated_at	timestamp without time zone	true	now()	
+public	plugs_data	1	id	uuid	false	uuid_generate_v4()	
+public	plugs_data	2	timestamp	timestamp with time zone	false	now()	
+public	plugs_data	3	output	boolean	false	null	
+public	plugs_data	4	apower	numeric	true	null	
+public	plugs_data	5	voltage	numeric	true	null	
+public	plugs_data	6	current	numeric	true	null	
+public	plugs_data	7	aenergy_total	numeric	true	null	
+public	plugs_data	8	aenergy_by_minute_0	numeric	true	null	
+public	plugs_data	9	aenergy_by_minute_1	numeric	true	null	
+public	plugs_data	10	aenergy_by_minute_2	numeric	true	null	
+public	plugs_data	11	aenergy_minute_ts	bigint	true	null	
+public	plugs_data	12	temperature_tc	numeric	true	null	
+public	plugs_data	13	temperature_tf	numeric	true	null	
+public	pv_classifications	1	id	integer	false	nextval('pv_classifications_id_seq'::regclass)	
+public	pv_classifications	2	measured_watt	numeric(10,2)	false	null	
+public	pv_classifications	3	output_voltage	numeric(4,2)	false	null	
+public	pv_classifications	4	description	text	true	null	
+public	pv_classifications	5	created_at	timestamp without time zone	true	now()	
+public	pv_classifications	6	updated_at	timestamp without time zone	true	now()	
+public	temperature_data	1	id	uuid	false	gen_random_uuid()	
+public	temperature_data	2	created_at	timestamp with time zone	true	timezone('Europe/Berlin'::text, now())	
+public	temperature_data	3	t1	double precision	true	null	
+public	temperature_data	4	t2	double precision	true	null	
+public	temperature_data	5	t3	double precision	true	null	
+public	weather	1	id	uuid	false	gen_random_uuid()	
+public	weather	2	created_at	timestamp with time zone	true	now()	
+public	weather	3	updated_at	timestamp with time zone	true	now()	
+public	weather	4	timestamp_utc	timestamp with time zone	false	null	
+public	weather	5	temperature	numeric(5,2)	true	null	
+public	weather	6	dew_point	numeric(5,2)	true	null	
+public	weather	7	cloud_cover	numeric(5,2)	true	null	
+public	weather	8	visibility	numeric(8,2)	true	null	
+public	weather	9	wind_speed	numeric(5,2)	true	null	
+public	weather	10	wind_direction	numeric(5,2)	true	null	
+public	weather	11	wind_gust_speed	numeric(5,2)	true	null	
+public	weather	12	wind_gust_direction	numeric(5,2)	true	null	
+public	weather	13	precipitation	numeric(6,2)	true	null	
+public	weather	14	pressure_msl	numeric(7,2)	true	null	
+public	weather	15	relative_humidity	numeric(5,2)	true	null	
+public	weather	16	sunshine	numeric(6,2)	true	null	
+public	weather	17	solar	numeric(8,4)	true	null	
+public	weather	18	precipitation_probability	numeric(5,2)	true	null	
+public	weather	19	precipitation_probability_6h	numeric(5,2)	true	null	
+public	weather	20	condition	character varying(50)	true	null	
+public	weather	21	icon	character varying(50)	true	null	
+public	weather	22	source_id	integer	true	null	
+public	weather	23	latitude	numeric(10,8)	false	null	
+public	weather	24	longitude	numeric(11,8)	false	null	
+public	weatherraw	1	id	uuid	false	gen_random_uuid()	
+public	weatherraw	2	created_at	timestamp with time zone	true	now()	
+public	weatherraw	3	api_response	jsonb	false	null	
+public	weatherraw	4	request_timestamp	timestamp with time zone	true	now()	
+public	weatherraw	5	latitude	numeric(10,8)	false	null	
+public	weatherraw	6	longitude	numeric(11,8)	false	null	
+							

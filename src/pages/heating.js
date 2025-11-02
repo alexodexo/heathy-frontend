@@ -22,13 +22,26 @@ export default function HeatingControl() {
     const ruecklaufTemp = currentData.temperatures?.ruecklauf_temp || 0
     const tempDiff = vorlaufTemp - ruecklaufTemp
     
+    // Berechne aktuelle Heizleistung basierend auf aktiven Heizstäben
+    // Jeder Heizstab = 1500W
+    let heatingPower = 0
+    if (currentData.plugs) {
+      const plug1Active = currentData.plugs.plug_1?.state === 'on' || currentData.plugs.plug_1?.state === true
+      const plug2Active = currentData.plugs.plug_2?.state === 'on' || currentData.plugs.plug_2?.state === true
+      const plug3Active = currentData.plugs.plug_3?.state === 'on' || currentData.plugs.plug_3?.state === true
+      
+      if (plug1Active) heatingPower += 1500
+      if (plug2Active) heatingPower += 1500
+      if (plug3Active) heatingPower += 1500
+    }
+    
     return {
       vorlaufTemp,
       ruecklaufTemp,
       tempDiff,
-      heatingPower: 0,
+      heatingPower,
       efficiency: tempDiff > 0 ? Math.round((tempDiff / 20) * 100) : 0,
-      isHeating: heatingStatus?.is_heating || false,
+      isHeating: heatingPower > 0,
     }
   }
 
@@ -52,6 +65,25 @@ export default function HeatingControl() {
 
   const costData = calculateHeatingCosts()
 
+  // Consumption calculation for heating (in kWh)
+  const calculateHeatingConsumption = () => {
+    if (!heatingData || !systemStats) return { today: '0.0', week: '0.0', month: '0.0', year: '0.0' }
+    
+    // Example calculation - Alex needs to implement real data from backend
+    const hoursRunning = (systemStats.performance?.uptime_seconds || 0) / 3600
+    const averagePower = 2.5 // kW - average heating power (can be 1.5, 3.0, or 4.5 depending on mode)
+    const totalConsumption = hoursRunning * averagePower
+    
+    return {
+      today: (totalConsumption * 0.1).toFixed(1), // Rough estimation
+      week: (totalConsumption * 0.7).toFixed(1),
+      month: (totalConsumption * 3).toFixed(1),
+      year: totalConsumption.toFixed(1),
+    }
+  }
+
+  const consumptionData = calculateHeatingConsumption()
+
   if (currentLoading && statusLoading) {
     return (
       <div className="max-w-7xl mx-auto p-6">
@@ -69,13 +101,11 @@ export default function HeatingControl() {
         <title>Heizung - Heizungssteuerung</title>
       </Head>
 
-      <div className="max-w-7xl mx-auto space-y-6 px-4 md:px-8">
+      <div className="max-w-7xl mx-auto space-y-4 md:space-y-6">
         {/* Header */}
-        <div className="flex items-center justify-between">
-          <div className="text-center md:text-left">
-            <h1 className="text-3xl md:text-4xl font-bold text-gray-900">Heizungs-Steuerung</h1>
-            <p className="text-lg md:text-xl text-gray-600 mt-2">Kontrolle und Monitoring der Heizungsanlage</p>
-          </div>
+        <div>
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900">Heizungs-Steuerung</h1>
+          <p className="text-sm sm:text-base md:text-lg text-gray-600 mt-1 md:mt-2">Kontrolle und Monitoring der Heizungsanlage</p>
         </div>
 
         {/* Status Cards */}
@@ -89,8 +119,8 @@ export default function HeatingControl() {
         {/* Mode Selection Control Center */}
         <HeatingModeSelection />
 
-        {/* Cost Overview */}
-        <HeatingCostOverview costData={costData} />
+        {/* Cost & Consumption Overview */}
+        <HeatingCostOverview costData={costData} consumptionData={consumptionData} />
       </div>
     </>
   )

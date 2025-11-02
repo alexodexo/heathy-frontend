@@ -76,11 +76,11 @@ export default function Dashboard() {
         <title>Dashboard - Heizungssteuerung</title>
       </Head>
 
-      <div className="max-w-7xl mx-auto space-y-6 px-4 md:px-8">
+      <div className="max-w-7xl mx-auto space-y-4 md:space-y-6">
         {/* Header */}
-        <div className="text-center md:text-left">
-          <h1 className="text-3xl md:text-4xl font-bold text-gray-900">Live Dashboard</h1>
-          <p className="text-lg md:text-xl text-gray-600 mt-2">Echtzeit-Übersicht aller Systeme</p>
+        <div>
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900">Live Dashboard</h1>
+          <p className="text-sm sm:text-base md:text-lg text-gray-600 mt-1 md:mt-2">Echtzeit-Übersicht aller Systeme</p>
         </div>
 
         {/* Status Cards */}

@@ -59,15 +59,15 @@
 
   /* Button styles */
   .btn {
-    @apply px-4 py-2 rounded-xl font-medium transition-all duration-200 inline-flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed;
+    @apply px-4 py-2.5 md:py-2 rounded-xl font-medium transition-all duration-200 inline-flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed touch-manipulation min-h-[44px];
   }
 
   .btn-primary {
-    @apply btn bg-primary-500 text-white hover:bg-primary-600 active:scale-95 shadow-sm hover:shadow-md;
+    @apply btn bg-primary-500 text-white hover:bg-primary-600 active:scale-95 active:bg-primary-700 shadow-sm hover:shadow-md;
   }
 
   .btn-secondary {
-    @apply btn bg-gray-100 text-gray-700 hover:bg-gray-200 active:scale-95;
+    @apply btn bg-gray-100 text-gray-700 hover:bg-gray-200 active:scale-95 active:bg-gray-300;
   }
 
   .btn-ghost {
@@ -76,7 +76,7 @@
 
   /* Input styles */
   .input {
-    @apply w-full px-4 py-2 rounded-xl border border-gray-200 bg-white focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200;
+    @apply w-full px-4 py-2.5 md:py-2 rounded-xl border border-gray-200 bg-white focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200 text-base touch-manipulation min-h-[44px];
   }
 
   /* Status indicators */
@@ -143,8 +143,16 @@
     @apply text-2xl font-bold text-gray-900 whitespace-nowrap;
   }
 
+  .stat-value-sm {
+    @apply text-base font-semibold text-gray-900 whitespace-nowrap;
+  }
+
   .stat-label {
     @apply text-sm text-gray-500;
+  }
+
+  .stat-label-sm {
+    @apply text-xs text-gray-500;
   }
 
   /* Switch/Toggle */
