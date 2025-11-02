@@ -34,11 +34,6 @@ export default function HeatingModeSelection() {
       transition={{ delay: 0.1 }}
       className="card p-4 md:p-6"
     >
-      {/* Überschrift und aktuelle Werte in einer Zeile */}
-      <div className="flex items-center justify-between mb-4 p-3 bg-gray-50 rounded-lg">
-        <h2 className="text-base md:text-lg font-semibold text-gray-900">Betriebsmodus Steuerung</h2>
-      </div>
-      
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
         {modes.map((mode) => (
           <HeatingModeCard
