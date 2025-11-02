@@ -10,7 +10,6 @@ export default function OperationModeControls({
   updateParameterSetting,
   timeSlots,
   updateTimeSlot,
-  removeTimeSlot,
   isSaving,
   parameterLoading
 }) {
@@ -36,7 +35,6 @@ export default function OperationModeControls({
             <TimeSlotControls
               timeSlots={timeSlots}
               updateTimeSlot={updateTimeSlot}
-              removeTimeSlot={removeTimeSlot}
               isSaving={isSaving}
             />
           </div>

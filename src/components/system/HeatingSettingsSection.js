@@ -11,7 +11,6 @@ export default function HeatingSettingsSection({
   updateParameterSetting,
   timeSlots,
   updateTimeSlot,
-  removeTimeSlot,
   isSaving,
   parameterLoading
 }) {
@@ -41,7 +40,6 @@ export default function HeatingSettingsSection({
             updateParameterSetting={updateParameterSetting}
             timeSlots={timeSlots}
             updateTimeSlot={updateTimeSlot}
-            removeTimeSlot={removeTimeSlot}
             isSaving={isSaving}
             parameterLoading={parameterLoading}
           />

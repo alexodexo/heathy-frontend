@@ -179,7 +179,6 @@ export default function SystemSettings() {
           updateParameterSetting={updateParameterSetting}
           timeSlots={timeSlots}
           updateTimeSlot={updateTimeSlot}
-          removeTimeSlot={removeTimeSlot}
           isSaving={isSaving}
           parameterLoading={parameterLoading}
         />
