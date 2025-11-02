@@ -22,7 +22,7 @@ export default function BoosterSettings({
       
       {/* Gesamtzeit Anzeige */}
       <div className="mb-4 p-3 bg-white rounded-lg border border-gray-200">
-        <div className="flex items-center gap-4 text-sm">
+        <div className="flex items-center justify-between text-sm">
           <div className="flex items-center gap-2">
             <span className="text-gray-600">Gesamtzeit:</span>
             <span className="font-semibold text-gray-900">
@@ -30,34 +30,11 @@ export default function BoosterSettings({
             </span>
           </div>
 
-          {/* Visueller Zeitbalken */}
-          <div className="ml-auto flex items-center gap-1">
-            <div className="w-32 h-4 bg-gray-200 rounded-full overflow-hidden flex">
-              {/* Phase 1 */}
-              <div 
-                className="bg-gray-400 h-full"
-                style={{
-                  width: `${((localParameterSettings.phase1_duration ?? 10) / calculateTotal()) * 100}%`
-                }}
-                title={`Phase 1: ${localParameterSettings.phase1_duration ?? 10} min`}
-              />
-              {/* Phase 2 */}
-              <div 
-                className="bg-gray-500 h-full"
-                style={{
-                  width: `${((localParameterSettings.phase2_duration ?? 12) / calculateTotal()) * 100}%`
-                }}
-                title={`Phase 2: ${localParameterSettings.phase2_duration ?? 12} min`}
-              />
-              {/* Phase 3 */}
-              <div 
-                className="bg-gray-600 h-full"
-                style={{
-                  width: `${((localParameterSettings.phase3_duration ?? 8) / calculateTotal()) * 100}%`
-                }}
-                title={`Phase 3: ${localParameterSettings.phase3_duration ?? 8} min`}
-              />
-            </div>
+          <div className="flex items-center gap-2">
+            <span className="text-gray-600">Restlaufzeit:</span>
+            <span className="font-semibold text-gray-900">
+              {calculateTotal()} min
+            </span>
           </div>
         </div>
       </div>
