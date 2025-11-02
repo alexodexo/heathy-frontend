@@ -366,8 +366,8 @@ export default function OperationModeControls({
       </div>
 
       {/* Info Text */}
-      <div className="mt-4 p-3 bg-blue-50 rounded-lg">
-        <p className="text-sm text-blue-800">
+      <div className="mt-4 p-3 bg-green-50 rounded-lg">
+        <p className="text-sm text-green-800">
           <strong>Hinweis:</strong> Konfiguriere die Vorlauftemperaturen für jeden Betriebsmodus.
         </p>
       </div>

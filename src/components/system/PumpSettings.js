@@ -45,8 +45,8 @@ export default function PumpSettings({
             />
             <span className="text-sm font-medium text-gray-700">min</span>
           </div>
-          <div className="mt-3 p-3 bg-blue-50 rounded-lg">
-            <p className="text-sm text-blue-800">
+          <div className="mt-3 p-3 bg-green-50 rounded-lg">
+            <p className="text-sm text-green-800">
               <strong>Hinweis:</strong> Die Zirkulationspumpe läuft automatisch nach dem Ausschalten der Heizstäbe noch diese Zeit weiter, um die Restwärme zu verteilen.
             </p>
           </div>
@@ -75,8 +75,8 @@ export default function PumpSettings({
               disabled={isSaving || parameterLoading}
             />
           </div>
-          <div className="mt-3 p-3 bg-blue-50 rounded-lg">
-            <p className="text-sm text-blue-800">
+          <div className="mt-3 p-3 bg-green-50 rounded-lg">
+            <p className="text-sm text-green-800">
               <strong>Hinweis:</strong> Regelmäßige Betätigung zur Erhaltung der Funktionsfähigkeit. Die Pumpe startet automatisch für 1min, auch wenn keine Heizung aktiv ist.
             </p>
           </div>
