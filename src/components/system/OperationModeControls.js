@@ -124,9 +124,6 @@ export default function OperationModeControls({
               <div className="pl-7 space-y-3">
                 <div className="flex items-center gap-4">
                   <div className="flex-1">
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Boost-Zieltemperatur
-                    </label>
                     <div className="flex items-center gap-2">
                       <span className="text-sm text-gray-600">Boosten bis Vorlauftemperatur</span>
                       <input
