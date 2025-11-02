@@ -1,10 +1,10 @@
 // src/components/warmwater/WarmwaterStatusCards.js
 import StatusCard from '@/components/StatusCard'
-import { BeakerIcon, CurrencyEuroIcon } from '@heroicons/react/24/outline'
+import { BeakerIcon, BoltIcon } from '@heroicons/react/24/outline'
 
 export default function WarmwaterStatusCards({ 
   waterTemp, 
-  estimatedCostPerHour, 
+  heatingPower, 
   currentLoading, 
   statusLoading 
 }) {
@@ -14,7 +14,7 @@ export default function WarmwaterStatusCards({
   }
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6">
       <StatusCard
         title="Warmwasser"
         value={formatNumber(waterTemp, 1)}
@@ -24,11 +24,11 @@ export default function WarmwaterStatusCards({
         loading={currentLoading}
       />
       <StatusCard
-        title="Kosten/heute"
-        value={formatNumber(estimatedCostPerHour, 2)}
-        unit="€"
-        icon={CurrencyEuroIcon}
-        color="warning"
+        title="Heizleistung"
+        value={formatNumber(heatingPower, 0)}
+        unit="W"
+        icon={BoltIcon}
+        color={Number(heatingPower) > 0 ? 'success' : 'primary'}
         loading={statusLoading}
       />
     </div>

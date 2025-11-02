@@ -18,21 +18,21 @@ export default function WarmwaterSettingsSection({
       className="card p-0 overflow-hidden"
     >
       {/* Warmwater Header */}
-      <div className="bg-gradient-to-r from-blue-500 to-blue-600 text-white px-6 py-4">
-        <div className="flex items-center gap-3">
-          <BeakerIcon className="w-6 h-6" />
-          <h2 className="text-xl font-semibold">Warmwasser-Einstellungen</h2>
+      <div className="bg-gradient-to-r from-blue-500 to-blue-600 text-white px-4 md:px-6 py-3 md:py-4">
+        <div className="flex items-center gap-2 md:gap-3">
+          <BeakerIcon className="w-5 h-5 md:w-6 md:h-6" />
+          <h2 className="text-base md:text-xl font-semibold">Warmwasser-Einstellungen</h2>
         </div>
-        <p className="text-blue-100 text-sm mt-1">Schalttemperaturen für Warmwasser</p>
+        <p className="text-blue-100 text-xs md:text-sm mt-1">Schalttemperaturen für Warmwasser</p>
       </div>
       
-      <div className="p-6">
-        <div className="space-y-6">
+      <div className="p-4 md:p-6">
+        <div className="space-y-4 md:space-y-6">
           {/* Modus 1 + Leistung Heizstab in separaten Boxen */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
             {/* Modus 1: Vollständig EIN */}
             <div className="bg-gray-50 p-4 rounded-lg">
-              <h3 className="text-lg font-semibold text-gray-900 mb-3">Modus 1 &ldquo;Normalbetrieb - EIN&rdquo;</h3>
+              <h3 className="text-lg font-semibold text-gray-900 mb-3">Normalbetrieb</h3>
               <div className="space-y-4">
                 <div className="flex items-end gap-4">
                   <div className="flex-1">

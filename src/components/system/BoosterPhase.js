@@ -44,6 +44,14 @@ export default function BoosterPhase({
       desc: 'text-green-600',
       power: 'text-green-700',
       checkbox: 'text-green-600 focus:ring-green-500'
+    },
+    gray: {
+      bg: 'bg-white',
+      border: 'border-gray-300',
+      title: 'text-gray-900',
+      desc: 'text-gray-600',
+      power: 'text-gray-900',
+      checkbox: 'text-gray-600 focus:ring-gray-500'
     }
   }
 
@@ -57,11 +65,10 @@ export default function BoosterPhase({
         <p className={`text-xs ${classes.desc}`}>{description}</p>
       </div>
 
-      {/* Duration & Heizstäbe Column */}
+      {/* Duration Column */}
       <div className="flex-1">
-        {/* Duration & Heizstäbe on same line */}
+        {/* Duration */}
         <div className="flex items-center gap-4">
-          {/* Duration */}
           <div className="flex items-center gap-2">
             <input
               type="number"
@@ -76,7 +83,7 @@ export default function BoosterPhase({
                   updateParameterSetting(durationKey, value)
                 }
               }}
-              className="input text-gray-900 w-20"
+              className="input text-gray-900 w-28"
               min="0"
               max="120"
               step="1"
@@ -84,53 +91,13 @@ export default function BoosterPhase({
             />
             <span className="text-xs font-medium text-gray-700">min</span>
           </div>
-
-          {/* Heizstäbe */}
-          <div className="flex flex-wrap gap-3">
-            {[
-              { value: 'L1', label: 'L1' },
-              { value: 'L2', label: 'L2' },
-              { value: 'L3', label: 'L3' }
-            ].map((option) => (
-              <label key={`phase${phase}_${option.value}`} className="flex items-center gap-2 p-2 rounded-lg hover:bg-white transition-colors cursor-pointer">
-                <input
-                  type="checkbox"
-                  value={option.value}
-                  checked={Array.isArray(localParameterSettings[powerKey]) 
-                    ? localParameterSettings[powerKey].includes(option.value)
-                    : defaultPowers[phase].includes(option.value)}
-                  onChange={(e) => {
-                    const value = e.target.value
-                    const currentPowers = Array.isArray(localParameterSettings[powerKey]) 
-                      ? localParameterSettings[powerKey] 
-                      : defaultPowers[phase]
-                    
-                    let newPowers
-                    if (e.target.checked) {
-                      newPowers = [...currentPowers, value]
-                    } else {
-                      newPowers = currentPowers.filter(p => p !== value)
-                    }
-                    
-                    setLocalParameterSettings(prev => ({ ...prev, [powerKey]: newPowers }))
-                    updateParameterSetting(powerKey, newPowers)
-                  }}
-                  className={`w-4 h-4 ${classes.checkbox} focus:ring-2 rounded`}
-                  disabled={isSaving || parameterLoading}
-                />
-                <span className="text-sm font-medium text-gray-900">{option.label}</span>
-              </label>
-            ))}
-          </div>
         </div>
       </div>
 
       {/* Power Display */}
       <div className="ml-6 text-right">
         <div className={`text-sm font-semibold ${classes.power}`}>
-          {(Array.isArray(localParameterSettings[powerKey]) 
-            ? localParameterSettings[powerKey].length 
-            : defaultPowers[phase].length) * 1.5} kW
+          {defaultPowers[phase].length * 1.5} kW
         </div>
         <div className={`text-xs ${classes.desc}`}>
           {phase === 1 ? 'Max. Power' : phase === 2 ? 'Mittlere Power' : 'Min. Power'}

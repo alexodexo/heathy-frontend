@@ -144,20 +144,20 @@ export default function SystemSettings() {
         <title>System - Heizungssteuerung</title>
       </Head>
 
-      <div className="max-w-7xl mx-auto space-y-6 px-4 md:px-8">
+      <div className="max-w-7xl mx-auto space-y-4 md:space-y-6">
         {/* Header */}
-        <div className="flex items-center justify-between">
-          <div className="text-center md:text-left">
-            <h1 className="text-3xl md:text-4xl font-bold text-gray-900">Systemeinstellungen</h1>
-            <p className="text-lg md:text-xl text-gray-600 mt-2">Konfiguration und Verwaltung</p>
+        <div className="flex items-center justify-between gap-4">
+          <div>
+            <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900">Systemeinstellungen</h1>
+            <p className="text-sm sm:text-base md:text-lg text-gray-600 mt-1 md:mt-2">Konfiguration und Verwaltung</p>
           </div>
           <button
             onClick={handleRefreshSettings}
-            className="btn-secondary"
+            className="btn-secondary flex-shrink-0 h-10"
             disabled={isSaving}
           >
             <ArrowPathIcon className="w-4 h-4" />
-            Neu laden
+            <span className="hidden sm:inline">Neu laden</span>
           </button>
         </div>
 
@@ -179,7 +179,6 @@ export default function SystemSettings() {
           updateParameterSetting={updateParameterSetting}
           timeSlots={timeSlots}
           updateTimeSlot={updateTimeSlot}
-          removeTimeSlot={removeTimeSlot}
           isSaving={isSaving}
           parameterLoading={parameterLoading}
         />

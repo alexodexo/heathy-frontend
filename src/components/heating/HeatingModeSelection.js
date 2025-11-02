@@ -25,27 +25,6 @@ export default function HeatingModeSelection() {
       isActive: false,
       isRecommended: false,
     },
-    {
-      number: 4,
-      title: '1.5 kW Dauerbetrieb',
-      description: 'Vorlauftemperatur --°C',
-      isActive: false,
-      isRecommended: false,
-    },
-    {
-      number: 5,
-      title: '3.0 kW Dauerbetrieb',
-      description: 'Vorlauftemperatur --°C',
-      isActive: false,
-      isRecommended: false,
-    },
-    {
-      number: 6,
-      title: '4.5 kW Dauerbetrieb',
-      description: 'Vorlauftemperatur --°C',
-      isActive: false,
-      isRecommended: false,
-    },
   ]
 
   return (
@@ -53,14 +32,9 @@ export default function HeatingModeSelection() {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.1 }}
-      className="card p-6"
+      className="card p-4 md:p-6"
     >
-      {/* Überschrift und aktuelle Werte in einer Zeile */}
-      <div className="flex items-center justify-between mb-4 p-3 bg-gray-50 rounded-lg">
-        <h2 className="text-lg font-semibold text-gray-900">Betriebsmodus Steuerung</h2>
-      </div>
-      
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
         {modes.map((mode) => (
           <HeatingModeCard
             key={mode.number}

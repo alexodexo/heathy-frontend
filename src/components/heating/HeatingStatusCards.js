@@ -4,7 +4,7 @@ import { ArrowUpIcon, ArrowDownIcon, FireIcon, BoltIcon } from '@heroicons/react
 
 export default function HeatingStatusCards({ heatingData, currentData, currentLoading, statusLoading }) {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
       <StatusCard
         title="Vorlauf"
         value={heatingData?.vorlaufTemp?.toFixed(1) || '--'}
@@ -31,19 +31,11 @@ export default function HeatingStatusCards({ heatingData, currentData, currentLo
       />
       <StatusCard
         title="Heizleistung"
-        value={heatingData?.heatingPower?.toString() || '--'}
+        value={heatingData?.heatingPower?.toString() || '0'}
         unit="W"
         icon={BoltIcon}
-        color="primary"
+        color={heatingData?.heatingPower > 0 ? 'success' : 'primary'}
         loading={statusLoading}
-        topRight={
-          <div className="flex items-center gap-2">
-            <span className={`status-dot ${currentData?.circulator_no1 ? 'status-active' : 'status-inactive'}`} />
-            <span className="text-xs font-medium text-gray-700">
-              {currentData?.circulator_no1 ? 'Pumpe ein' : 'Pumpe aus'}
-            </span>
-          </div>
-        }
       />
     </div>
   )

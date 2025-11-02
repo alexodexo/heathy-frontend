@@ -9,13 +9,6 @@ export default function WarmwaterModeCard({
   onModeChange 
 }) {
   const isRecommended = false // Keine Empfehlung mehr - nur Ein/Aus
-  
-  const displayNumber = (() => {
-    // Backend-Nummerierung beibehalten (Modi 3,4,5,6 entfernt)
-    if (mode.name === 'Vollständig EIN') return 1
-    if (mode.name === 'Vollständig AUS') return 2
-    return mode.id // Fallback
-  })()
 
   return (
     <motion.button
@@ -65,7 +58,6 @@ export default function WarmwaterModeCard({
         </div>
         <div>
           <h3 className="font-semibold text-gray-900">{mode.name}</h3>
-          <p className="text-xs text-gray-500">Modus {displayNumber}</p>
         </div>
       </div>
       

@@ -1,10 +1,8 @@
 // src/components/system/TimeSlotControls.js
-import { TrashIcon } from '@heroicons/react/24/outline'
 
 export default function TimeSlotControls({ 
   timeSlots, 
   updateTimeSlot, 
-  removeTimeSlot, 
   isSaving 
 }) {
   return (
@@ -37,17 +35,6 @@ export default function TimeSlotControls({
                 disabled={isSaving}
               />
             </div>
-            {timeSlots.length > 1 && (
-              <button
-                type="button"
-                onClick={() => removeTimeSlot(slot.id)}
-                className="text-gray-400 hover:text-red-500 transition-colors p-2 rounded-lg hover:bg-red-50"
-                disabled={isSaving}
-                title="Zeitfenster entfernen"
-              >
-                <TrashIcon className="w-4 h-4" />
-              </button>
-            )}
           </div>
         ))}
       </div>

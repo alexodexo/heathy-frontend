@@ -4,7 +4,7 @@ import { BeakerIcon, FireIcon } from '@heroicons/react/24/outline'
 
 export default function DashboardStatusCards({ currentData, currentLoading }) {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-4 gap-6">
+    <div className="grid grid-cols-2 gap-4 md:gap-6">
       <StatusCard
         title="Vorlauf Heizung"
         value={currentData?.temperatures?.vorlauf_temp?.toFixed(1) || '--'}
@@ -21,7 +21,7 @@ export default function DashboardStatusCards({ currentData, currentLoading }) {
         tertiaryTitle="aktuelle Heizleistung"
         quaternaryValue={currentData?.costs?.heating_week?.toFixed(2) || '--'}
         quaternaryUnit="€"
-        quaternaryTitle="Heizungskosten rolling 7 days"
+        quaternaryTitle="Heizungskosten letzte 7 Tage"
         icon={FireIcon}
         color="warning"
         loading={currentLoading}
@@ -38,7 +38,7 @@ export default function DashboardStatusCards({ currentData, currentLoading }) {
         tertiaryTitle="aktuelle Heizleistung"
         quaternaryValue={currentData?.costs?.warmwater_week?.toFixed(2) || '--'}
         quaternaryUnit="€"
-        quaternaryTitle="Warmwasserkosten rolling 7 days"
+        quaternaryTitle="Warmwasserkosten letzte 7 Tage"
         icon={BeakerIcon}
         color="primary"
         loading={currentLoading}
@@ -47,8 +47,8 @@ export default function DashboardStatusCards({ currentData, currentLoading }) {
         title="Außentemperatur"
         value={currentData?.temperatures?.outdoor_temp?.toFixed(1) || '--'}
         unit="°C"
-        secondaryValue={currentData?.weather?.forecast_temp?.toFixed(1) || '--'}
-        secondaryUnit="°C"
+        secondaryValue={`-- min. --- max. --°C`}
+        secondaryUnit=""
         secondaryTitle="Prognose heute"
         tertiaryValue={currentData?.weather?.sunshine_hours?.toFixed(1) || '--'}
         tertiaryUnit="h"
@@ -73,6 +73,9 @@ export default function DashboardStatusCards({ currentData, currentLoading }) {
         tertiaryValue={currentData?.temperatures?.room_bad?.toFixed(1) || '--'}
         tertiaryUnit="°C"
         tertiaryTitle="Bad"
+        quaternaryValue={currentData?.temperatures?.room_alex?.toFixed(1) || '--'}
+        quaternaryUnit="°C"
+        quaternaryTitle="Zimmer Alex"
         icon={() => (
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6">
             <path d="M14 4v10.54a4 4 0 1 1-4 0V4a2 2 0 0 1 4 0Z"/>

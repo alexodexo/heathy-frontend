@@ -22,6 +22,7 @@ export default function StatusCard({
   trend = null,
   loading = false,
   topRight = null,
+  size = 'default', // 'default' or 'sm'
 }) {
   const colorClasses = {
     primary: 'from-primary-400 to-primary-600',
@@ -50,7 +51,7 @@ export default function StatusCard({
       transition={{ duration: 0.3 }}
       className="stat-card card-hover"
     >
-      <div className="flex items-start justify-between gap-4">
+      <div className="flex items-center justify-between gap-4">
         {Icon && (
           <div className="flex flex-col items-center gap-2 flex-shrink-0">
             <div className={`p-3 md:p-4 rounded-xl bg-gradient-to-br ${colorClasses[color]} text-white shadow-lg`}>
@@ -65,46 +66,56 @@ export default function StatusCard({
           </div>
         )}
         
-        <div className="flex-1 space-y-1">
-          <div className="flex items-baseline gap-6">
-            <div className="flex items-baseline gap-2 justify-end min-w-0 flex-1">
-              <span className="stat-value">{value}</span>
-              {unit && <span className="text-lg text-gray-500">{unit}</span>}
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="stat-label text-left">{title}</p>
-            </div>
-          </div>
-          {secondaryValue !== null && (
-            <div className="flex items-baseline gap-6">
-              <div className="flex items-baseline gap-2 justify-end min-w-0 flex-1">
-                <span className="text-lg font-semibold text-gray-700">{secondaryValue}</span>
-                {secondaryUnit && <span className="text-sm text-gray-500">{secondaryUnit}</span>}
+        <div className={`flex-1 ${size === 'sm' ? 'flex flex-col items-center justify-center text-center space-y-2' : 'flex flex-col'}`}>
+          {size === 'sm' ? (
+            /* Symmetrisches Layout für kleine Karten */
+            <>
+              <div className="flex items-baseline gap-2">
+                <span className="stat-value-sm">{value}</span>
+                {unit && <span className="text-sm text-gray-500">{unit}</span>}
               </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-xs text-gray-500 text-left">{secondaryTitle}</p>
+              {secondaryValue !== null && (
+                <div className="flex items-baseline gap-2">
+                  <span className="text-sm font-semibold text-gray-700">{secondaryValue}</span>
+                  {secondaryUnit && <span className="text-xs text-gray-500">{secondaryUnit}</span>}
+                </div>
+              )}
+              <p className="stat-label-sm pt-1">{title}</p>
+            </>
+          ) : (
+            /* Normales Layout für große Karten - Wert und Titel einzeilig linksbündig */
+            <>
+              <div className="flex items-center gap-2">
+                <span className="text-xs text-gray-700">{value}</span>
+                {unit && <span className="text-xs text-gray-500">{unit}</span>}
+                <span className="text-xs text-gray-500">- {title}</span>
               </div>
-            </div>
+              {secondaryValue !== null && (
+                <div className="pt-3">
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs text-gray-700">{secondaryValue}</span>
+                    {secondaryUnit && <span className="text-xs text-gray-500">{secondaryUnit}</span>}
+                    {secondaryTitle && <span className="text-xs text-gray-500">- {secondaryTitle}</span>}
+                  </div>
+                </div>
+              )}
+            </>
           )}
           {tertiaryValue !== null && (
-            <div className="flex items-baseline gap-6">
-              <div className="flex items-baseline gap-2 justify-end min-w-0 flex-1">
-                <span className="text-lg font-semibold text-gray-700">{tertiaryValue}</span>
-                {tertiaryUnit && <span className="text-sm text-gray-500">{tertiaryUnit}</span>}
-              </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-xs text-gray-500 text-left">{tertiaryTitle}</p>
+            <div className="pt-3">
+              <div className="flex items-center gap-2">
+                <span className="text-xs text-gray-700">{tertiaryValue}</span>
+                {tertiaryUnit && <span className="text-xs text-gray-500">{tertiaryUnit}</span>}
+                {tertiaryTitle && <span className="text-xs text-gray-500">- {tertiaryTitle}</span>}
               </div>
             </div>
           )}
           {quaternaryValue !== null && (
-            <div className="flex items-baseline gap-6">
-              <div className="flex items-baseline gap-2 justify-end min-w-0 flex-1">
-                <span className="text-lg font-semibold text-gray-700">{quaternaryValue}</span>
-                {quaternaryUnit && <span className="text-sm text-gray-500">{quaternaryUnit}</span>}
-              </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-xs text-gray-500 text-left">{quaternaryTitle}</p>
+            <div className="pt-3">
+              <div className="flex items-center gap-2">
+                <span className="text-xs text-gray-700">{quaternaryValue}</span>
+                {quaternaryUnit && <span className="text-xs text-gray-500">{quaternaryUnit}</span>}
+                {quaternaryTitle && <span className="text-xs text-gray-500">- {quaternaryTitle}</span>}
               </div>
             </div>
           )}
