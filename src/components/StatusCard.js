@@ -66,7 +66,7 @@ export default function StatusCard({
           </div>
         )}
         
-        <div className={`flex-1 ${size === 'sm' ? 'flex flex-col items-center justify-center text-center space-y-2' : 'flex flex-col items-center justify-center'}`}>
+        <div className={`flex-1 ${size === 'sm' ? 'flex flex-col items-center justify-center text-center space-y-2' : 'flex flex-col'}`}>
           {size === 'sm' ? (
             /* Symmetrisches Layout für kleine Karten */
             <>
