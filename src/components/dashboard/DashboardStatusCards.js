@@ -21,7 +21,7 @@ export default function DashboardStatusCards({ currentData, currentLoading }) {
         tertiaryTitle="aktuelle Heizleistung"
         quaternaryValue={currentData?.costs?.heating_week?.toFixed(2) || '--'}
         quaternaryUnit="€"
-        quaternaryTitle="Heizungskosten rolling 7 days"
+        quaternaryTitle="Heizungskosten letzte 7 Tage"
         icon={FireIcon}
         color="warning"
         loading={currentLoading}
@@ -38,7 +38,7 @@ export default function DashboardStatusCards({ currentData, currentLoading }) {
         tertiaryTitle="aktuelle Heizleistung"
         quaternaryValue={currentData?.costs?.warmwater_week?.toFixed(2) || '--'}
         quaternaryUnit="€"
-        quaternaryTitle="Warmwasserkosten rolling 7 days"
+        quaternaryTitle="Warmwasserkosten letzte 7 Tage"
         icon={BeakerIcon}
         color="primary"
         loading={currentLoading}
