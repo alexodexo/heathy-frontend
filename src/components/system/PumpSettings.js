@@ -36,7 +36,7 @@ export default function PumpSettings({
                   updateParameterSetting('pump_overrun_time', value)
                 }
               }}
-              className="input text-gray-900 w-20"
+              className="input text-gray-900 w-28"
               min="0"
               max="60"
               step="1"

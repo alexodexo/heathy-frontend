@@ -44,11 +44,11 @@ export default function BillingSettingsSection({
                   updateSetting('electricity_price', value)
                 }
               }}
-              className="input text-gray-900 w-32"
-              step="0.01"
-              min="0"
-              max="1"
-              disabled={isSaving}
+                  className="input text-gray-900 w-40"
+                  step="0.01"
+                  min="0"
+                  max="1"
+                  disabled={isSaving}
             />
           </div>
           
@@ -75,7 +75,7 @@ export default function BillingSettingsSection({
                       updateSetting('heating_meter_reading', value)
                     }
                   }}
-                  className="input text-gray-900 w-32"
+                  className="input text-gray-900 w-40"
                   min="0"
                   step="0.1"
                   disabled={isSaving}
@@ -129,7 +129,7 @@ export default function BillingSettingsSection({
                       updateSetting('warmwater_meter_reading', value)
                     }
                   }}
-                  className="input text-gray-900 w-32"
+                  className="input text-gray-900 w-40"
                   min="0"
                   step="0.1"
                   disabled={isSaving}
@@ -153,7 +153,7 @@ export default function BillingSettingsSection({
                       updateSetting('warmwater_meter_date', value)
                     }
                   }}
-                  className="input text-gray-900 w-40"
+                  className="input text-gray-900 w-48"
                   disabled={isSaving}
                 />
               </div>
@@ -183,7 +183,7 @@ export default function BillingSettingsSection({
                       updateSetting('ht_meter_reading', value)
                     }
                   }}
-                  className="input text-gray-900 w-32"
+                  className="input text-gray-900 w-40"
                   min="0"
                   step="0.1"
                   disabled={isSaving}
@@ -207,7 +207,7 @@ export default function BillingSettingsSection({
                       updateSetting('nt_meter_reading', value)
                     }
                   }}
-                  className="input text-gray-900 w-32"
+                  className="input text-gray-900 w-40"
                   min="0"
                   step="0.1"
                   disabled={isSaving}

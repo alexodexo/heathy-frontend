@@ -47,7 +47,7 @@ export default function BoosterSettings({
                   updateParameterSetting('total_booster_duration', value)
                 }
               }}
-              className="input text-gray-900 w-20"
+              className="input text-gray-900 w-28"
               min="1"
               max="120"
               step="1"

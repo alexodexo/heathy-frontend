@@ -139,7 +139,7 @@ export default function OperationModeControls({
                             updateParameterSetting('mode_1_coldstart_target_temp', value)
                           }
                         }}
-                        className="input text-gray-900 w-20"
+                        className="input text-gray-900 w-28"
                         min="30"
                         max="70"
                         step="0.5"
@@ -182,7 +182,7 @@ export default function OperationModeControls({
                       updateParameterSetting('mode_1_l2_boost_time', value)
                     }
                   }}
-                  className="input text-gray-900 w-16"
+                  className="input text-gray-900 w-24"
                   min="0"
                   max="60"
                   step="1"
@@ -213,7 +213,7 @@ export default function OperationModeControls({
                       updateParameterSetting('mode_1_l3_boost_time', value)
                     }
                   }}
-                  className="input text-gray-900 w-16"
+                  className="input text-gray-900 w-24"
                   min="0"
                   max="60"
                   step="1"
@@ -257,7 +257,7 @@ export default function OperationModeControls({
                           updateParameterSetting('mode_1_downshift_l3_offset', value)
                         }
                       }}
-                      className="input text-gray-900 w-20"
+                      className="input text-gray-900 w-28"
                       min="0"
                       max="10"
                       step="0.5"
@@ -291,7 +291,7 @@ export default function OperationModeControls({
                           updateParameterSetting('mode_1_downshift_l2_offset', value)
                         }
                       }}
-                      className="input text-gray-900 w-20"
+                      className="input text-gray-900 w-28"
                       min="0"
                       max="10"
                       step="0.5"
@@ -315,7 +315,7 @@ export default function OperationModeControls({
                     <input
                       type="number"
                       value={localParameterSettings.mode_1_switchoff ?? 45}
-                      className="input text-gray-400 w-20 cursor-not-allowed"
+                      className="input text-gray-400 w-28 cursor-not-allowed"
                       disabled={true}
                     />
                     <span className="text-sm text-gray-600">°C</span>

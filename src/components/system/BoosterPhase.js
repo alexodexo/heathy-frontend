@@ -84,7 +84,7 @@ export default function BoosterPhase({
                   updateParameterSetting(durationKey, value)
                 }
               }}
-              className="input text-gray-900 w-20"
+              className="input text-gray-900 w-28"
               min="0"
               max="120"
               step="1"
