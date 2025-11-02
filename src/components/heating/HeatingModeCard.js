@@ -22,14 +22,11 @@ export default function HeatingModeCard({
         <span className={`text-sm md:text-base font-semibold ${isActive ? 'text-blue-700' : 'text-gray-700'}`}>
           Modus {modeNumber}
         </span>
-        <div className="flex items-center gap-2">
-          {isRecommended && (
-            <span className="text-xs font-medium text-green-600 bg-green-100 px-2 py-1 rounded">
-              Empfohlen
-            </span>
-          )}
-          <span className={`status-dot ${isActive ? 'status-active' : 'status-inactive'}`}></span>
-        </div>
+        {isRecommended && (
+          <span className="text-xs font-medium text-green-600 bg-green-100 px-2 py-1 rounded">
+            Empfohlen
+          </span>
+        )}
       </div>
       <h3 className={`text-base md:text-lg font-bold mb-1 ${isActive ? 'text-blue-900' : 'text-gray-900'}`}>
         {title}
