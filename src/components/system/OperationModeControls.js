@@ -93,8 +93,175 @@ export default function OperationModeControls({
             
           </div>
 
-          {/* Runterschalten-Einstellungen */}
+          {/* Kaltstart-Boost */}
           <div className="space-y-3 mb-4 pb-4 border-b border-gray-300">
+            <h5 className="text-xs font-semibold text-gray-800 uppercase tracking-wide mb-2">🚀 Booster</h5>
+            <p className="text-xs text-gray-600 mb-3">
+              Startet zu einer festen Uhrzeit und heizt mit allen drei Heizstäben (L1+L2+L3 = 4,5kW) bis zur Zieltemperatur. Ideal für schnelles Aufheizen am Morgen.
+            </p>
+            
+            {/* Aktivierung Checkbox */}
+            <div className="flex items-center gap-3 mb-3">
+              <input
+                type="checkbox"
+                id="mode_1_coldstart_enabled"
+                checked={localParameterSettings.mode_1_coldstart_enabled ?? false}
+                onChange={(e) => {
+                  const value = e.target.checked
+                  setLocalParameterSettings(prev => ({ ...prev, mode_1_coldstart_enabled: value }))
+                  updateParameterSetting('mode_1_coldstart_enabled', value)
+                }}
+                className="w-4 h-4 text-primary-600 bg-gray-100 border-gray-300 rounded focus:ring-primary-500"
+                disabled={isSaving || parameterLoading}
+              />
+              <label htmlFor="mode_1_coldstart_enabled" className="text-sm font-medium text-gray-700 cursor-pointer">
+                Booster aktivieren
+              </label>
+            </div>
+
+            {/* Kaltstart-Boost Einstellungen */}
+            {localParameterSettings.mode_1_coldstart_enabled && (
+              <div className="pl-7 space-y-3">
+                <div className="flex items-center gap-4">
+                  <div className="flex-1">
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Boost-Startzeit
+                    </label>
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm text-gray-600">Starte Boost um</span>
+                      <input
+                        type="time"
+                        value={localParameterSettings.mode_1_coldstart_start_time ?? '06:00'}
+                        onChange={(e) => {
+                          const value = e.target.value
+                          setLocalParameterSettings(prev => ({ ...prev, mode_1_coldstart_start_time: value }))
+                        }}
+                        onBlur={(e) => {
+                          const value = e.target.value
+                          if (value !== parameterSettings?.mode_1_coldstart_start_time?.value) {
+                            updateParameterSetting('mode_1_coldstart_start_time', value)
+                          }
+                        }}
+                        className="input text-gray-900 w-32"
+                        disabled={isSaving || parameterLoading}
+                      />
+                      <span className="text-sm text-gray-600">Uhr</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-4">
+                  <div className="flex-1">
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Boost-Zieltemperatur
+                    </label>
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm text-gray-600">Boosten bis Vorlauftemperatur</span>
+                      <input
+                        type="number"
+                        value={localParameterSettings.mode_1_coldstart_target_temp ?? 45}
+                        onChange={(e) => {
+                          const value = parseFloat(e.target.value)
+                          setLocalParameterSettings(prev => ({ ...prev, mode_1_coldstart_target_temp: value }))
+                        }}
+                        onBlur={(e) => {
+                          const value = parseFloat(e.target.value)
+                          if (value !== parameterSettings?.mode_1_coldstart_target_temp?.value) {
+                            updateParameterSetting('mode_1_coldstart_target_temp', value)
+                          }
+                        }}
+                        className="input text-gray-900 w-20"
+                        min="30"
+                        max="70"
+                        step="0.5"
+                        disabled={isSaving || parameterLoading}
+                      />
+                      <span className="text-sm text-gray-600">°C erreicht ist</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="mt-2 p-2 bg-green-50 rounded border border-green-200">
+                  <p className="text-xs text-green-800">
+                    <strong>⚡ Funktion:</strong> Um {localParameterSettings.mode_1_coldstart_start_time ?? '06:00'} Uhr startet die Heizung mit allen drei Heizstäben (L1+L2+L3 = 4,5kW gesamt) und heizt auf, bis die Vorlauftemperatur {localParameterSettings.mode_1_coldstart_target_temp ?? 45}°C erreicht hat. Danach schaltet das System automatisch auf die normale Regelung um.
+                  </p>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* L2 und L3 Booster */}
+          <div className="space-y-3 mb-4 pb-4 border-b border-gray-300">
+            <h5 className="text-xs font-semibold text-gray-800 uppercase tracking-wide mb-3">⚡ Verzögerungs-Booster</h5>
+            <p className="text-xs text-gray-600 mb-3">
+              Automatisches Zuschalten zusätzlicher Heizstäbe, wenn die Zieltemperatur nicht rechtzeitig erreicht wird.
+            </p>
+            <div>
+              <p className="text-xs font-medium text-gray-700 mb-2">L2 Heizstab zuschalten:</p>
+              <div className="flex items-center gap-2">
+                <span className="text-xs text-gray-600">Nach</span>
+                <input
+                  type="number"
+                  value={localParameterSettings.mode_1_l2_boost_time ?? '--'}
+                  onChange={(e) => {
+                    const value = parseInt(e.target.value)
+                    setLocalParameterSettings(prev => ({ ...prev, mode_1_l2_boost_time: value }))
+                  }}
+                  onBlur={(e) => {
+                    const value = parseInt(e.target.value)
+                    if (value !== parameterSettings?.mode_1_l2_boost_time?.value) {
+                      updateParameterSetting('mode_1_l2_boost_time', value)
+                    }
+                  }}
+                  className="input text-gray-900 w-16"
+                  min="0"
+                  max="60"
+                  step="1"
+                  placeholder="--"
+                  disabled={isSaving || parameterLoading}
+                  style={{
+                    MozAppearance: 'textfield',
+                    WebkitAppearance: 'none'
+                  }}
+                />
+                <span className="text-xs text-gray-600">min. Heizstab L2 zusätzlich zuschalten (dann L1+L2 = 3,0kW), wenn Zieltemperatur nicht erreicht wird.</span>
+              </div>
+            </div>
+            <div>
+              <p className="text-xs font-medium text-gray-700 mb-2">L3 Heizstab zuschalten:</p>
+              <div className="flex items-center gap-2">
+                <span className="text-xs text-gray-600">Nach</span>
+                <input
+                  type="number"
+                  value={localParameterSettings.mode_1_l3_boost_time ?? '--'}
+                  onChange={(e) => {
+                    const value = parseInt(e.target.value)
+                    setLocalParameterSettings(prev => ({ ...prev, mode_1_l3_boost_time: value }))
+                  }}
+                  onBlur={(e) => {
+                    const value = parseInt(e.target.value)
+                    if (value !== parameterSettings?.mode_1_l3_boost_time?.value) {
+                      updateParameterSetting('mode_1_l3_boost_time', value)
+                    }
+                  }}
+                  className="input text-gray-900 w-16"
+                  min="0"
+                  max="60"
+                  step="1"
+                  placeholder="--"
+                  disabled={isSaving || parameterLoading}
+                  style={{
+                    MozAppearance: 'textfield',
+                    WebkitAppearance: 'none'
+                  }}
+                />
+                <span className="text-xs text-gray-600">min. Heizstab L3 zusätzlich zuschalten (dann L1+L2+L3 = 4,5kW), wenn Zieltemperatur nicht erreicht wird.</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Runterschalten-Einstellungen */}
+          <div className="space-y-3">
             <h5 className="text-xs font-semibold text-gray-800 uppercase tracking-wide mb-2">📉 Intelligentes Runterschalten</h5>
             <p className="text-xs text-gray-600 mb-3">
               Konfiguriere, wann einzelne Heizstäbe abgeschaltet werden, wenn sich die Zieltemperatur nähert. Dies spart Energie und verhindert Überschwingen.
@@ -201,173 +368,6 @@ export default function OperationModeControls({
                     <div>🟢 L1 abschalten bei: <strong>{(localParameterSettings.mode_1_switchoff ?? 45).toFixed(1)}°C</strong> (Ziel erreicht)</div>
                   </div>
                 </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Kaltstart-Boost */}
-          <div className="space-y-3 mb-4 pb-4 border-b border-gray-300">
-            <h5 className="text-xs font-semibold text-gray-800 uppercase tracking-wide mb-2">🚀 Kaltstart-Boost</h5>
-            <p className="text-xs text-gray-600 mb-3">
-              Startet zu einer festen Uhrzeit und heizt mit allen drei Heizstäben (L1+L2+L3 = 4,5kW) bis zur Zieltemperatur. Ideal für schnelles Aufheizen am Morgen.
-            </p>
-            
-            {/* Aktivierung Checkbox */}
-            <div className="flex items-center gap-3 mb-3">
-              <input
-                type="checkbox"
-                id="mode_1_coldstart_enabled"
-                checked={localParameterSettings.mode_1_coldstart_enabled ?? false}
-                onChange={(e) => {
-                  const value = e.target.checked
-                  setLocalParameterSettings(prev => ({ ...prev, mode_1_coldstart_enabled: value }))
-                  updateParameterSetting('mode_1_coldstart_enabled', value)
-                }}
-                className="w-4 h-4 text-primary-600 bg-gray-100 border-gray-300 rounded focus:ring-primary-500"
-                disabled={isSaving || parameterLoading}
-              />
-              <label htmlFor="mode_1_coldstart_enabled" className="text-sm font-medium text-gray-700 cursor-pointer">
-                Kaltstart-Boost aktivieren
-              </label>
-            </div>
-
-            {/* Kaltstart-Boost Einstellungen */}
-            {localParameterSettings.mode_1_coldstart_enabled && (
-              <div className="pl-7 space-y-3">
-                <div className="flex items-center gap-4">
-                  <div className="flex-1">
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Boost-Startzeit
-                    </label>
-                    <div className="flex items-center gap-2">
-                      <span className="text-sm text-gray-600">Starte Boost um</span>
-                      <input
-                        type="time"
-                        value={localParameterSettings.mode_1_coldstart_start_time ?? '06:00'}
-                        onChange={(e) => {
-                          const value = e.target.value
-                          setLocalParameterSettings(prev => ({ ...prev, mode_1_coldstart_start_time: value }))
-                        }}
-                        onBlur={(e) => {
-                          const value = e.target.value
-                          if (value !== parameterSettings?.mode_1_coldstart_start_time?.value) {
-                            updateParameterSetting('mode_1_coldstart_start_time', value)
-                          }
-                        }}
-                        className="input text-gray-900 w-32"
-                        disabled={isSaving || parameterLoading}
-                      />
-                      <span className="text-sm text-gray-600">Uhr</span>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-4">
-                  <div className="flex-1">
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Boost-Zieltemperatur
-                    </label>
-                    <div className="flex items-center gap-2">
-                      <span className="text-sm text-gray-600">Boosten bis Vorlauftemperatur</span>
-                      <input
-                        type="number"
-                        value={localParameterSettings.mode_1_coldstart_target_temp ?? 45}
-                        onChange={(e) => {
-                          const value = parseFloat(e.target.value)
-                          setLocalParameterSettings(prev => ({ ...prev, mode_1_coldstart_target_temp: value }))
-                        }}
-                        onBlur={(e) => {
-                          const value = parseFloat(e.target.value)
-                          if (value !== parameterSettings?.mode_1_coldstart_target_temp?.value) {
-                            updateParameterSetting('mode_1_coldstart_target_temp', value)
-                          }
-                        }}
-                        className="input text-gray-900 w-20"
-                        min="30"
-                        max="70"
-                        step="0.5"
-                        disabled={isSaving || parameterLoading}
-                      />
-                      <span className="text-sm text-gray-600">°C erreicht ist</span>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="mt-2 p-2 bg-green-50 rounded border border-green-200">
-                  <p className="text-xs text-green-800">
-                    <strong>⚡ Funktion:</strong> Um {localParameterSettings.mode_1_coldstart_start_time ?? '06:00'} Uhr startet die Heizung mit allen drei Heizstäben (L1+L2+L3 = 4,5kW gesamt) und heizt auf, bis die Vorlauftemperatur {localParameterSettings.mode_1_coldstart_target_temp ?? 45}°C erreicht hat. Danach schaltet das System automatisch auf die normale Regelung um.
-                  </p>
-                </div>
-              </div>
-            )}
-          </div>
-
-          {/* L2 und L3 Booster */}
-          <div className="space-y-3">
-            <h5 className="text-xs font-semibold text-gray-800 uppercase tracking-wide mb-3">⚡ Verzögerungs-Booster</h5>
-            <p className="text-xs text-gray-600 mb-3">
-              Automatisches Zuschalten zusätzlicher Heizstäbe, wenn die Zieltemperatur nicht rechtzeitig erreicht wird.
-            </p>
-            <div>
-              <p className="text-xs font-medium text-gray-700 mb-2">L2 Heizstab zuschalten:</p>
-              <div className="flex items-center gap-2">
-                <span className="text-xs text-gray-600">Nach</span>
-                <input
-                  type="number"
-                  value={localParameterSettings.mode_1_l2_boost_time ?? '--'}
-                  onChange={(e) => {
-                    const value = parseInt(e.target.value)
-                    setLocalParameterSettings(prev => ({ ...prev, mode_1_l2_boost_time: value }))
-                  }}
-                  onBlur={(e) => {
-                    const value = parseInt(e.target.value)
-                    if (value !== parameterSettings?.mode_1_l2_boost_time?.value) {
-                      updateParameterSetting('mode_1_l2_boost_time', value)
-                    }
-                  }}
-                  className="input text-gray-900 w-16"
-                  min="0"
-                  max="60"
-                  step="1"
-                  placeholder="--"
-                  disabled={isSaving || parameterLoading}
-                  style={{
-                    MozAppearance: 'textfield',
-                    WebkitAppearance: 'none'
-                  }}
-                />
-                <span className="text-xs text-gray-600">min. Heizstab L2 zusätzlich zuschalten (dann L1+L2 = 3,0kW), wenn Zieltemperatur nicht erreicht wird.</span>
-              </div>
-            </div>
-            <div>
-              <p className="text-xs font-medium text-gray-700 mb-2">L3 Heizstab zuschalten:</p>
-              <div className="flex items-center gap-2">
-                <span className="text-xs text-gray-600">Nach</span>
-                <input
-                  type="number"
-                  value={localParameterSettings.mode_1_l3_boost_time ?? '--'}
-                  onChange={(e) => {
-                    const value = parseInt(e.target.value)
-                    setLocalParameterSettings(prev => ({ ...prev, mode_1_l3_boost_time: value }))
-                  }}
-                  onBlur={(e) => {
-                    const value = parseInt(e.target.value)
-                    if (value !== parameterSettings?.mode_1_l3_boost_time?.value) {
-                      updateParameterSetting('mode_1_l3_boost_time', value)
-                    }
-                  }}
-                  className="input text-gray-900 w-16"
-                  min="0"
-                  max="60"
-                  step="1"
-                  placeholder="--"
-                  disabled={isSaving || parameterLoading}
-                  style={{
-                    MozAppearance: 'textfield',
-                    WebkitAppearance: 'none'
-                  }}
-                />
-                <span className="text-xs text-gray-600">min. Heizstab L3 zusätzlich zuschalten (dann L1+L2+L3 = 4,5kW), wenn Zieltemperatur nicht erreicht wird.</span>
               </div>
             </div>
           </div>
