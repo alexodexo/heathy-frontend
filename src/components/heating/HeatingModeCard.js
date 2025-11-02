@@ -18,16 +18,13 @@ export default function HeatingModeCard({
           : 'bg-white border-gray-200 active:border-gray-400'
       }`}
     >
-      <div className="flex items-center justify-between mb-2">
-        <span className={`text-sm md:text-base font-semibold ${isActive ? 'text-blue-700' : 'text-gray-700'}`}>
-          Modus {modeNumber}
-        </span>
-        {isRecommended && (
+      {isRecommended && (
+        <div className="mb-2">
           <span className="text-xs font-medium text-green-600 bg-green-100 px-2 py-1 rounded">
             Empfohlen
           </span>
-        )}
-      </div>
+        </div>
+      )}
       <h3 className={`text-base md:text-lg font-bold mb-1 ${isActive ? 'text-blue-900' : 'text-gray-900'}`}>
         {title}
       </h3>
