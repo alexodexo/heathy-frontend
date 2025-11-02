@@ -83,16 +83,16 @@ export default function StatusCard({
               <p className="stat-label-sm pt-1">{title}</p>
             </>
           ) : (
-            /* Normales Layout für große Karten - Wert und Titel einzeilig */
+            /* Normales Layout für große Karten - Wert und Titel einzeilig linksbündig */
             <>
-              <div className="flex items-center gap-2 justify-center">
+              <div className="flex items-center gap-2">
                 <span className="stat-value">{value}</span>
                 {unit && <span className="text-lg text-gray-500">{unit}</span>}
                 <span className="text-xs text-gray-500">- {title}</span>
               </div>
               {secondaryValue !== null && (
                 <div className="pt-3">
-                  <div className="flex items-center gap-2 justify-center">
+                  <div className="flex items-center gap-2">
                     <span className="text-lg font-semibold text-gray-700">{secondaryValue}</span>
                     {secondaryUnit && <span className="text-sm text-gray-500">{secondaryUnit}</span>}
                     {secondaryTitle && <span className="text-xs text-gray-500">- {secondaryTitle}</span>}
@@ -103,7 +103,7 @@ export default function StatusCard({
           )}
           {tertiaryValue !== null && (
             <div className="pt-3">
-              <div className="flex items-center gap-2 justify-center">
+              <div className="flex items-center gap-2">
                 <span className="text-lg font-semibold text-gray-700">{tertiaryValue}</span>
                 {tertiaryUnit && <span className="text-sm text-gray-500">{tertiaryUnit}</span>}
                 {tertiaryTitle && <span className="text-xs text-gray-500">- {tertiaryTitle}</span>}
@@ -112,7 +112,7 @@ export default function StatusCard({
           )}
           {quaternaryValue !== null && (
             <div className="pt-3">
-              <div className="flex items-center gap-2 justify-center">
+              <div className="flex items-center gap-2">
                 <span className="text-lg font-semibold text-gray-700">{quaternaryValue}</span>
                 {quaternaryUnit && <span className="text-sm text-gray-500">{quaternaryUnit}</span>}
                 {quaternaryTitle && <span className="text-xs text-gray-500">- {quaternaryTitle}</span>}
