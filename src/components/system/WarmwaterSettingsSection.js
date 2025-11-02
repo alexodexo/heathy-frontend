@@ -32,7 +32,7 @@ export default function WarmwaterSettingsSection({
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
             {/* Modus 1: Vollständig EIN */}
             <div className="bg-gray-50 p-4 rounded-lg">
-              <h3 className="text-lg font-semibold text-gray-900 mb-3">Normalbetrieb - EIN</h3>
+              <h3 className="text-lg font-semibold text-gray-900 mb-3">Normalbetrieb</h3>
               <div className="space-y-4">
                 <div className="flex items-end gap-4">
                   <div className="flex-1">
