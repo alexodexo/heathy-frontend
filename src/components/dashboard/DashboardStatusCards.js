@@ -47,8 +47,8 @@ export default function DashboardStatusCards({ currentData, currentLoading }) {
         title="Außentemperatur"
         value={currentData?.temperatures?.outdoor_temp?.toFixed(1) || '--'}
         unit="°C"
-        secondaryValue={currentData?.weather?.forecast_temp?.toFixed(1) || '--'}
-        secondaryUnit="°C"
+        secondaryValue={`-- min. --- max. --°C`}
+        secondaryUnit=""
         secondaryTitle="Prognose heute"
         tertiaryValue={currentData?.weather?.sunshine_hours?.toFixed(1) || '--'}
         tertiaryUnit="h"
