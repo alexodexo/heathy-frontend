@@ -125,34 +125,6 @@ export default function OperationModeControls({
                 <div className="flex items-center gap-4">
                   <div className="flex-1">
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Boost-Startzeit
-                    </label>
-                    <div className="flex items-center gap-2">
-                      <span className="text-sm text-gray-600">Starte Boost um</span>
-                      <input
-                        type="time"
-                        value={localParameterSettings.mode_1_coldstart_start_time ?? '06:00'}
-                        onChange={(e) => {
-                          const value = e.target.value
-                          setLocalParameterSettings(prev => ({ ...prev, mode_1_coldstart_start_time: value }))
-                        }}
-                        onBlur={(e) => {
-                          const value = e.target.value
-                          if (value !== parameterSettings?.mode_1_coldstart_start_time?.value) {
-                            updateParameterSetting('mode_1_coldstart_start_time', value)
-                          }
-                        }}
-                        className="input text-gray-900 w-32"
-                        disabled={isSaving || parameterLoading}
-                      />
-                      <span className="text-sm text-gray-600">Uhr</span>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-4">
-                  <div className="flex-1">
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
                       Boost-Zieltemperatur
                     </label>
                     <div className="flex items-center gap-2">
@@ -183,7 +155,7 @@ export default function OperationModeControls({
 
                 <div className="mt-2 p-2 bg-green-50 rounded border border-green-200">
                   <p className="text-xs text-green-800">
-                    <strong>⚡ Funktion:</strong> Um {localParameterSettings.mode_1_coldstart_start_time ?? '06:00'} Uhr startet die Heizung mit allen drei Heizstäben (L1+L2+L3 = 4,5kW gesamt) und heizt auf, bis die Vorlauftemperatur {localParameterSettings.mode_1_coldstart_target_temp ?? 45}°C erreicht hat. Danach schaltet das System automatisch auf die normale Regelung um.
+                    <strong>⚡ Funktion:</strong> Die Heizung startet mit allen drei Heizstäben (L1+L2+L3 = 4,5kW gesamt) und heizt auf, bis die Vorlauftemperatur {localParameterSettings.mode_1_coldstart_target_temp ?? 45}°C erreicht hat. Danach schaltet das System automatisch auf die normale Regelung um.
                   </p>
                 </div>
               </div>
