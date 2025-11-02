@@ -73,6 +73,9 @@ export default function DashboardStatusCards({ currentData, currentLoading }) {
         tertiaryValue={currentData?.temperatures?.room_bad?.toFixed(1) || '--'}
         tertiaryUnit="°C"
         tertiaryTitle="Bad"
+        quaternaryValue={currentData?.temperatures?.room_alex?.toFixed(1) || '--'}
+        quaternaryUnit="°C"
+        quaternaryTitle="Zimmer Alex"
         icon={() => (
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6">
             <path d="M14 4v10.54a4 4 0 1 1-4 0V4a2 2 0 0 1 4 0Z"/>

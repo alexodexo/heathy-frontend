@@ -104,8 +104,8 @@ export default function StatusCard({
           {tertiaryValue !== null && (
             <div className="pt-3">
               <div className="flex items-center gap-2">
-                <span className="text-lg font-semibold text-gray-700">{tertiaryValue}</span>
-                {tertiaryUnit && <span className="text-sm text-gray-500">{tertiaryUnit}</span>}
+                <span className="text-xs text-gray-700">{tertiaryValue}</span>
+                {tertiaryUnit && <span className="text-xs text-gray-500">{tertiaryUnit}</span>}
                 {tertiaryTitle && <span className="text-xs text-gray-500">- {tertiaryTitle}</span>}
               </div>
             </div>
@@ -113,8 +113,8 @@ export default function StatusCard({
           {quaternaryValue !== null && (
             <div className="pt-3">
               <div className="flex items-center gap-2">
-                <span className="text-lg font-semibold text-gray-700">{quaternaryValue}</span>
-                {quaternaryUnit && <span className="text-sm text-gray-500">{quaternaryUnit}</span>}
+                <span className="text-xs text-gray-700">{quaternaryValue}</span>
+                {quaternaryUnit && <span className="text-xs text-gray-500">{quaternaryUnit}</span>}
                 {quaternaryTitle && <span className="text-xs text-gray-500">- {quaternaryTitle}</span>}
               </div>
             </div>
