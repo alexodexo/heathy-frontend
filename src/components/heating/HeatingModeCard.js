@@ -18,13 +18,6 @@ export default function HeatingModeCard({
           : 'bg-white border-gray-200 active:border-gray-400'
       }`}
     >
-      {isRecommended && (
-        <div className="mb-2">
-          <span className="text-xs font-medium text-green-600 bg-green-100 px-2 py-1 rounded">
-            Empfohlen
-          </span>
-        </div>
-      )}
       <h3 className={`text-base md:text-lg font-bold mb-1 ${isActive ? 'text-blue-900' : 'text-gray-900'}`}>
         {title}
       </h3>
