@@ -97,7 +97,7 @@ export default function OperationModeControls({
           <div className="space-y-3 mb-4 pb-4 border-b border-gray-300">
             <h5 className="text-xs font-semibold text-gray-800 uppercase tracking-wide mb-2">🚀 Booster</h5>
             <p className="text-xs text-gray-600 mb-3">
-              Startet zu einer festen Uhrzeit und heizt mit allen drei Heizstäben (L1+L2+L3 = 4,5kW) bis zur Zieltemperatur. Ideal für schnelles Aufheizen am Morgen.
+              Startet zu einer festen Uhrzeit und heizt mit allen drei Heizstäben (4,5kW) bis zur Zieltemperatur. Ideal für schnelles Aufheizen am Morgen.
             </p>
             
             {/* Aktivierung Checkbox */}
@@ -152,7 +152,7 @@ export default function OperationModeControls({
 
                 <div className="mt-2 p-2 bg-green-50 rounded border border-green-200">
                   <p className="text-xs text-green-800">
-                    <strong>⚡ Funktion:</strong> Die Heizung startet mit allen drei Heizstäben (L1+L2+L3 = 4,5kW gesamt) und heizt auf, bis die Vorlauftemperatur {localParameterSettings.mode_1_coldstart_target_temp ?? 45}°C erreicht hat. Danach schaltet das System automatisch auf die normale Regelung um.
+                    <strong>⚡ Funktion:</strong> Die Heizung startet mit allen drei Heizstäben (4,5kW gesamt) und heizt auf, bis die Vorlauftemperatur {localParameterSettings.mode_1_coldstart_target_temp ?? 45}°C erreicht hat. Danach schaltet das System automatisch auf die normale Regelung um.
                   </p>
                 </div>
               </div>
