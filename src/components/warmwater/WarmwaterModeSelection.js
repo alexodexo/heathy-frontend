@@ -15,11 +15,6 @@ export default function WarmwaterModeSelection({
       transition={{ delay: 0.1 }}
       className="card p-4 md:p-6"
     >
-      {/* Überschrift */}
-      <div className="mb-4 md:mb-6">
-        <h2 className="text-base md:text-xl font-semibold text-gray-900">Warmwasser Ein - Aus Schaltung</h2>
-      </div>
-      
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6">
         {allModes
           .sort((a, b) => {
