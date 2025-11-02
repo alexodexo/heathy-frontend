@@ -342,9 +342,9 @@ export default function OperationModeControls({
           </div>
 
           {/* Zusammenfassung der kompletten Logik */}
-          <div className="mt-4 p-3 bg-purple-50 rounded-lg border border-purple-200">
-            <p className="text-xs font-semibold text-purple-900 mb-2">🧠 Intelligente Regellogik - Zusammenfassung:</p>
-            <ul className="text-xs text-purple-800 space-y-1 list-disc list-inside">
+          <div className="mt-4 p-3 bg-green-50 rounded-lg border border-green-200">
+            <p className="text-xs font-semibold text-green-900 mb-2">🧠 Intelligente Regellogik - Zusammenfassung:</p>
+            <ul className="text-xs text-green-800 space-y-1 list-disc list-inside">
               <li><strong>Zeitfenster:</strong> Heizung läuft nur in den konfigurierten Zeitslots</li>
               <li><strong>Kaltstart-Boost:</strong> Gezieltes Aufheizen zur Wunschzeit mit allen Heizstäben (L1+L2+L3 = 4,5kW) bis Zieltemperatur (optional)</li>
               <li><strong>Hochschalten:</strong> L1 (1,5kW) → L1+L2 (3,0kW) → L1+L2+L3 (4,5kW) wenn Zieltemperatur verzögert erreicht wird</li>
