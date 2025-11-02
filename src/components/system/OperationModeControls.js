@@ -28,7 +28,7 @@ export default function OperationModeControls({
       <div className="space-y-6">
         {/* Modus 1 - Normalbetrieb */}
         <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
-          <h4 className="text-sm font-semibold text-gray-900 mb-4">Modus 1 - Normalbetrieb Beginn mit 1,5kW (L1)</h4>
+          <h4 className="text-sm font-semibold text-gray-900 mb-4">Normalbetrieb Beginn mit 1,5kW (L1)</h4>
           
           {/* Zeitsteuerung für Modus 1 - kommt ZUERST */}
           <div className="mb-4">

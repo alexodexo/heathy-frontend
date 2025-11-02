@@ -18,7 +18,7 @@ export default function BoosterSettings({
 
   return (
     <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
-      <h4 className="text-sm font-semibold text-gray-900 mb-4">Modus 2 - Booster Einstellungen</h4>
+      <h4 className="text-sm font-semibold text-gray-900 mb-4">Booster Einstellungen</h4>
       
       {/* Gesamtzeit Anzeige */}
       <div className="mb-4 p-3 bg-white rounded-lg border border-gray-200">
