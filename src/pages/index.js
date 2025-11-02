@@ -1,11 +1,20 @@
 // src/pages/index.js
 import Head from 'next/head'
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { useCurrentData, useHeatingStatus, useHeatingModes, useSystemHealth, usePlugsData } from '@/hooks/useBackendData'
 import DashboardStatusCards from '@/components/dashboard/DashboardStatusCards'
 import EnergyMonitoring from '@/components/dashboard/EnergyMonitoring'
 
 export default function Dashboard() {
+  const [currentTime, setCurrentTime] = useState(new Date())
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentTime(new Date())
+    }, 1000)
+
+    return () => clearInterval(timer)
+  }, [])
   const { data: currentData, isLoading: currentLoading } = useCurrentData()
   const { data: heatingStatus, isLoading: statusLoading } = useHeatingStatus()
   const { data: heatingModes, isLoading: modesLoading } = useHeatingModes()
@@ -78,9 +87,19 @@ export default function Dashboard() {
 
       <div className="max-w-7xl mx-auto space-y-4 md:space-y-6">
         {/* Header */}
-        <div>
-          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900">Live Dashboard</h1>
-          <p className="text-sm sm:text-base md:text-lg text-gray-600 mt-1 md:mt-2">Echtzeit-Übersicht aller Systeme</p>
+        <div className="flex items-start justify-between flex-col md:flex-row gap-4 md:gap-6">
+          <div>
+            <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900">Live Dashboard</h1>
+            <p className="text-sm sm:text-base md:text-lg text-gray-600 mt-1 md:mt-2">Echtzeit-Übersicht aller Systeme</p>
+          </div>
+          <div className="text-right">
+            <div className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 tabular-nums">
+              {currentTime.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' })}
+            </div>
+            <div className="text-sm sm:text-base md:text-lg text-gray-600 mt-1">
+              {currentTime.toLocaleDateString('de-DE', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
+            </div>
+          </div>
         </div>
 
         {/* Status Cards */}
