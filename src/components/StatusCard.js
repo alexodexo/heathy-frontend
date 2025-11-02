@@ -86,8 +86,8 @@ export default function StatusCard({
             /* Normales Layout für große Karten - Wert und Titel einzeilig linksbündig */
             <>
               <div className="flex items-center gap-2">
-                <span className="stat-value">{value}</span>
-                {unit && <span className="text-lg text-gray-500">{unit}</span>}
+                <span className="text-xs text-gray-700">{value}</span>
+                {unit && <span className="text-xs text-gray-500">{unit}</span>}
                 <span className="text-xs text-gray-500">- {title}</span>
               </div>
               {secondaryValue !== null && (
