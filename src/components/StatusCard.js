@@ -83,7 +83,7 @@ export default function StatusCard({
               <p className="stat-label-sm pt-1">{title}</p>
             </>
           ) : (
-            /* Normales Layout für große Karten - Wert oben, Titel unten */
+            /* Normales Layout für große Karten - Wert und Titel einzeilig */
             <>
               <div className="space-y-2">
                 <div className="flex items-baseline gap-2 justify-center">
@@ -93,32 +93,32 @@ export default function StatusCard({
                 <p className="stat-label text-center">{title}</p>
               </div>
               {secondaryValue !== null && (
-                <div className="space-y-1 pt-3 border-t border-gray-200">
-                  <div className="flex items-baseline gap-2 justify-center">
+                <div className="pt-3 border-t border-gray-200">
+                  <div className="flex items-center gap-2 justify-center">
                     <span className="text-lg font-semibold text-gray-700">{secondaryValue}</span>
                     {secondaryUnit && <span className="text-sm text-gray-500">{secondaryUnit}</span>}
+                    {secondaryTitle && <span className="text-xs text-gray-500">- {secondaryTitle}</span>}
                   </div>
-                  {secondaryTitle && <p className="text-xs text-gray-500 text-center">{secondaryTitle}</p>}
                 </div>
               )}
             </>
           )}
           {tertiaryValue !== null && (
-            <div className="space-y-1 pt-3 border-t border-gray-200">
-              <div className="flex items-baseline gap-2 justify-center">
+            <div className="pt-3 border-t border-gray-200">
+              <div className="flex items-center gap-2 justify-center">
                 <span className="text-lg font-semibold text-gray-700">{tertiaryValue}</span>
                 {tertiaryUnit && <span className="text-sm text-gray-500">{tertiaryUnit}</span>}
+                {tertiaryTitle && <span className="text-xs text-gray-500">- {tertiaryTitle}</span>}
               </div>
-              {tertiaryTitle && <p className="text-xs text-gray-500 text-center">{tertiaryTitle}</p>}
             </div>
           )}
           {quaternaryValue !== null && (
-            <div className="space-y-1 pt-3 border-t border-gray-200">
-              <div className="flex items-baseline gap-2 justify-center">
+            <div className="pt-3 border-t border-gray-200">
+              <div className="flex items-center gap-2 justify-center">
                 <span className="text-lg font-semibold text-gray-700">{quaternaryValue}</span>
                 {quaternaryUnit && <span className="text-sm text-gray-500">{quaternaryUnit}</span>}
+                {quaternaryTitle && <span className="text-xs text-gray-500">- {quaternaryTitle}</span>}
               </div>
-              {quaternaryTitle && <p className="text-xs text-gray-500 text-center">{quaternaryTitle}</p>}
             </div>
           )}
         </div>
