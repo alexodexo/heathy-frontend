@@ -51,7 +51,7 @@ export default function StatusCard({
       transition={{ duration: 0.3 }}
       className="stat-card card-hover"
     >
-      <div className="flex items-start justify-between gap-4">
+      <div className="flex items-center justify-between gap-4">
         {Icon && (
           <div className="flex flex-col items-center gap-2 flex-shrink-0">
             <div className={`p-3 md:p-4 rounded-xl bg-gradient-to-br ${colorClasses[color]} text-white shadow-lg`}>
