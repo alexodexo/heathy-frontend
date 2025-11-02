@@ -93,8 +93,8 @@ export default function StatusCard({
               {secondaryValue !== null && (
                 <div className="pt-3">
                   <div className="flex items-center gap-2">
-                    <span className="text-lg font-semibold text-gray-700">{secondaryValue}</span>
-                    {secondaryUnit && <span className="text-sm text-gray-500">{secondaryUnit}</span>}
+                    <span className="text-xs text-gray-700">{secondaryValue}</span>
+                    {secondaryUnit && <span className="text-xs text-gray-500">{secondaryUnit}</span>}
                     {secondaryTitle && <span className="text-xs text-gray-500">- {secondaryTitle}</span>}
                   </div>
                 </div>
