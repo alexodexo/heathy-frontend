@@ -4,7 +4,7 @@ import { BeakerIcon, FireIcon } from '@heroicons/react/24/outline'
 
 export default function DashboardStatusCards({ currentData, currentLoading }) {
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+    <div className="grid grid-cols-2 gap-4 md:gap-6">
       <StatusCard
         title="Vorlauf Heizung"
         value={currentData?.temperatures?.vorlauf_temp?.toFixed(1) || '--'}
