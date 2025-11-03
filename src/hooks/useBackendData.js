@@ -171,6 +171,7 @@ export function useParameterSettings() {
     {
       refreshInterval: API_CONFIG.REFRESH_INTERVALS.SETTINGS,
       revalidateOnFocus: false, // Deaktiviert - zu störend beim Eingeben
+      revalidateOnReconnect: false, // Deaktiviert - verhindert Refresh bei Reconnect
     }
   )
 
