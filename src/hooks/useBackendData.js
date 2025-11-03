@@ -170,7 +170,7 @@ export function useParameterSettings() {
     () => backendAPI.getParameterSettings(),
     {
       refreshInterval: API_CONFIG.REFRESH_INTERVALS.SETTINGS,
-      revalidateOnFocus: true, // Force reload when window focused
+      revalidateOnFocus: false, // Deaktiviert - zu störend beim Eingeben
     }
   )
 

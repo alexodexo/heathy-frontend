@@ -7,12 +7,12 @@ export const API_CONFIG = {
   
   // Refresh-Intervalle in Millisekunden
   REFRESH_INTERVALS: {
-    HEATING_STATUS: 5000,      // 5 Sekunden - Live-Status
-    CURRENT_DATA: 3000,        // 3 Sekunden - Sensor-Daten
-    HEATING_MODES: 10000,      // 10 Sekunden - Modi
-    SYSTEM_HEALTH: 15000,      // 15 Sekunden - System-Health
-    SYSTEM_STATS: 10000,       // 10 Sekunden - System-Statistiken
-    SETTINGS: 30000,           // 30 Sekunden - Einstellungen
+    HEATING_STATUS: 30000,     // 30 Sekunden - Live-Status (verlängert für weniger Störung)
+    CURRENT_DATA: 30000,       // 30 Sekunden - Sensor-Daten (verlängert für weniger Störung)
+    HEATING_MODES: 30000,      // 30 Sekunden - Modi (verlängert)
+    SYSTEM_HEALTH: 60000,      // 60 Sekunden - System-Health (verlängert)
+    SYSTEM_STATS: 60000,       // 60 Sekunden - System-Statistiken (verlängert)
+    SETTINGS: 60000,           // 60 Sekunden - Einstellungen (verlängert für System-Seite)
   },
   
   // Retry-Konfiguration
