@@ -17,25 +17,40 @@ export default function Statistics() {
   const { data: summaryData, error: summaryError, isLoading: summaryLoading } = useSWR(
     '/api/statistics/summary',
     fetcher,
-    { refreshInterval: 30000 } // Refresh every 30 seconds
+    { 
+      refreshInterval: 60000, // Refresh every minute
+      // revalidateOnFocus und revalidateOnReconnect werden global deaktiviert
+    }
   )
 
   const { data: energyData, error: energyError, isLoading: energyLoading } = useSWR(
     `/api/statistics/energy?range=${selectedRange}`,
     fetcher,
-    { refreshInterval: 60000 } // Refresh every minute
+    { 
+      refreshInterval: 60000, // Refresh every minute
+      revalidateOnFocus: false, // Verhindert Reload bei Tab-Wechsel
+      revalidateOnReconnect: false, // Verhindert Reload bei Reconnect
+    }
   )
 
   const { data: temperatureData, error: temperatureError, isLoading: temperatureLoading } = useSWR(
     `/api/statistics/temperatures?range=${selectedRange}`,
     fetcher,
-    { refreshInterval: 60000 }
+    { 
+      refreshInterval: 60000,
+      revalidateOnFocus: false, // Verhindert Reload bei Tab-Wechsel
+      revalidateOnReconnect: false, // Verhindert Reload bei Reconnect
+    }
   )
 
   const { data: costsData, error: costsError, isLoading: costsLoading } = useSWR(
     `/api/statistics/costs?range=${selectedRange}`,
     fetcher,
-    { refreshInterval: 60000 }
+    { 
+      refreshInterval: 60000,
+      revalidateOnFocus: false, // Verhindert Reload bei Tab-Wechsel
+      revalidateOnReconnect: false, // Verhindert Reload bei Reconnect
+    }
   )
 
   // Debug: Log errors

@@ -6,13 +6,14 @@ export const API_CONFIG = {
   BASE_URL: process.env.NEXT_PUBLIC_BACKEND_URL || 'http://192.168.178.82:12345',
   
   // Refresh-Intervalle in Millisekunden
+  // Längere Intervalle für ruhigere Seiten - nur wenn Seite sichtbar ist
   REFRESH_INTERVALS: {
-    HEATING_STATUS: 30000,     // 30 Sekunden - Live-Status (verlängert für weniger Störung)
-    CURRENT_DATA: 30000,       // 30 Sekunden - Sensor-Daten (verlängert für weniger Störung)
-    HEATING_MODES: 30000,      // 30 Sekunden - Modi (verlängert)
-    SYSTEM_HEALTH: 60000,      // 60 Sekunden - System-Health (verlängert)
-    SYSTEM_STATS: 60000,       // 60 Sekunden - System-Statistiken (verlängert)
-    SETTINGS: 60000,           // 60 Sekunden - Einstellungen (verlängert für System-Seite)
+    HEATING_STATUS: 60000,     // 60 Sekunden - Live-Status (verlängert für ruhigere Seiten)
+    CURRENT_DATA: 60000,       // 60 Sekunden - Sensor-Daten (verlängert)
+    HEATING_MODES: 60000,      // 60 Sekunden - Modi (verlängert)
+    SYSTEM_HEALTH: 120000,     // 120 Sekunden - System-Health (2 Minuten)
+    SYSTEM_STATS: 120000,      // 120 Sekunden - System-Statistiken (2 Minuten)
+    SETTINGS: 120000,          // 120 Sekunden - Einstellungen (2 Minuten - System-Seite)
   },
   
   // Retry-Konfiguration

@@ -20,34 +20,34 @@ export default function PumpSettings({
       <div>
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
-            Nachlaufzeit nach Ausschalten der Heizstäbe
+            Temperaturdifferenz ≤
           </label>
           <div className="flex items-center gap-2">
             <input
               type="number"
-              value={localParameterSettings.pump_overrun_time ?? 10}
+              value={localParameterSettings.pump_overrun_time ?? 5}
               onChange={(e) => {
-                const value = parseInt(e.target.value)
+                const value = parseFloat(e.target.value)
                 setLocalParameterSettings(prev => ({ ...prev, pump_overrun_time: value }))
               }}
               onBlur={(e) => {
-                const value = parseInt(e.target.value)
+                const value = parseFloat(e.target.value)
                 if (value !== parameterSettings?.pump_overrun_time?.value) {
                   updateParameterSetting('pump_overrun_time', value)
                 }
               }}
               className="input text-gray-900 w-28"
               min="0"
-              max="60"
-              step="1"
-              placeholder="10"
+              max="20"
+              step="0.1"
+              placeholder="5.0"
               disabled={isSaving || parameterLoading}
             />
-            <span className="text-sm font-medium text-gray-700">min</span>
+            <span className="text-sm font-medium text-gray-700">°C</span>
           </div>
           <div className="mt-3 p-3 bg-green-50 rounded-lg">
             <p className="text-sm text-green-800">
-              <strong>Hinweis:</strong> Die Zirkulationspumpe läuft automatisch nach dem Ausschalten der Heizstäbe noch diese Zeit weiter, um die Restwärme zu verteilen.
+              <strong>Hinweis:</strong> Differenz zwischen Heizungsvor- und Rücklauf. Die Zirkulationspumpe läuft automatisch weiter, bis die Temperaturdifferenz ≤ diesem Wert ist.
             </p>
           </div>
         </div>
