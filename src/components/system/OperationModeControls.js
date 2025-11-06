@@ -47,15 +47,15 @@ export default function OperationModeControls({
                 <label className="block text-sm font-medium text-gray-700 mb-2">Einschalten ≤ °C</label>
                 <input
                   type="number"
-                  value={localSettings.mode_1_switchon ?? '--'}
+                  value={localSettings.heizung_mode_1_switchon ?? '--'}
                   onChange={(e) => {
                     const value = parseFloat(e.target.value)
-                    setLocalSettings(prev => ({ ...prev, mode_1_switchon: value }))
+                    setLocalSettings(prev => ({ ...prev, heizung_mode_1_switchon: value }))
                   }}
                   onBlur={(e) => {
                     const value = parseFloat(e.target.value)
-                    if (value !== einstellungen?.mode_1_switchon?.value) {
-                      updateSetting('mode_1_switchon', value)
+                    if (value !== einstellungen?.heizung_mode_1_switchon?.value) {
+                      updateSetting('heizung_mode_1_switchon', value)
                     }
                   }}
                   className="input text-gray-900 w-full"
@@ -70,15 +70,15 @@ export default function OperationModeControls({
                 <label className="block text-sm font-medium text-gray-700 mb-2">Ausschalten ≥ °C</label>
                 <input
                   type="number"
-                  value={localSettings.mode_1_switchoff ?? '--'}
+                  value={localSettings.heizung_mode_1_switchoff ?? '--'}
                   onChange={(e) => {
                     const value = parseFloat(e.target.value)
-                    setLocalSettings(prev => ({ ...prev, mode_1_switchoff: value }))
+                    setLocalSettings(prev => ({ ...prev, heizung_mode_1_switchoff: value }))
                   }}
                   onBlur={(e) => {
                     const value = parseFloat(e.target.value)
-                    if (value !== einstellungen?.mode_1_switchoff?.value) {
-                      updateSetting('mode_1_switchoff', value)
+                    if (value !== einstellungen?.heizung_mode_1_switchoff?.value) {
+                      updateSetting('heizung_mode_1_switchoff', value)
                     }
                   }}
                   className="input text-gray-900 w-full"
@@ -104,23 +104,23 @@ export default function OperationModeControls({
             <div className="flex items-center gap-3 mb-3">
               <input
                 type="checkbox"
-                id="mode_1_coldstart_enabled"
-                checked={!!localSettings.mode_1_coldstart_enabled}
+                id="heizung_mode_1_coldstart_enabled"
+                checked={!!localSettings.heizung_mode_1_coldstart_enabled}
                 onChange={(e) => {
                   const value = e.target.checked ? 1 : 0
-                  setLocalSettings(prev => ({ ...prev, mode_1_coldstart_enabled: value }))
-                  updateSetting('mode_1_coldstart_enabled', value, 'Modus 1: Kaltstart-Boost aktiviert (0=false, 1=true)')
+                  setLocalSettings(prev => ({ ...prev, heizung_mode_1_coldstart_enabled: value }))
+                  updateSetting('heizung_mode_1_coldstart_enabled', value, 'Heizung Modus 1: Kaltstart-Boost aktiviert (0=false, 1=true)')
                 }}
                 className="w-4 h-4 text-primary-600 bg-gray-100 border-gray-300 rounded focus:ring-primary-500"
                 disabled={isSaving || einstellungenLoading}
               />
-              <label htmlFor="mode_1_coldstart_enabled" className="text-sm font-medium text-gray-700 cursor-pointer">
+              <label htmlFor="heizung_mode_1_coldstart_enabled" className="text-sm font-medium text-gray-700 cursor-pointer">
                 Booster aktivieren
               </label>
             </div>
 
             {/* Kaltstart-Boost Einstellungen */}
-            {localSettings.mode_1_coldstart_enabled && (
+            {localSettings.heizung_mode_1_coldstart_enabled && (
               <div className="pl-7 space-y-3">
                 <div className="flex items-center gap-4">
                   <div className="flex-1">
@@ -128,15 +128,15 @@ export default function OperationModeControls({
                       <span className="text-sm text-gray-600">Boosten bis Vorlauftemperatur</span>
                       <input
                         type="number"
-                        value={localSettings.mode_1_coldstart_target_temp ?? 45}
+                        value={localSettings.heizung_mode_1_coldstart_target_temp ?? 45}
                         onChange={(e) => {
                           const value = parseFloat(e.target.value)
-                          setLocalSettings(prev => ({ ...prev, mode_1_coldstart_target_temp: value }))
+                          setLocalSettings(prev => ({ ...prev, heizung_mode_1_coldstart_target_temp: value }))
                         }}
                         onBlur={(e) => {
                           const value = parseFloat(e.target.value)
-                          if (value !== einstellungen?.mode_1_coldstart_target_temp?.value) {
-                            updateSetting('mode_1_coldstart_target_temp', value)
+                          if (value !== einstellungen?.heizung_mode_1_coldstart_target_temp?.value) {
+                            updateSetting('heizung_mode_1_coldstart_target_temp', value)
                           }
                         }}
                         className="input text-gray-900 w-28"
@@ -152,7 +152,7 @@ export default function OperationModeControls({
 
                 <div className="mt-2 p-2 bg-green-50 rounded border border-green-200">
                   <p className="text-xs text-green-800">
-                    <strong>⚡ Funktion:</strong> Die Heizung startet mit allen drei Heizstäben (4,5kW gesamt) und heizt auf, bis die Vorlauftemperatur {localSettings.mode_1_coldstart_target_temp ?? 45}°C erreicht hat. Danach schaltet das System automatisch auf die normale Regelung um.
+                    <strong>⚡ Funktion:</strong> Die Heizung startet mit allen drei Heizstäben (4,5kW gesamt) und heizt auf, bis die Vorlauftemperatur {localSettings.heizung_mode_1_coldstart_target_temp ?? 45}°C erreicht hat. Danach schaltet das System automatisch auf die normale Regelung um.
                   </p>
                 </div>
               </div>
@@ -171,15 +171,15 @@ export default function OperationModeControls({
                 <span className="text-xs text-gray-600">Nach</span>
                 <input
                   type="number"
-                  value={localSettings.mode_1_l2_boost_time ?? '--'}
+                  value={localSettings.heizung_mode_1_l2_boost_time ?? '--'}
                   onChange={(e) => {
                     const value = parseInt(e.target.value)
-                    setLocalSettings(prev => ({ ...prev, mode_1_l2_boost_time: value }))
+                    setLocalSettings(prev => ({ ...prev, heizung_mode_1_l2_boost_time: value }))
                   }}
                   onBlur={(e) => {
                     const value = parseInt(e.target.value)
-                    if (value !== einstellungen?.mode_1_l2_boost_time?.value) {
-                      updateSetting('mode_1_l2_boost_time', value)
+                    if (value !== einstellungen?.heizung_mode_1_l2_boost_time?.value) {
+                      updateSetting('heizung_mode_1_l2_boost_time', value)
                     }
                   }}
                   className="input text-gray-900 w-24"
@@ -202,15 +202,15 @@ export default function OperationModeControls({
                 <span className="text-xs text-gray-600">Nach</span>
                 <input
                   type="number"
-                  value={localSettings.mode_1_l3_boost_time ?? '--'}
+                  value={localSettings.heizung_mode_1_l3_boost_time ?? '--'}
                   onChange={(e) => {
                     const value = parseInt(e.target.value)
-                    setLocalSettings(prev => ({ ...prev, mode_1_l3_boost_time: value }))
+                    setLocalSettings(prev => ({ ...prev, heizung_mode_1_l3_boost_time: value }))
                   }}
                   onBlur={(e) => {
                     const value = parseInt(e.target.value)
-                    if (value !== einstellungen?.mode_1_l3_boost_time?.value) {
-                      updateSetting('mode_1_l3_boost_time', value)
+                    if (value !== einstellungen?.heizung_mode_1_l3_boost_time?.value) {
+                      updateSetting('heizung_mode_1_l3_boost_time', value)
                     }
                   }}
                   className="input text-gray-900 w-24"
@@ -246,15 +246,15 @@ export default function OperationModeControls({
                     <span className="text-sm text-gray-600">Zieltemperatur minus</span>
                     <input
                       type="number"
-                      value={localSettings.mode_1_downshift_l3_offset ?? 3.0}
+                      value={localSettings.heizung_mode_1_downshift_l3_offset ?? 3.0}
                       onChange={(e) => {
                         const value = parseFloat(e.target.value)
-                        setLocalSettings(prev => ({ ...prev, mode_1_downshift_l3_offset: value }))
+                        setLocalSettings(prev => ({ ...prev, heizung_mode_1_downshift_l3_offset: value }))
                       }}
                       onBlur={(e) => {
                         const value = parseFloat(e.target.value)
-                        if (value !== einstellungen?.mode_1_downshift_l3_offset?.value) {
-                          updateSetting('mode_1_downshift_l3_offset', value)
+                        if (value !== einstellungen?.heizung_mode_1_downshift_l3_offset?.value) {
+                          updateSetting('heizung_mode_1_downshift_l3_offset', value)
                         }
                       }}
                       className="input text-gray-900 w-28"
@@ -280,15 +280,15 @@ export default function OperationModeControls({
                     <span className="text-sm text-gray-600">Zieltemperatur minus</span>
                     <input
                       type="number"
-                      value={localSettings.mode_1_downshift_l2_offset ?? 1.5}
+                      value={localSettings.heizung_mode_1_downshift_l2_offset ?? 1.5}
                       onChange={(e) => {
                         const value = parseFloat(e.target.value)
-                        setLocalSettings(prev => ({ ...prev, mode_1_downshift_l2_offset: value }))
+                        setLocalSettings(prev => ({ ...prev, heizung_mode_1_downshift_l2_offset: value }))
                       }}
                       onBlur={(e) => {
                         const value = parseFloat(e.target.value)
-                        if (value !== einstellungen?.mode_1_downshift_l2_offset?.value) {
-                          updateSetting('mode_1_downshift_l2_offset', value)
+                        if (value !== einstellungen?.heizung_mode_1_downshift_l2_offset?.value) {
+                          updateSetting('heizung_mode_1_downshift_l2_offset', value)
                         }
                       }}
                       className="input text-gray-900 w-28"
@@ -314,7 +314,7 @@ export default function OperationModeControls({
                     <span className="text-sm text-gray-600">Zieltemperatur</span>
                     <input
                       type="number"
-                      value={localSettings.mode_1_switchoff ?? 45}
+                      value={localSettings.heizung_mode_1_switchoff ?? 45}
                       className="input text-gray-400 w-28 cursor-not-allowed"
                       disabled={true}
                     />
@@ -330,11 +330,11 @@ export default function OperationModeControls({
               <div className="mt-4 p-3 bg-white rounded border border-blue-300">
                 <p className="text-xs font-semibold text-blue-900 mb-2">📊 Beispiel-Berechnung:</p>
                 <div className="text-xs text-gray-700 space-y-1">
-                  <div>Zieltemperatur (Ausschalten): <strong>{localSettings.mode_1_switchoff ?? 45}°C</strong></div>
+                  <div>Zieltemperatur (Ausschalten): <strong>{localSettings.heizung_mode_1_switchoff ?? 45}°C</strong></div>
                   <div className="mt-2 space-y-1 pl-4 border-l-2 border-blue-400">
-                    <div>🔴 L3 abschalten bei: <strong>{((localSettings.mode_1_switchoff ?? 45) - (localSettings.mode_1_downshift_l3_offset ?? 3.0)).toFixed(1)}°C</strong> (Ziel - {localSettings.mode_1_downshift_l3_offset ?? 3.0}°C)</div>
-                    <div>🟡 L2 abschalten bei: <strong>{((localSettings.mode_1_switchoff ?? 45) - (localSettings.mode_1_downshift_l2_offset ?? 1.5)).toFixed(1)}°C</strong> (Ziel - {localSettings.mode_1_downshift_l2_offset ?? 1.5}°C)</div>
-                    <div>🟢 L1 abschalten bei: <strong>{(localSettings.mode_1_switchoff ?? 45).toFixed(1)}°C</strong> (Ziel erreicht)</div>
+                    <div>🔴 L3 abschalten bei: <strong>{((localSettings.heizung_mode_1_switchoff ?? 45) - (localSettings.heizung_mode_1_downshift_l3_offset ?? 3.0)).toFixed(1)}°C</strong> (Ziel - {localSettings.heizung_mode_1_downshift_l3_offset ?? 3.0}°C)</div>
+                    <div>🟡 L2 abschalten bei: <strong>{((localSettings.heizung_mode_1_switchoff ?? 45) - (localSettings.heizung_mode_1_downshift_l2_offset ?? 1.5)).toFixed(1)}°C</strong> (Ziel - {localSettings.heizung_mode_1_downshift_l2_offset ?? 1.5}°C)</div>
+                    <div>🟢 L1 abschalten bei: <strong>{(localSettings.heizung_mode_1_switchoff ?? 45).toFixed(1)}°C</strong> (Ziel erreicht)</div>
                   </div>
                 </div>
               </div>

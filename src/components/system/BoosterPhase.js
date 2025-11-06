@@ -11,7 +11,7 @@ export default function BoosterPhase({
   isSaving,
   einstellungenLoading
 }) {
-  const durationKey = `phase${phase}_duration`
+  const durationKey = `heizung_phase${phase}_duration`
   const powerKey = `phase${phase}_power`
   
   const defaultPowers = {

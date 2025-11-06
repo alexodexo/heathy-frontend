@@ -25,15 +25,15 @@ export default function PumpSettings({
           <div className="flex items-center gap-2">
             <input
               type="number"
-              value={localSettings.pump_overrun_time ?? 10}
+              value={localSettings.heizung_pump_overrun_time ?? 10}
               onChange={(e) => {
                 const value = parseInt(e.target.value)
-                setLocalSettings(prev => ({ ...prev, pump_overrun_time: value }))
+                setLocalSettings(prev => ({ ...prev, heizung_pump_overrun_time: value }))
               }}
               onBlur={(e) => {
                 const value = parseInt(e.target.value)
-                if (value !== einstellungen?.pump_overrun_time?.value) {
-                  updateSetting('pump_overrun_time', value)
+                if (value !== einstellungen?.heizung_pump_overrun_time?.value) {
+                  updateSetting('heizung_pump_overrun_time', value)
                 }
               }}
               className="input text-gray-900 w-28"
@@ -62,7 +62,7 @@ export default function PumpSettings({
               type="time"
               value={(() => {
                 // Konvertiere Minuten zu HH:MM
-                const minutes = localSettings.pump_protection_time ?? 720
+                const minutes = localSettings.heizung_pump_protection_time ?? 720
                 const hours = Math.floor(minutes / 60)
                 const mins = minutes % 60
                 return `${String(hours).padStart(2, '0')}:${String(mins).padStart(2, '0')}`
@@ -71,14 +71,14 @@ export default function PumpSettings({
                 // Konvertiere HH:MM zu Minuten
                 const [hours, mins] = e.target.value.split(':').map(Number)
                 const totalMinutes = hours * 60 + mins
-                setLocalSettings(prev => ({ ...prev, pump_protection_time: totalMinutes }))
+                setLocalSettings(prev => ({ ...prev, heizung_pump_protection_time: totalMinutes }))
               }}
               onBlur={(e) => {
                 // Konvertiere HH:MM zu Minuten und speichere
                 const [hours, mins] = e.target.value.split(':').map(Number)
                 const totalMinutes = hours * 60 + mins
-                if (totalMinutes !== einstellungen?.pump_protection_time?.value) {
-                  updateSetting('pump_protection_time', totalMinutes, 'Pumpe täglich gegen Festsetzen (Minuten seit Mitternacht)')
+                if (totalMinutes !== einstellungen?.heizung_pump_protection_time?.value) {
+                  updateSetting('heizung_pump_protection_time', totalMinutes, 'Heizung Pumpe täglich gegen Festsetzen (Minuten seit Mitternacht)')
                 }
               }}
               className="input text-gray-900 w-28"

@@ -11,9 +11,9 @@ export default function BoosterSettings({
   einstellungenLoading
 }) {
   const calculateTotal = () => {
-    return (localSettings.phase1_duration ?? 10) + 
-           (localSettings.phase2_duration ?? 12) + 
-           (localSettings.phase3_duration ?? 8)
+    return (localSettings.heizung_phase1_duration ?? 10) + 
+           (localSettings.heizung_phase2_duration ?? 12) + 
+           (localSettings.heizung_phase3_duration ?? 8)
   }
 
   return (
