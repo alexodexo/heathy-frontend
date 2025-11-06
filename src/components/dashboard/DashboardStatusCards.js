@@ -2,10 +2,16 @@
 import StatusCard from '@/components/StatusCard'
 import { BeakerIcon, FireIcon } from '@heroicons/react/24/outline'
 
-export default function DashboardStatusCards({ currentData, currentLoading, fritzDevices, fritzLoading }) {
+export default function DashboardStatusCards({ currentData, currentLoading, fritzDevices, fritzLoading, weatherData, weatherLoading }) {
   // Extract temperature values from Fritz devices
   const roomAlexTemp = fritzDevices?.zimmer_alex?.temperature
   const roomBueroTemp = fritzDevices?.buero?.temperature
+  
+  // Extract weather data
+  const outdoorTemp = weatherData?.temperature ? parseFloat(weatherData.temperature) : null
+  const minTemp = weatherData?.min_temp_today != null ? weatherData.min_temp_today : null
+  const maxTemp = weatherData?.max_temp_today != null ? weatherData.max_temp_today : null
+  const sunshineHours = weatherData?.sunshine_hours_today
   return (
     <div className="grid grid-cols-2 gap-4 md:gap-6">
       <StatusCard
@@ -48,12 +54,16 @@ export default function DashboardStatusCards({ currentData, currentLoading, frit
       />
       <StatusCard
         title="Außentemperatur"
-        value={currentData?.temperatures?.outdoor_temp?.toFixed(1) || '--'}
+        value={outdoorTemp !== null ? outdoorTemp.toFixed(1) : '--'}
         unit="°C"
-        secondaryValue={`-- min. -- max. °C`}
+        secondaryValue={
+          minTemp !== null && maxTemp !== null
+            ? `${minTemp.toFixed(1)} min. ${maxTemp.toFixed(1)} max. °C`
+            : '-- min. -- max. °C'
+        }
         secondaryUnit=""
         secondaryTitle="Prognose heute"
-        tertiaryValue={currentData?.weather?.sunshine_hours?.toFixed(1) || '--'}
+        tertiaryValue={sunshineHours !== null && sunshineHours !== undefined ? sunshineHours.toFixed(1) : '--'}
         tertiaryUnit="h"
         tertiaryTitle="Sonnenstunden heute"
         icon={() => (
@@ -64,7 +74,7 @@ export default function DashboardStatusCards({ currentData, currentLoading, frit
           </svg>
         )}
         color="primary"
-        loading={currentLoading}
+        loading={weatherLoading}
       />
       <StatusCard
         title="Wohnzimmer"

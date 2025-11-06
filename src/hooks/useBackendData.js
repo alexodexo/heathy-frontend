@@ -213,3 +213,25 @@ export function useFritzDevices() {
     refresh: mutate,
   }
 }
+
+export function useWeatherData() {
+  const { data, error, isLoading, mutate } = useSWR(
+    'weather-data',
+    async () => {
+      const response = await fetch('/api/weather/latest')
+      if (!response.ok) throw new Error('Failed to fetch weather data')
+      return response.json()
+    },
+    {
+      refreshInterval: API_CONFIG.REFRESH_INTERVALS.CURRENT_DATA, // Same refresh as current data
+      // revalidateOnFocus und revalidateOnReconnect werden global deaktiviert
+    }
+  )
+
+  return {
+    data: data || null,
+    isLoading,
+    isError: error,
+    refresh: mutate,
+  }
+}
