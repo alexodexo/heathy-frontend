@@ -33,14 +33,14 @@ export default async function handler(req, res) {
         startTime.setHours(now.getHours() - 24)
     }
 
-    // Fetch electricity price from settings
+    // Fetch electricity price from einstellungen table
     const { data: priceData, error: priceError } = await supabase
-      .from('parameter_settings')
+      .from('einstellungen')
       .select('value')
-      .eq('key', 'electricity_price')
+      .eq('key', 'strompreis')
       .single()
 
-    const electricityPrice = priceData?.value || 0.25 // Default price per kWh
+    const electricityPrice = parseFloat(priceData?.value) || 0.25 // Default price per kWh
 
     // Fetch energy consumption data
     const { data: energyData, error: energyError } = await supabase

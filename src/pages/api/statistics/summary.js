@@ -11,16 +11,16 @@ export default async function handler(req, res) {
     const now = new Date()
     const yesterday = new Date(now.getTime() - 24 * 60 * 60 * 1000)
 
-    // Fetch latest heating status
-    const { data: latestStatus, error: statusError } = await supabase
-      .from('heating_status')
+    // Fetch latest temperature data
+    const { data: latestTemp, error: tempStatusError } = await supabase
+      .from('temperature_data')
       .select('*')
       .order('created_at', { ascending: false })
       .limit(1)
       .single()
 
-    if (statusError && statusError.code !== 'PGRST116') {
-      console.error('Error fetching heating status:', statusError)
+    if (tempStatusError && tempStatusError.code !== 'PGRST116') {
+      console.error('Error fetching latest temperature:', tempStatusError)
     }
 
     // Fetch 24h energy data for averages
@@ -33,10 +33,10 @@ export default async function handler(req, res) {
       console.error('Error fetching energy data:', energyError)
     }
 
-    // Fetch 24h temperature data
+    // Fetch 24h temperature data from temperature_data
     const { data: tempData24h, error: tempError } = await supabase
-      .from('heating_status')
-      .select('water_temp, vorlauf_temp, ruecklauf_temp')
+      .from('temperature_data')
+      .select('t1, t2, t3')
       .gte('created_at', yesterday.toISOString())
 
     if (tempError) {
@@ -47,11 +47,11 @@ export default async function handler(req, res) {
     const energyAvg = calculateEnergyAverages(energyData24h || [])
     const tempAvg = calculateTempAverages(tempData24h || [])
 
-    // Get electricity price
+    // Get electricity price from einstellungen table
     const { data: priceData } = await supabase
-      .from('parameter_settings')
+      .from('einstellungen')
       .select('value')
-      .eq('key', 'electricity_price')
+      .eq('key', 'strompreis')
       .single()
 
     const electricityPrice = parseFloat(priceData?.value || 0.25)
@@ -64,11 +64,9 @@ export default async function handler(req, res) {
       success: true,
       data: {
         current: {
-          activeMode: latestStatus?.active_mode_name || 'Unbekannt',
-          waterTemp: parseFloat(latestStatus?.water_temp || 0).toFixed(1),
-          vorlaufTemp: parseFloat(latestStatus?.vorlauf_temp || 0).toFixed(1),
-          ruecklaufTemp: parseFloat(latestStatus?.ruecklauf_temp || 0).toFixed(1),
-          currentPwm: parseFloat(latestStatus?.current_pwm || 0).toFixed(0),
+          waterTemp: parseFloat(latestTemp?.t1 || 0).toFixed(1),
+          vorlaufTemp: parseFloat(latestTemp?.t2 || 0).toFixed(1),
+          ruecklaufTemp: parseFloat(latestTemp?.t3 || 0).toFixed(1),
         },
         averages24h: {
           ...energyAvg,
@@ -116,28 +114,32 @@ function calculateTempAverages(data) {
       waterTemp: 0,
       vorlaufTemp: 0,
       ruecklaufTemp: 0,
+      tempDiff: 0,
     }
   }
 
-  const validData = data.filter(d => d.water_temp && d.vorlauf_temp && d.ruecklauf_temp)
-  if (validData.length === 0) {
+  const waterTemps = data.map(d => parseFloat(d.t1)).filter(t => !isNaN(t))  // t1 = Warmwasser
+  const vorlaufTemps = data.map(d => parseFloat(d.t2)).filter(t => !isNaN(t))  // t2 = Vorlauf
+  const ruecklaufTemps = data.map(d => parseFloat(d.t3)).filter(t => !isNaN(t))  // t3 = Rücklauf
+  
+  if (waterTemps.length === 0 || vorlaufTemps.length === 0 || ruecklaufTemps.length === 0) {
     return {
       waterTemp: 0,
       vorlaufTemp: 0,
       ruecklaufTemp: 0,
+      tempDiff: 0,
     }
   }
 
-  const sum = validData.reduce((acc, d) => ({
-    water: acc.water + parseFloat(d.water_temp),
-    vorlauf: acc.vorlauf + parseFloat(d.vorlauf_temp),
-    ruecklauf: acc.ruecklauf + parseFloat(d.ruecklauf_temp),
-  }), { water: 0, vorlauf: 0, ruecklauf: 0 })
+  const waterAvg = waterTemps.reduce((a, b) => a + b, 0) / waterTemps.length
+  const vorlaufAvg = vorlaufTemps.reduce((a, b) => a + b, 0) / vorlaufTemps.length
+  const ruecklaufAvg = ruecklaufTemps.reduce((a, b) => a + b, 0) / ruecklaufTemps.length
 
   return {
-    waterTemp: (sum.water / validData.length).toFixed(1),
-    vorlaufTemp: (sum.vorlauf / validData.length).toFixed(1),
-    ruecklaufTemp: (sum.ruecklauf / validData.length).toFixed(1),
+    waterTemp: waterAvg.toFixed(1),
+    vorlaufTemp: vorlaufAvg.toFixed(1),
+    ruecklaufTemp: ruecklaufAvg.toFixed(1),
+    tempDiff: (vorlaufAvg - ruecklaufAvg).toFixed(1),
   }
 }
 

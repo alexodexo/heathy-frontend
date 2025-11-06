@@ -33,18 +33,8 @@ export default async function handler(req, res) {
         startTime.setHours(now.getHours() - 24)
     }
 
-    // Fetch temperature data from heating_status
-    const { data: heatingData, error: heatingError } = await supabase
-      .from('heating_status')
-      .select('created_at, water_temp, vorlauf_temp, ruecklauf_temp, target_temp')
-      .gte('created_at', startTime.toISOString())
-      .order('created_at', { ascending: true })
-
-    if (heatingError) {
-      console.error('Error fetching heating temperature data:', heatingError)
-    }
-
-    // Fetch raw temperature sensor data
+    // Fetch raw temperature sensor data from temperature_data
+    // t1 = Warmwasser, t2 = Vorlauf, t3 = Rücklauf
     const { data: sensorData, error: sensorError } = await supabase
       .from('temperature_data')
       .select('created_at, t1, t2, t3')
@@ -52,14 +42,15 @@ export default async function handler(req, res) {
       .order('created_at', { ascending: true })
 
     if (sensorError) {
-      console.error('Error fetching sensor temperature data:', sensorError)
+      console.error('Error fetching temperature data:', sensorError)
+      throw sensorError
     }
 
-    // Combine and process data
-    const processedData = combineTemperatureData(heatingData || [], sensorData || [], range)
+    // Process temperature data
+    const processedData = processTemperatureData(sensorData || [], range)
 
     // Calculate statistics
-    const stats = calculateTemperatureStats(heatingData || [])
+    const stats = calculateTemperatureStats(sensorData || [])
 
     return res.status(200).json({
       success: true,
@@ -76,19 +67,18 @@ export default async function handler(req, res) {
   }
 }
 
-function combineTemperatureData(heatingData, sensorData, range) {
+function processTemperatureData(sensorData, range) {
   // Determine sampling rate based on range
   const samplingRate = getSamplingRate(range)
   
-  // Sample heating data
-  const sampledHeating = sampleData(heatingData, samplingRate)
+  // Sample sensor data
+  const sampledData = sampleData(sensorData, samplingRate)
   
-  return sampledHeating.map(h => ({
-    timestamp: h.created_at,
-    water_temp: parseFloat(h.water_temp) || null,
-    vorlauf_temp: parseFloat(h.vorlauf_temp) || null,
-    ruecklauf_temp: parseFloat(h.ruecklauf_temp) || null,
-    target_temp: parseFloat(h.target_temp) || null,
+  return sampledData.map(d => ({
+    timestamp: d.created_at,
+    water_temp: parseFloat(d.t1) || null,  // t1 = Warmwasser
+    vorlauf_temp: parseFloat(d.t2) || null,  // t2 = Vorlauf
+    ruecklauf_temp: parseFloat(d.t3) || null,  // t3 = Rücklauf
   }))
 }
 
@@ -126,9 +116,9 @@ function calculateTemperatureStats(data) {
     }
   }
 
-  const waterTemps = data.map(d => parseFloat(d.water_temp)).filter(t => !isNaN(t))
-  const vorlaufTemps = data.map(d => parseFloat(d.vorlauf_temp)).filter(t => !isNaN(t))
-  const ruecklaufTemps = data.map(d => parseFloat(d.ruecklauf_temp)).filter(t => !isNaN(t))
+  const waterTemps = data.map(d => parseFloat(d.t1)).filter(t => !isNaN(t))  // t1 = Warmwasser
+  const vorlaufTemps = data.map(d => parseFloat(d.t2)).filter(t => !isNaN(t))  // t2 = Vorlauf
+  const ruecklaufTemps = data.map(d => parseFloat(d.t3)).filter(t => !isNaN(t))  // t3 = Rücklauf
 
   const waterTempAvg = waterTemps.length > 0 ? waterTemps.reduce((a, b) => a + b, 0) / waterTemps.length : 0
   const vorlaufTempAvg = vorlaufTemps.length > 0 ? vorlaufTemps.reduce((a, b) => a + b, 0) / vorlaufTemps.length : 0
