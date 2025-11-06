@@ -161,7 +161,7 @@ export default function OperationModeControls({
 
           {/* L2 und L3 Booster */}
           <div className="space-y-3 mb-4 pb-4 border-b border-gray-300">
-            <h5 className="text-xs font-semibold text-gray-800 uppercase tracking-wide mb-3">⚡ Verzögerungs-Booster</h5>
+            <h5 className="text-xs font-semibold text-gray-800 mb-3">regulierter Normalbetrieb</h5>
             <p className="text-xs text-gray-600 mb-3">
               Automatisches Zuschalten zusätzlicher Heizstäbe, wenn die Zieltemperatur nicht rechtzeitig erreicht wird.
             </p>

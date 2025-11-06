@@ -20,7 +20,7 @@ export default function PumpSettings({
       <div>
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
-            Nachlaufzeit nach Ausschalten der Heizstäbe
+            Nachlaufzeit
           </label>
           <div className="flex items-center gap-2">
             <input

@@ -30,23 +30,38 @@ export default function SystemSettings() {
     { id: 1, start: '06:00', end: '22:00' }
   ])
   
-  // Update local settings when backend data changes
+  // Update local settings when backend data changes (nur wenn wirklich geändert)
   useEffect(() => {
     if (allSettings?.settings) {
-      setLocalSettings(allSettings.settings)
+      // Nur updaten wenn sich tatsächlich etwas geändert hat
+      const newSettings = allSettings.settings
+      const hasChanged = JSON.stringify(newSettings) !== JSON.stringify(localSettings)
+      if (hasChanged && Object.keys(localSettings).length > 0) {
+        setLocalSettings(newSettings)
+      } else if (Object.keys(localSettings).length === 0) {
+        // Initial load
+        setLocalSettings(newSettings)
+      }
     }
-  }, [allSettings])
+  }, [allSettings]) // eslint-disable-line react-hooks/exhaustive-deps
 
-  // Update local parameter settings when data changes
+  // Update local parameter settings when data changes (nur wenn wirklich geändert)
   useEffect(() => {
     if (parameterSettings) {
       const localParams = {}
       Object.keys(parameterSettings).forEach(key => {
         localParams[key] = parameterSettings[key].value
       })
-      setLocalParameterSettings(localParams)
+      // Nur updaten wenn sich tatsächlich etwas geändert hat
+      const hasChanged = JSON.stringify(localParams) !== JSON.stringify(localParameterSettings)
+      if (hasChanged && Object.keys(localParameterSettings).length > 0) {
+        setLocalParameterSettings(localParams)
+      } else if (Object.keys(localParameterSettings).length === 0) {
+        // Initial load
+        setLocalParameterSettings(localParams)
+      }
     }
-  }, [parameterSettings])
+  }, [parameterSettings]) // eslint-disable-line react-hooks/exhaustive-deps
 
   // Update individual setting
   const updateSetting = useCallback(async (key, value) => {

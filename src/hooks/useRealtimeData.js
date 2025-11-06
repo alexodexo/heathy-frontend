@@ -5,7 +5,8 @@ const fetcher = (url) => fetch(url).then((res) => res.json())
 
 export function useEM3Data() {
   const { data, error, isLoading } = useSWR('/api/em3/latest', fetcher, {
-    refreshInterval: 5000, // Refresh every 5 seconds
+    refreshInterval: 60000, // Refresh every 60 seconds (erhöht für ruhigere Seiten)
+    // revalidateOnFocus und revalidateOnReconnect werden global deaktiviert
   })
 
   return {
@@ -17,7 +18,8 @@ export function useEM3Data() {
 
 export function useTemperatureData() {
   const { data, error, isLoading } = useSWR('/api/temperature/latest', fetcher, {
-    refreshInterval: 30000, // Refresh every 30 seconds
+    refreshInterval: 60000, // Refresh every 60 seconds (erhöht)
+    // revalidateOnFocus und revalidateOnReconnect werden global deaktiviert
   })
 
   return {
@@ -30,6 +32,7 @@ export function useTemperatureData() {
 export function useWeatherData() {
   const { data, error, isLoading } = useSWR('/api/weather/latest', fetcher, {
     refreshInterval: 3600000, // Refresh every hour
+    // revalidateOnFocus und revalidateOnReconnect werden global deaktiviert
   })
 
   return {

@@ -11,6 +11,7 @@ export function useHeatingStatus() {
     () => backendAPI.getHeatingStatus(),
     {
       refreshInterval: API_CONFIG.REFRESH_INTERVALS.HEATING_STATUS,
+      // revalidateOnFocus und revalidateOnReconnect werden global deaktiviert
       errorRetryCount: API_CONFIG.RETRY_CONFIG.COUNT,
       errorRetryInterval: API_CONFIG.RETRY_CONFIG.INTERVAL,
     }
@@ -30,6 +31,7 @@ export function useHeatingModes() {
     () => backendAPI.getHeatingModes(),
     {
       refreshInterval: API_CONFIG.REFRESH_INTERVALS.HEATING_MODES,
+      // revalidateOnFocus und revalidateOnReconnect werden global deaktiviert
     }
   )
 
@@ -47,6 +49,7 @@ export function useCurrentData() {
     () => backendAPI.getCurrentData(),
     {
       refreshInterval: API_CONFIG.REFRESH_INTERVALS.CURRENT_DATA,
+      // revalidateOnFocus und revalidateOnReconnect werden global deaktiviert
     }
   )
 
@@ -64,6 +67,7 @@ export function useSystemHealth() {
     () => backendAPI.getSystemHealth(),
     {
       refreshInterval: API_CONFIG.REFRESH_INTERVALS.SYSTEM_HEALTH,
+      // revalidateOnFocus und revalidateOnReconnect werden global deaktiviert
     }
   )
 
@@ -81,6 +85,7 @@ export function useSystemStats() {
     () => backendAPI.getSystemStats(),
     {
       refreshInterval: API_CONFIG.REFRESH_INTERVALS.SYSTEM_STATS,
+      // revalidateOnFocus und revalidateOnReconnect werden global deaktiviert
     }
   )
 
@@ -98,6 +103,7 @@ export function useAllSettings() {
     () => backendAPI.getAllSettings(),
     {
       refreshInterval: API_CONFIG.REFRESH_INTERVALS.SETTINGS,
+      // revalidateOnFocus und revalidateOnReconnect werden global deaktiviert
     }
   )
 
@@ -115,6 +121,7 @@ export function useWarmwaterSettings() {
     () => backendAPI.getWarmwaterSettings(),
     {
       refreshInterval: API_CONFIG.REFRESH_INTERVALS.SETTINGS,
+      // revalidateOnFocus und revalidateOnReconnect werden global deaktiviert
     }
   )
 
@@ -132,6 +139,7 @@ export function useSensorSettings() {
     () => backendAPI.getSensorSettings(),
     {
       refreshInterval: API_CONFIG.REFRESH_INTERVALS.SETTINGS,
+      // revalidateOnFocus und revalidateOnReconnect werden global deaktiviert
     }
   )
 
@@ -153,6 +161,7 @@ export function usePlugsData() {
     },
     {
       refreshInterval: API_CONFIG.REFRESH_INTERVALS.CURRENT_DATA, // Same refresh as current data
+      // revalidateOnFocus und revalidateOnReconnect werden global deaktiviert
     }
   )
 
@@ -170,7 +179,7 @@ export function useParameterSettings() {
     () => backendAPI.getParameterSettings(),
     {
       refreshInterval: API_CONFIG.REFRESH_INTERVALS.SETTINGS,
-      revalidateOnFocus: true, // Force reload when window focused
+      // revalidateOnFocus und revalidateOnReconnect werden global deaktiviert
     }
   )
 
