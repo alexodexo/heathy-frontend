@@ -1,20 +1,77 @@
 // src/pages/heating.js
+import { useState, useCallback, useEffect } from 'react'
 import Head from 'next/head'
+import { motion } from 'framer-motion'
+import { toast } from 'react-hot-toast'
 import { 
   useCurrentData, 
   useHeatingStatus, 
-  useSystemStats 
+  useSystemStats,
+  useParameterSettings
 } from '@/hooks/useBackendData'
 import { useTemperatureData } from '@/hooks/useRealtimeData'
+import { backendAPI } from '@/lib/api'
 import HeatingStatusCards from '@/components/heating/HeatingStatusCards'
 import HeatingModeSelection from '@/components/heating/HeatingModeSelection'
 import HeatingCostOverview from '@/components/heating/HeatingCostOverview'
+import HeatingSettingsSection from '@/components/system/HeatingSettingsSection'
 
 export default function HeatingControl() {
   const { data: currentData, isLoading: currentLoading } = useCurrentData()
   const { data: heatingStatus, isLoading: statusLoading } = useHeatingStatus()
   const { data: systemStats } = useSystemStats()
   const { data: temperatureData, isLoading: temperatureLoading } = useTemperatureData()
+  const { data: parameterSettings, isLoading: parameterLoading, refresh: refreshParameterSettings } = useParameterSettings()
+  
+  const [isSaving, setIsSaving] = useState(false)
+  const [localParameterSettings, setLocalParameterSettings] = useState({})
+  const [timeSlots, setTimeSlots] = useState([
+    { id: 0, start: '06:00', end: '22:00' },
+    { id: 1, start: '06:00', end: '22:00' }
+  ])
+
+  // Update local parameter settings when data changes
+  useEffect(() => {
+    if (parameterSettings) {
+      const localParams = {}
+      Object.keys(parameterSettings).forEach(key => {
+        localParams[key] = parameterSettings[key].value
+      })
+      const hasChanged = JSON.stringify(localParams) !== JSON.stringify(localParameterSettings)
+      if (hasChanged && Object.keys(localParameterSettings).length > 0) {
+        setLocalParameterSettings(localParams)
+      } else if (Object.keys(localParameterSettings).length === 0) {
+        setLocalParameterSettings(localParams)
+      }
+    }
+  }, [parameterSettings]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Update parameter setting
+  const updateParameterSetting = useCallback(async (key, value) => {
+    setIsSaving(true)
+    try {
+      const response = await backendAPI.updateParameterSetting(key, value)
+      if (response.success) {
+        toast.success(`Einstellung erfolgreich aktualisiert`)
+        setLocalParameterSettings(prev => ({ ...prev, [key]: value }))
+        await refreshParameterSettings()
+      } else {
+        toast.error(`Fehler beim Aktualisieren der Einstellung`)
+      }
+    } catch (error) {
+      console.error(`Error updating parameter setting ${key}:`, error)
+      toast.error(`Fehler beim Aktualisieren der Einstellung`)
+    } finally {
+      setIsSaving(false)
+    }
+  }, [refreshParameterSettings])
+
+  // Update time slot
+  const updateTimeSlot = useCallback((slotId, field, value) => {
+    setTimeSlots(prev => prev.map(slot => 
+      slot.id === slotId ? { ...slot, [field]: value } : slot
+    ))
+  }, [])
 
   // Calculate heating-specific data
   const getHeatingData = () => {
@@ -86,7 +143,7 @@ export default function HeatingControl() {
 
   const consumptionData = calculateHeatingConsumption()
 
-  if (currentLoading && statusLoading) {
+  if (currentLoading && statusLoading && parameterLoading) {
     return (
       <div className="max-w-7xl mx-auto p-6">
         <div className="text-center py-12">
@@ -125,6 +182,32 @@ export default function HeatingControl() {
 
         {/* Cost & Consumption Overview */}
         <HeatingCostOverview costData={costData} consumptionData={consumptionData} />
+
+        {/* Heating Settings */}
+        <HeatingSettingsSection
+          localParameterSettings={localParameterSettings}
+          setLocalParameterSettings={setLocalParameterSettings}
+          parameterSettings={parameterSettings}
+          updateParameterSetting={updateParameterSetting}
+          timeSlots={timeSlots}
+          updateTimeSlot={updateTimeSlot}
+          isSaving={isSaving}
+          parameterLoading={parameterLoading}
+        />
+
+        {/* Save Status */}
+        {isSaving && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="fixed bottom-4 right-4 bg-primary-500 text-white px-4 py-2 rounded-xl shadow-lg"
+          >
+            <div className="flex items-center gap-2">
+              <div className="inline-block animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+              <span>Speichere...</span>
+            </div>
+          </motion.div>
+        )}
       </div>
     </>
   )
