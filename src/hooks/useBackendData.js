@@ -257,3 +257,26 @@ export function useEinstellungen() {
     refresh: mutate,
   }
 }
+
+export function useAblesungen() {
+  const { data, error, isLoading, mutate } = useSWR(
+    'ablesungen',
+    async () => {
+      const response = await fetch('/api/ablesungen')
+      if (!response.ok) throw new Error('Failed to fetch ablesungen')
+      const result = await response.json()
+      return result.data || []
+    },
+    {
+      refreshInterval: API_CONFIG.REFRESH_INTERVALS.SETTINGS,
+      // revalidateOnFocus und revalidateOnReconnect werden global deaktiviert
+    }
+  )
+
+  return {
+    data: data || [],
+    isLoading,
+    isError: error,
+    refresh: mutate,
+  }
+}

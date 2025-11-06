@@ -11,7 +11,6 @@ import {
 import { backendAPI } from '@/lib/api'
 import { ArrowPathIcon } from '@heroicons/react/24/outline'
 import HeatingSettingsSection from '@/components/system/HeatingSettingsSection'
-import BillingSettingsSection from '@/components/system/BillingSettingsSection'
 
 
 export default function SystemSettings() {
@@ -182,15 +181,6 @@ export default function SystemSettings() {
           updateTimeSlot={updateTimeSlot}
           isSaving={isSaving}
           parameterLoading={parameterLoading}
-        />
-
-        {/* Billing Settings */}
-        <BillingSettingsSection
-          localSettings={localSettings}
-          setLocalSettings={setLocalSettings}
-          allSettings={allSettings}
-          updateSetting={updateSetting}
-          isSaving={isSaving}
         />
 
         {/* Save Status */}

@@ -10,6 +10,7 @@ import {
   FireIcon,
   ChartBarIcon,
   Cog6ToothIcon,
+  CurrencyEuroIcon,
   ExclamationTriangleIcon,
   CheckCircleIcon,
 } from '@heroicons/react/24/outline'
@@ -19,6 +20,7 @@ const navigation = [
   { name: 'Warmwasser', href: '/warmwater', icon: BeakerIcon },
   { name: 'Heizung', href: '/heating', icon: FireIcon },
   { name: 'System', href: '/system', icon: Cog6ToothIcon },
+  { name: 'Abrechnung', href: '/abrechnung', icon: CurrencyEuroIcon },
   { name: 'Statistiken', href: '/statistics', icon: ChartBarIcon },
 
 ]
@@ -114,7 +116,7 @@ export default function Layout({ children }) {
 
       {/* Mobile Bottom Navigation */}
       <nav className="glass fixed bottom-0 left-0 right-0 z-50 md:hidden safe-bottom border-t border-gray-200">
-        <div className="grid grid-cols-5 h-16">
+        <div className="grid grid-cols-6 h-16">
           {navigation.map((item) => {
             const isActive = router.pathname === item.href
             const Icon = item.icon
