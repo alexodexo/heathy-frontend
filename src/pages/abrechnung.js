@@ -339,14 +339,14 @@ export default function Abrechnung() {
           transition={{ delay: 0.3 }}
           className="card p-0 overflow-hidden"
         >
-          <div className="bg-gradient-to-br from-gray-700 via-gray-800 to-gray-900 p-6">
+          <div className="bg-gradient-to-br from-indigo-500 via-indigo-600 to-indigo-700 p-6">
             <div className="flex items-center gap-3 text-white">
               <div className="p-3 bg-white/20 backdrop-blur-sm rounded-xl">
                 <CalendarIcon className="w-7 h-7" />
               </div>
               <div>
                 <h2 className="text-2xl font-bold">Ablesungen Historie</h2>
-                <p className="text-gray-300 text-sm mt-0.5">Alle erfassten Zählerstände im Überblick</p>
+                <p className="text-indigo-100 text-sm mt-0.5">Alle erfassten Zählerstände im Überblick</p>
               </div>
             </div>
           </div>

@@ -14,18 +14,7 @@ export default function OperationModeControls({
   einstellungenLoading
 }) {
   return (
-    <div className="bg-white p-6 rounded-lg border border-gray-200 shadow-sm">
-      <div className="flex items-center gap-3 mb-4">
-        <div className="p-2 rounded-lg bg-purple-100">
-          <FireIcon className="w-5 h-5 text-purple-600" />
-        </div>
-        <h3 className="text-lg font-semibold text-gray-900">Betriebsmodus Steuerung</h3>
-      </div>
-      
-      <p className="text-sm text-gray-600 mb-6">Konfiguriere die Vorlauftemperaturen für die einzelnen Betriebsmodi.</p>
-
-      {/* Modi Einstellungen */}
-      <div className="space-y-6">
+    <div className="space-y-6">
         {/* Modus 1 - Normalbetrieb */}
         <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
           <h4 className="text-sm font-semibold text-gray-900 mb-4">Normalbetrieb Beginn mit 1,5kW (L1)</h4>
@@ -354,23 +343,15 @@ export default function OperationModeControls({
           </div>
         </div>
 
-        {/* Modus 2 - Booster Einstellungen */}
-        <BoosterSettings
-          localSettings={localSettings}
-          setLocalSettings={setLocalSettings}
-          einstellungen={einstellungen}
-          updateSetting={updateSetting}
-          isSaving={isSaving}
-          einstellungenLoading={einstellungenLoading}
-        />
-      </div>
-
-      {/* Info Text */}
-      <div className="mt-4 p-3 bg-green-50 rounded-lg">
-        <p className="text-sm text-green-800">
-          <strong>Hinweis:</strong> Konfiguriere die Vorlauftemperaturen für jeden Betriebsmodus.
-        </p>
-      </div>
+      {/* Modus 2 - Booster Einstellungen */}
+      <BoosterSettings
+        localSettings={localSettings}
+        setLocalSettings={setLocalSettings}
+        einstellungen={einstellungen}
+        updateSetting={updateSetting}
+        isSaving={isSaving}
+        einstellungenLoading={einstellungenLoading}
+      />
     </div>
   )
 }
