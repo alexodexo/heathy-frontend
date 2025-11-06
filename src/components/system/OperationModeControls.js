@@ -105,11 +105,11 @@ export default function OperationModeControls({
               <input
                 type="checkbox"
                 id="mode_1_coldstart_enabled"
-                checked={localSettings.mode_1_coldstart_enabled ?? false}
+                checked={!!localSettings.mode_1_coldstart_enabled}
                 onChange={(e) => {
-                  const value = e.target.checked
+                  const value = e.target.checked ? 1 : 0
                   setLocalSettings(prev => ({ ...prev, mode_1_coldstart_enabled: value }))
-                  updateSetting('mode_1_coldstart_enabled', value)
+                  updateSetting('mode_1_coldstart_enabled', value, 'Modus 1: Kaltstart-Boost aktiviert (0=false, 1=true)')
                 }}
                 className="w-4 h-4 text-primary-600 bg-gray-100 border-gray-300 rounded focus:ring-primary-500"
                 disabled={isSaving || einstellungenLoading}

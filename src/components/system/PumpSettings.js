@@ -60,15 +60,25 @@ export default function PumpSettings({
             <span className="text-xs text-gray-600">Täglich um</span>
             <input
               type="time"
-              value={localSettings.pump_protection_time ?? '12:00'}
+              value={(() => {
+                // Konvertiere Minuten zu HH:MM
+                const minutes = localSettings.pump_protection_time ?? 720
+                const hours = Math.floor(minutes / 60)
+                const mins = minutes % 60
+                return `${String(hours).padStart(2, '0')}:${String(mins).padStart(2, '0')}`
+              })()}
               onChange={(e) => {
-                const value = e.target.value
-                setLocalSettings(prev => ({ ...prev, pump_protection_time: value }))
+                // Konvertiere HH:MM zu Minuten
+                const [hours, mins] = e.target.value.split(':').map(Number)
+                const totalMinutes = hours * 60 + mins
+                setLocalSettings(prev => ({ ...prev, pump_protection_time: totalMinutes }))
               }}
               onBlur={(e) => {
-                const value = e.target.value
-                if (value !== einstellungen?.pump_protection_time?.value) {
-                  updateSetting('pump_protection_time', value)
+                // Konvertiere HH:MM zu Minuten und speichere
+                const [hours, mins] = e.target.value.split(':').map(Number)
+                const totalMinutes = hours * 60 + mins
+                if (totalMinutes !== einstellungen?.pump_protection_time?.value) {
+                  updateSetting('pump_protection_time', totalMinutes, 'Pumpe täglich gegen Festsetzen (Minuten seit Mitternacht)')
                 }
               }}
               className="input text-gray-900 w-28"

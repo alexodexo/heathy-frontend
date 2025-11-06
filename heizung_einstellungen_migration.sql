@@ -5,7 +5,7 @@ INSERT INTO einstellungen (key, value, description, updated_at)
 VALUES
   ('mode_1_switchon', 40, 'Modus 1: Einschalten bei ≤ Temperatur (°C)', NOW()),
   ('mode_1_switchoff', 45, 'Modus 1: Ausschalten bei ≥ Temperatur (°C)', NOW()),
-  ('mode_1_coldstart_enabled', false, 'Modus 1: Kaltstart-Boost aktiviert', NOW()),
+  ('mode_1_coldstart_enabled', 0, 'Modus 1: Kaltstart-Boost aktiviert (0=false, 1=true)', NOW()),
   ('mode_1_coldstart_target_temp', 45, 'Modus 1: Kaltstart-Boost Zieltemperatur (°C)', NOW()),
   ('mode_1_l2_boost_time', 15, 'Modus 1: L2 Heizstab nach X Minuten zuschalten', NOW()),
   ('mode_1_l3_boost_time', 30, 'Modus 1: L3 Heizstab nach X Minuten zuschalten', NOW()),
@@ -25,6 +25,6 @@ ON CONFLICT (key) DO NOTHING;
 INSERT INTO einstellungen (key, value, description, updated_at)
 VALUES
   ('pump_overrun_time', 10, 'Zirkulationspumpe Nachlaufzeit (Minuten)', NOW()),
-  ('pump_protection_time', '12:00', 'Pumpe täglich gegen Festsetzen um Uhrzeit', NOW())
+  ('pump_protection_time', 720, 'Pumpe täglich gegen Festsetzen (Minuten seit Mitternacht, 720=12:00)', NOW())
 ON CONFLICT (key) DO NOTHING;
 
