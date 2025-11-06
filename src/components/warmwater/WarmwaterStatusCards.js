@@ -22,6 +22,7 @@ export default function WarmwaterStatusCards({
         icon={BeakerIcon}
         color={Number(waterTemp) > 50 ? 'success' : 'warning'}
         loading={currentLoading}
+        size="lg"
       />
       <StatusCard
         title="Heizleistung"
@@ -30,6 +31,7 @@ export default function WarmwaterStatusCards({
         icon={BoltIcon}
         color={Number(heatingPower) > 0 ? 'success' : 'primary'}
         loading={statusLoading}
+        size="lg"
       />
     </div>
   )

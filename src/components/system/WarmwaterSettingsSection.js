@@ -1,115 +1,156 @@
 // src/components/system/WarmwaterSettingsSection.js
 import { motion } from 'framer-motion'
-import { BeakerIcon } from '@heroicons/react/24/outline'
+import { BeakerIcon, BoltIcon } from '@heroicons/react/24/outline'
 
 export default function WarmwaterSettingsSection({ 
-  localParameterSettings, 
-  setLocalParameterSettings,
-  parameterSettings,
-  updateParameterSetting,
+  localSettings, 
+  setLocalSettings,
+  einstellungen,
+  updateSetting,
   isSaving,
-  parameterLoading 
+  einstellungenLoading 
 }) {
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: 0.1 }}
+      transition={{ delay: 0.2 }}
       className="card p-0 overflow-hidden"
     >
-      {/* Warmwater Header */}
-      <div className="bg-gradient-to-r from-blue-500 to-blue-600 text-white px-4 md:px-6 py-3 md:py-4">
-        <div className="flex items-center gap-2 md:gap-3">
-          <BeakerIcon className="w-5 h-5 md:w-6 md:h-6" />
-          <h2 className="text-base md:text-xl font-semibold">Warmwasser-Einstellungen</h2>
+      {/* Header mit Gradient */}
+      <div className="bg-gradient-to-br from-blue-500 via-blue-600 to-blue-700 p-6">
+        <div className="flex items-center gap-3 text-white">
+          <div className="p-3 bg-white/20 backdrop-blur-sm rounded-xl">
+            <BeakerIcon className="w-7 h-7" />
+          </div>
+          <div>
+            <h2 className="text-2xl font-bold">Einstellungen</h2>
+            <p className="text-blue-100 text-sm mt-0.5">Schalttemperaturen und Leistung konfigurieren</p>
+          </div>
         </div>
-        <p className="text-blue-100 text-xs md:text-sm mt-1">Schalttemperaturen für Warmwasser</p>
       </div>
       
-      <div className="p-4 md:p-6">
-        <div className="space-y-4 md:space-y-6">
-          {/* Modus 1 + Leistung Heizstab in separaten Boxen */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
-            {/* Modus 1: Vollständig EIN */}
-            <div className="bg-gray-50 p-4 rounded-lg">
-              <h3 className="text-lg font-semibold text-gray-900 mb-3">Normalbetrieb</h3>
-              <div className="space-y-4">
-                <div className="flex items-end gap-4">
-                  <div className="flex-1">
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Einschalten ≤ °C</label>
-                    <input
-                      type="number"
-                      value={localParameterSettings.mode_1_switchon ?? 45}
-                      onChange={(e) => {
-                        const value = parseFloat(e.target.value)
-                        setLocalParameterSettings(prev => ({ ...prev, mode_1_switchon: value }))
-                      }}
-                      onBlur={(e) => {
-                        const value = parseFloat(e.target.value)
-                        if (value !== parameterSettings?.mode_1_switchon?.value) {
-                          updateParameterSetting('mode_1_switchon', value)
-                        }
-                      }}
-                      className="input text-gray-900 w-full"
-                      min="20"
-                      max="70"
-                      step="0.1"
-                      placeholder="45"
-                      disabled={isSaving || parameterLoading}
-                    />
-                  </div>
-                  <div className="flex-1">
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Ausschalten ≥ °C</label>
-                    <input
-                      type="number"
-                      value={localParameterSettings.mode_1_switchoff ?? 55}
-                      onChange={(e) => {
-                        const value = parseFloat(e.target.value)
-                        setLocalParameterSettings(prev => ({ ...prev, mode_1_switchoff: value }))
-                      }}
-                      onBlur={(e) => {
-                        const value = parseFloat(e.target.value)
-                        if (value !== parameterSettings?.mode_1_switchoff?.value) {
-                          updateParameterSetting('mode_1_switchoff', value)
-                        }
-                      }}
-                      className="input text-gray-900 w-full"
-                      min="20"
-                      max="80"  
-                      step="0.1"
-                      placeholder="55"
-                      disabled={isSaving || parameterLoading}
-                    />
-                  </div>
-                </div>
+      {/* Settings Content */}
+      <div className="p-6 bg-gradient-to-br from-gray-50 to-white">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Normalbetrieb Card */}
+          <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="p-2.5 bg-blue-50 rounded-xl">
+                <BeakerIcon className="w-6 h-6 text-blue-600" />
               </div>
+              <h3 className="text-lg font-bold text-gray-900">Normalbetrieb</h3>
             </div>
-
-            {/* Leistung Heizstab */}
-            <div className="bg-gray-50 p-4 rounded-lg">
-              <h3 className="text-lg font-semibold text-gray-900 mb-3">Leistung Heizstab</h3>
+            
+            <div className="space-y-5">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Leistung Heizstab (Watt)</label>
+                <label className="block text-sm font-semibold text-gray-700 mb-2.5">
+                  Einschalten ≤ °C
+                </label>
                 <input
                   type="number"
-                  value={localParameterSettings.power_heathing_rod ?? 380}
+                  value={localSettings.warmwasser_einschalt_temperatur ?? 45}
                   onChange={(e) => {
                     const value = parseFloat(e.target.value)
-                    setLocalParameterSettings(prev => ({ ...prev, power_heathing_rod: value }))
+                    setLocalSettings(prev => ({ ...prev, warmwasser_einschalt_temperatur: value }))
                   }}
                   onBlur={(e) => {
                     const value = parseFloat(e.target.value)
-                    if (value !== parameterSettings?.power_heathing_rod?.value) {
-                      updateParameterSetting('power_heathing_rod', value)
+                    if (value !== einstellungen?.warmwasser_einschalt_temperatur?.value) {
+                      updateSetting('warmwasser_einschalt_temperatur', value, 'Temperatur, bei der die Warmwasserheizung einschaltet')
                     }
                   }}
-                  className="input text-gray-900 w-28"
+                  className="w-full px-4 py-3 text-lg font-semibold text-gray-900 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                  min="20"
+                  max="70"
+                  step="0.1"
+                  placeholder="45"
+                  disabled={isSaving || einstellungenLoading}
+                />
+                <p className="text-xs text-gray-500 mt-2 flex items-center gap-1.5">
+                  <span className="w-1 h-1 rounded-full bg-blue-500"></span>
+                  Temperatur, bei der die Heizung einschaltet
+                </p>
+              </div>
+              
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2.5">
+                  Ausschalten ≥ °C
+                </label>
+                <input
+                  type="number"
+                  value={localSettings.warmwasser_ausschalt_temperatur ?? 55}
+                  onChange={(e) => {
+                    const value = parseFloat(e.target.value)
+                    setLocalSettings(prev => ({ ...prev, warmwasser_ausschalt_temperatur: value }))
+                  }}
+                  onBlur={(e) => {
+                    const value = parseFloat(e.target.value)
+                    if (value !== einstellungen?.warmwasser_ausschalt_temperatur?.value) {
+                      updateSetting('warmwasser_ausschalt_temperatur', value, 'Temperatur, bei der die Warmwasserheizung ausschaltet')
+                    }
+                  }}
+                  className="w-full px-4 py-3 text-lg font-semibold text-gray-900 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                  min="20"
+                  max="80"  
+                  step="0.1"
+                  placeholder="55"
+                  disabled={isSaving || einstellungenLoading}
+                />
+                <p className="text-xs text-gray-500 mt-2 flex items-center gap-1.5">
+                  <span className="w-1 h-1 rounded-full bg-blue-500"></span>
+                  Temperatur, bei der die Heizung ausschaltet
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Leistung Heizstab Card */}
+          <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="p-2.5 bg-orange-50 rounded-xl">
+                <BoltIcon className="w-6 h-6 text-orange-600" />
+              </div>
+              <h3 className="text-lg font-bold text-gray-900">Leistung Heizstab</h3>
+            </div>
+            
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-2.5">
+                Leistung (Watt)
+              </label>
+              <div className="relative">
+                <input
+                  type="number"
+                  value={localSettings.warmwasser_heizstab_leistung ?? 380}
+                  onChange={(e) => {
+                    const value = parseFloat(e.target.value)
+                    setLocalSettings(prev => ({ ...prev, warmwasser_heizstab_leistung: value }))
+                  }}
+                  onBlur={(e) => {
+                    const value = parseFloat(e.target.value)
+                    if (value !== einstellungen?.warmwasser_heizstab_leistung?.value) {
+                      updateSetting('warmwasser_heizstab_leistung', value, 'Maximale Leistung des Heizstabs in Watt')
+                    }
+                  }}
+                  className="w-full px-4 py-3 text-lg font-semibold text-gray-900 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all"
                   min="100"
                   max="2000"
                   step="10"
                   placeholder="380"
-                  disabled={isSaving || parameterLoading}
+                  disabled={isSaving || einstellungenLoading}
                 />
+              </div>
+              <p className="text-xs text-gray-500 mt-2 flex items-center gap-1.5">
+                <span className="w-1 h-1 rounded-full bg-orange-500"></span>
+                Maximale Leistung des Heizstabs in Watt
+              </p>
+              
+              {/* Info Box */}
+              <div className="mt-6 p-4 bg-orange-50 border border-orange-100 rounded-xl">
+                <p className="text-sm text-orange-900 font-medium">💡 Hinweis</p>
+                <p className="text-xs text-orange-700 mt-1">
+                  Standardwert liegt bei 380W. Höhere Werte führen zu schnellerer Erwärmung bei höherem Stromverbrauch.
+                </p>
               </div>
             </div>
           </div>

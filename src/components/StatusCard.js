@@ -66,7 +66,7 @@ export default function StatusCard({
           </div>
         )}
         
-        <div className={`flex-1 ${size === 'sm' ? 'flex flex-col items-center justify-center text-center space-y-2' : 'flex flex-col'}`}>
+        <div className={`flex-1 ${size === 'sm' ? 'flex flex-col items-center justify-center text-center space-y-2' : size === 'lg' ? 'flex flex-col' : 'flex flex-col'}`}>
           {size === 'sm' ? (
             /* Symmetrisches Layout für kleine Karten */
             <>
@@ -81,6 +81,26 @@ export default function StatusCard({
                 </div>
               )}
               <p className="stat-label-sm pt-1">{title}</p>
+            </>
+          ) : size === 'lg' ? (
+            /* Großes Layout - großer Wert mit Titel darunter */
+            <>
+              <div className="flex items-baseline gap-2">
+                <span className="text-3xl md:text-4xl font-bold text-gray-900">{value}</span>
+                {unit && <span className="text-lg md:text-xl text-gray-500">{unit}</span>}
+              </div>
+              <p className="text-sm md:text-base font-semibold text-gray-600 mt-1">
+                - {title}
+              </p>
+              {secondaryValue !== null && (
+                <div className="pt-3">
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs text-gray-700">{secondaryValue}</span>
+                    {secondaryUnit && <span className="text-xs text-gray-500">{secondaryUnit}</span>}
+                    {secondaryTitle && <span className="text-xs text-gray-500">- {secondaryTitle}</span>}
+                  </div>
+                </div>
+              )}
             </>
           ) : (
             /* Normales Layout für große Karten - Wert und Titel einzeilig linksbündig */

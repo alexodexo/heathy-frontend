@@ -2,32 +2,40 @@
 import StatusCard from '@/components/StatusCard'
 import { ArrowUpIcon, ArrowDownIcon, FireIcon, BoltIcon } from '@heroicons/react/24/outline'
 
-export default function HeatingStatusCards({ heatingData, currentData, currentLoading, statusLoading }) {
+export default function HeatingStatusCards({ heatingData, currentData, currentLoading, statusLoading, temperatureData, temperatureLoading }) {
+  // Get temperatures from temperature_data table (t2 = Vorlauf, t3 = Rücklauf)
+  const vorlaufTemp = temperatureData?.t2
+  const ruecklaufTemp = temperatureData?.t3
+  const tempDiff = vorlaufTemp && ruecklaufTemp ? vorlaufTemp - ruecklaufTemp : null
+
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
       <StatusCard
         title="Vorlauf"
-        value={heatingData?.vorlaufTemp?.toFixed(1) || '--'}
+        value={vorlaufTemp?.toFixed(1) || '--'}
         unit="°C"
         icon={ArrowUpIcon}
-        color={heatingData?.vorlaufTemp > 40 ? 'success' : 'warning'}
-        loading={currentLoading}
+        color={vorlaufTemp && vorlaufTemp > 40 ? 'success' : 'warning'}
+        loading={currentLoading || temperatureLoading}
+        size="lg"
       />
       <StatusCard
         title="Rücklauf"
-        value={heatingData?.ruecklaufTemp?.toFixed(1) || '--'}
+        value={ruecklaufTemp?.toFixed(1) || '--'}
         unit="°C"
         icon={ArrowDownIcon}
-        color={heatingData?.ruecklaufTemp > 30 ? 'success' : 'warning'}
-        loading={currentLoading}
+        color={ruecklaufTemp && ruecklaufTemp > 30 ? 'success' : 'warning'}
+        loading={currentLoading || temperatureLoading}
+        size="lg"
       />
       <StatusCard
         title="Temperaturdifferenz"
-        value={heatingData?.tempDiff?.toFixed(1) || '--'}
+        value={tempDiff?.toFixed(1) || '--'}
         unit="°C"
         icon={FireIcon}
-        color={heatingData?.tempDiff > 5 ? 'success' : 'error'}
-        loading={currentLoading}
+        color={tempDiff && tempDiff > 5 ? 'success' : 'error'}
+        loading={currentLoading || temperatureLoading}
+        size="lg"
       />
       <StatusCard
         title="Heizleistung"
@@ -36,6 +44,7 @@ export default function HeatingStatusCards({ heatingData, currentData, currentLo
         icon={BoltIcon}
         color={heatingData?.heatingPower > 0 ? 'success' : 'primary'}
         loading={statusLoading}
+        size="lg"
       />
     </div>
   )

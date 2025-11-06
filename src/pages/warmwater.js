@@ -8,11 +8,13 @@ import {
   useHeatingModes, 
   useWarmwaterSettings,
   useSystemStats,
+  useEinstellungen,
 } from '@/hooks/useBackendData'
 import { backendAPI } from '@/lib/api'
 import WarmwaterStatusCards from '@/components/warmwater/WarmwaterStatusCards'
 import WarmwaterModeSelection from '@/components/warmwater/WarmwaterModeSelection'
 import WarmwaterCostOverview from '@/components/warmwater/WarmwaterCostOverview'
+import WarmwaterSettingsSection from '@/components/system/WarmwaterSettingsSection'
 
 export default function WarmwaterControlCenter() {
   const { data: currentData, isLoading: currentLoading, refresh: refreshCurrent } = useCurrentData()
@@ -20,13 +22,61 @@ export default function WarmwaterControlCenter() {
   const { data: heatingModes, isLoading: modesLoading, refresh: refreshModes } = useHeatingModes()
   const { data: warmwaterSettings, isLoading: settingsLoading } = useWarmwaterSettings()
   const { data: systemStats } = useSystemStats()
+  const { data: einstellungen, isLoading: einstellungenLoading, refresh: refreshEinstellungen } = useEinstellungen()
   
   const [isChangingMode, setIsChangingMode] = useState(false)
+  const [isSaving, setIsSaving] = useState(false)
+  const [localSettings, setLocalSettings] = useState({})
 
   // Reset changing mode state on component mount
   useEffect(() => {
     setIsChangingMode(false)
   }, [])
+
+  // Update local settings when data changes
+  useEffect(() => {
+    if (einstellungen) {
+      const newLocalSettings = {}
+      Object.keys(einstellungen).forEach(key => {
+        newLocalSettings[key] = einstellungen[key].value
+      })
+      const hasChanged = JSON.stringify(newLocalSettings) !== JSON.stringify(localSettings)
+      if (hasChanged && Object.keys(localSettings).length > 0) {
+        setLocalSettings(newLocalSettings)
+      } else if (Object.keys(localSettings).length === 0) {
+        setLocalSettings(newLocalSettings)
+      }
+    }
+  }, [einstellungen]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Update setting
+  const updateSetting = useCallback(async (key, value, description = null) => {
+    setIsSaving(true)
+    try {
+      const response = await fetch(`/api/einstellungen/${key}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ value, description }),
+      })
+
+      const data = await response.json()
+
+      if (response.ok && data.success) {
+        toast.success(`Einstellung erfolgreich aktualisiert`)
+        setLocalSettings(prev => ({ ...prev, [key]: value }))
+        await refreshEinstellungen()
+      } else {
+        toast.error(`Fehler beim Aktualisieren der Einstellung`)
+      }
+    } catch (error) {
+      console.error(`Error updating setting ${key}:`, error)
+      toast.error(`Fehler beim Aktualisieren der Einstellung`)
+    } finally {
+      setIsSaving(false)
+    }
+  }, [refreshEinstellungen])
 
   // Get available modes from backend
   const availableModes = heatingModes?.modes ? Object.values(heatingModes.modes) : []
@@ -164,10 +214,21 @@ export default function WarmwaterControlCenter() {
           activeMode={activeMode}
           isChangingMode={isChangingMode}
           onModeChange={handleModeChange}
+          einstellungen={einstellungen}
         />
 
         {/* Cost & Consumption Overview */}
         <WarmwaterCostOverview costData={costData} consumptionData={consumptionData} />
+
+        {/* Warmwater Settings */}
+        <WarmwaterSettingsSection
+          localSettings={localSettings}
+          setLocalSettings={setLocalSettings}
+          einstellungen={einstellungen}
+          updateSetting={updateSetting}
+          isSaving={isSaving}
+          einstellungenLoading={einstellungenLoading}
+        />
       </div>
     </>
   )

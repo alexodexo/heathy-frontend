@@ -5,6 +5,7 @@ import {
   useHeatingStatus, 
   useSystemStats 
 } from '@/hooks/useBackendData'
+import { useTemperatureData } from '@/hooks/useRealtimeData'
 import HeatingStatusCards from '@/components/heating/HeatingStatusCards'
 import HeatingModeSelection from '@/components/heating/HeatingModeSelection'
 import HeatingCostOverview from '@/components/heating/HeatingCostOverview'
@@ -13,6 +14,7 @@ export default function HeatingControl() {
   const { data: currentData, isLoading: currentLoading } = useCurrentData()
   const { data: heatingStatus, isLoading: statusLoading } = useHeatingStatus()
   const { data: systemStats } = useSystemStats()
+  const { data: temperatureData, isLoading: temperatureLoading } = useTemperatureData()
 
   // Calculate heating-specific data
   const getHeatingData = () => {
@@ -114,6 +116,8 @@ export default function HeatingControl() {
           currentData={currentData}
           currentLoading={currentLoading}
           statusLoading={statusLoading}
+          temperatureData={temperatureData}
+          temperatureLoading={temperatureLoading}
         />
 
         {/* Mode Selection Control Center */}

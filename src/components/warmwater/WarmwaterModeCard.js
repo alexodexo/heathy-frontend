@@ -6,7 +6,8 @@ export default function WarmwaterModeCard({
   mode, 
   isActive, 
   isChangingMode, 
-  onModeChange 
+  onModeChange,
+  einstellungen 
 }) {
   const isRecommended = false // Keine Empfehlung mehr - nur Ein/Aus
 
@@ -65,10 +66,10 @@ export default function WarmwaterModeCard({
       {mode.name === 'Vollständig EIN' && (
         <div className="mt-2 ml-11">
           <p className="text-sm font-medium text-gray-900">
-            Einschalttemperatur: --°C
+            Einschalttemperatur: {einstellungen?.warmwasser_einschalt_temperatur?.value ?? '--'}°C
           </p>
           <p className="text-sm font-medium text-gray-900">
-            Ausschalttemperatur: --°C
+            Ausschalttemperatur: {einstellungen?.warmwasser_ausschalt_temperatur?.value ?? '--'}°C
           </p>
         </div>
       )}

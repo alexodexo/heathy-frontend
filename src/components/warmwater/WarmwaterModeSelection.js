@@ -6,7 +6,8 @@ export default function WarmwaterModeSelection({
   allModes, 
   activeMode, 
   isChangingMode, 
-  onModeChange 
+  onModeChange,
+  einstellungen 
 }) {
   return (
     <motion.div
@@ -35,6 +36,7 @@ export default function WarmwaterModeSelection({
                 isActive={isActive}
                 isChangingMode={isChangingMode}
                 onModeChange={onModeChange}
+                einstellungen={einstellungen}
               />
             )
           })}

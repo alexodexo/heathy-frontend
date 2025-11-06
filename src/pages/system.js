@@ -6,12 +6,10 @@ import { toast } from 'react-hot-toast'
 import { 
   useAllSettings, 
   useSensorSettings, 
-  useWarmwaterSettings,
   useParameterSettings,
 } from '@/hooks/useBackendData'
 import { backendAPI } from '@/lib/api'
 import { ArrowPathIcon } from '@heroicons/react/24/outline'
-import WarmwaterSettingsSection from '@/components/system/WarmwaterSettingsSection'
 import HeatingSettingsSection from '@/components/system/HeatingSettingsSection'
 import BillingSettingsSection from '@/components/system/BillingSettingsSection'
 
@@ -19,7 +17,6 @@ import BillingSettingsSection from '@/components/system/BillingSettingsSection'
 export default function SystemSettings() {
   const { data: allSettings, isLoading: settingsLoading, refresh: refreshSettings } = useAllSettings()
   const { data: sensorSettings, refresh: refreshSensorSettings } = useSensorSettings()
-  const { data: warmwaterSettings, refresh: refreshWarmwaterSettings } = useWarmwaterSettings()
   const { data: parameterSettings, isLoading: parameterLoading, refresh: refreshParameterSettings } = useParameterSettings()
   
   const [isSaving, setIsSaving] = useState(false)
@@ -73,7 +70,6 @@ export default function SystemSettings() {
         setLocalSettings(prev => ({ ...prev, [key]: value }))
         await refreshSettings()
         await refreshSensorSettings()
-        await refreshWarmwaterSettings()
       } else {
         toast.error(`Fehler beim Aktualisieren von ${key}`)
       }
@@ -83,7 +79,7 @@ export default function SystemSettings() {
     } finally {
       setIsSaving(false)
     }
-  }, [refreshSettings, refreshSensorSettings, refreshWarmwaterSettings])
+  }, [refreshSettings, refreshSensorSettings])
 
   // Update parameter setting (for warmwater settings from database)
   const updateParameterSetting = useCallback(async (key, value) => {
@@ -175,16 +171,6 @@ export default function SystemSettings() {
             <span className="hidden sm:inline">Neu laden</span>
           </button>
         </div>
-
-        {/* Warmwater Settings */}
-        <WarmwaterSettingsSection
-          localParameterSettings={localParameterSettings}
-          setLocalParameterSettings={setLocalParameterSettings}
-          parameterSettings={parameterSettings}
-          updateParameterSetting={updateParameterSetting}
-          isSaving={isSaving}
-          parameterLoading={parameterLoading}
-        />
 
         {/* Heating Settings */}
         <HeatingSettingsSection

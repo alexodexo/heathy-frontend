@@ -235,3 +235,25 @@ export function useWeatherData() {
     refresh: mutate,
   }
 }
+
+export function useEinstellungen() {
+  const { data, error, isLoading, mutate } = useSWR(
+    'einstellungen',
+    async () => {
+      const response = await fetch('/api/einstellungen')
+      if (!response.ok) throw new Error('Failed to fetch einstellungen')
+      return response.json()
+    },
+    {
+      refreshInterval: API_CONFIG.REFRESH_INTERVALS.SETTINGS,
+      // revalidateOnFocus und revalidateOnReconnect werden global deaktiviert
+    }
+  )
+
+  return {
+    data: data || null,
+    isLoading,
+    isError: error,
+    refresh: mutate,
+  }
+}
