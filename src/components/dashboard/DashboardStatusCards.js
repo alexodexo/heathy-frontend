@@ -2,7 +2,10 @@
 import StatusCard from '@/components/StatusCard'
 import { BeakerIcon, FireIcon } from '@heroicons/react/24/outline'
 
-export default function DashboardStatusCards({ currentData, currentLoading }) {
+export default function DashboardStatusCards({ currentData, currentLoading, fritzDevices, fritzLoading }) {
+  // Extract temperature values from Fritz devices
+  const roomAlexTemp = fritzDevices?.zimmer_alex?.temperature
+  const roomBueroTemp = fritzDevices?.buero?.temperature
   return (
     <div className="grid grid-cols-2 gap-4 md:gap-6">
       <StatusCard
@@ -67,13 +70,13 @@ export default function DashboardStatusCards({ currentData, currentLoading }) {
         title="Wohnzimmer"
         value={currentData?.temperatures?.room_wohnzimmer?.toFixed(1) || '--'}
         unit="°C"
-        secondaryValue={currentData?.temperatures?.room_buero?.toFixed(1) || '--'}
+        secondaryValue={roomBueroTemp ? roomBueroTemp.toFixed(1) : '--'}
         secondaryUnit="°C"
         secondaryTitle="Büro"
         tertiaryValue={currentData?.temperatures?.room_bad?.toFixed(1) || '--'}
         tertiaryUnit="°C"
         tertiaryTitle="Bad"
-        quaternaryValue={currentData?.temperatures?.room_alex?.toFixed(1) || '--'}
+        quaternaryValue={roomAlexTemp ? roomAlexTemp.toFixed(1) : '--'}
         quaternaryUnit="°C"
         quaternaryTitle="Zimmer Alex"
         icon={() => (
@@ -85,7 +88,7 @@ export default function DashboardStatusCards({ currentData, currentLoading }) {
           </svg>
         )}
         color="primary"
-        loading={currentLoading}
+        loading={currentLoading || fritzLoading}
       />
     </div>
   )
