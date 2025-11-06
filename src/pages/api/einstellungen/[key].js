@@ -25,27 +25,51 @@ export default async function handler(req, res) {
     try {
       const { value, description } = req.body
 
-      // Build update object - only include fields that are provided
-      const updateData = {
-        value,
-        updated_at: new Date().toISOString()
-      }
-
-      // Only update description if it's explicitly provided
-      if (description !== undefined) {
-        updateData.description = description
-      }
-
-      const { data, error } = await supabase
+      // First, check if the key exists
+      const { data: existing } = await supabase
         .from('einstellungen')
-        .update(updateData)
+        .select('key, description')
         .eq('key', key)
-        .select()
         .single()
 
-      if (error) throw error
+      if (existing) {
+        // Key exists - UPDATE only value and updated_at
+        // Keep existing description unless explicitly provided
+        const updateData = {
+          value,
+          updated_at: new Date().toISOString()
+        }
 
-      return res.status(200).json({ success: true, data })
+        // Only update description if explicitly provided
+        if (description !== undefined && description !== null) {
+          updateData.description = description
+        }
+
+        const { data, error } = await supabase
+          .from('einstellungen')
+          .update(updateData)
+          .eq('key', key)
+          .select()
+          .single()
+
+        if (error) throw error
+        return res.status(200).json({ success: true, data })
+      } else {
+        // Key doesn't exist - INSERT new entry
+        const { data, error } = await supabase
+          .from('einstellungen')
+          .insert({
+            key,
+            value,
+            description: description || null,
+            updated_at: new Date().toISOString()
+          })
+          .select()
+          .single()
+
+        if (error) throw error
+        return res.status(200).json({ success: true, data })
+      }
     } catch (error) {
       console.error('Error updating setting:', error)
       return res.status(500).json({ error: 'Failed to update setting' })
