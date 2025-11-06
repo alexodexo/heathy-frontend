@@ -14,9 +14,10 @@ export default function DashboardStatusCards({ currentData, currentLoading, frit
   const maxTemp = weatherData?.max_temp_today != null ? weatherData.max_temp_today : null
   const sunshineHours = weatherData?.sunshine_hours_today
   
-  // Extract heating temperature data from temperature_data (t2 = Vorlauf, t3 = Rücklauf)
+  // Extract heating temperature data from temperature_data (t2 = Vorlauf, t3 = Rücklauf, t4 = Wohnzimmer)
   const vorlaufTemp = temperatureData?.t2
   const ruecklaufTemp = temperatureData?.t3
+  const wohnzimmerTemp = temperatureData?.t4
   return (
     <div className="grid grid-cols-2 gap-4 md:gap-6">
       <StatusCard
@@ -73,7 +74,7 @@ export default function DashboardStatusCards({ currentData, currentLoading, frit
       />
       <StatusCard
         title="Wohnzimmer"
-        value={currentData?.temperatures?.room_wohnzimmer?.toFixed(1) || '--'}
+        value={wohnzimmerTemp?.toFixed(1) || '--'}
         unit="°C"
         secondaryValue={roomBueroTemp ? roomBueroTemp.toFixed(1) : '--'}
         secondaryUnit="°C"
@@ -93,7 +94,7 @@ export default function DashboardStatusCards({ currentData, currentLoading, frit
           </svg>
         )}
         color="primary"
-        loading={currentLoading || fritzLoading}
+        loading={currentLoading || fritzLoading || temperatureLoading}
       />
     </div>
   )
