@@ -3,17 +3,17 @@ import { BoltIcon } from '@heroicons/react/24/outline'
 import BoosterPhase from './BoosterPhase'
 
 export default function BoosterSettings({
-  localParameterSettings,
-  setLocalParameterSettings,
-  parameterSettings,
-  updateParameterSetting,
+  localSettings,
+  setLocalSettings,
+  einstellungen,
+  updateSetting,
   isSaving,
-  parameterLoading
+  einstellungenLoading
 }) {
   const calculateTotal = () => {
-    return (localParameterSettings.phase1_duration ?? 10) + 
-           (localParameterSettings.phase2_duration ?? 12) + 
-           (localParameterSettings.phase3_duration ?? 8)
+    return (localSettings.phase1_duration ?? 10) + 
+           (localSettings.phase2_duration ?? 12) + 
+           (localSettings.phase3_duration ?? 8)
   }
 
   return (
@@ -46,12 +46,12 @@ export default function BoosterSettings({
           title="Phase 1: Aufheizen"
           description="Booster-Phase"
           color="gray"
-          localParameterSettings={localParameterSettings}
-          setLocalParameterSettings={setLocalParameterSettings}
-          parameterSettings={parameterSettings}
-          updateParameterSetting={updateParameterSetting}
+          localSettings={localSettings}
+          setLocalSettings={setLocalSettings}
+          einstellungen={einstellungen}
+          updateSetting={updateSetting}
           isSaving={isSaving}
-          parameterLoading={parameterLoading}
+          einstellungenLoading={einstellungenLoading}
         />
 
         <BoosterPhase
@@ -59,12 +59,12 @@ export default function BoosterSettings({
           title="Phase 2: Stabilisieren"
           description="Temperatur halten"
           color="gray"
-          localParameterSettings={localParameterSettings}
-          setLocalParameterSettings={setLocalParameterSettings}
-          parameterSettings={parameterSettings}
-          updateParameterSetting={updateParameterSetting}
+          localSettings={localSettings}
+          setLocalSettings={setLocalSettings}
+          einstellungen={einstellungen}
+          updateSetting={updateSetting}
           isSaving={isSaving}
-          parameterLoading={parameterLoading}
+          einstellungenLoading={einstellungenLoading}
         />
 
         <BoosterPhase
@@ -72,12 +72,12 @@ export default function BoosterSettings({
           title="Phase 3: Halten"
           description="Ausdauerbetrieb"
           color="gray"
-          localParameterSettings={localParameterSettings}
-          setLocalParameterSettings={setLocalParameterSettings}
-          parameterSettings={parameterSettings}
-          updateParameterSetting={updateParameterSetting}
+          localSettings={localSettings}
+          setLocalSettings={setLocalSettings}
+          einstellungen={einstellungen}
+          updateSetting={updateSetting}
           isSaving={isSaving}
-          parameterLoading={parameterLoading}
+          einstellungenLoading={einstellungenLoading}
         />
       </div>
 

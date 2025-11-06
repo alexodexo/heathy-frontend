@@ -4,14 +4,14 @@ import TimeSlotControls from './TimeSlotControls'
 import BoosterSettings from './BoosterSettings'
 
 export default function OperationModeControls({
-  localParameterSettings,
-  setLocalParameterSettings,
-  parameterSettings,
-  updateParameterSetting,
+  localSettings,
+  setLocalSettings,
+  einstellungen,
+  updateSetting,
   timeSlots,
   updateTimeSlot,
   isSaving,
-  parameterLoading
+  einstellungenLoading
 }) {
   return (
     <div className="bg-white p-6 rounded-lg border border-gray-200 shadow-sm">
@@ -47,15 +47,15 @@ export default function OperationModeControls({
                 <label className="block text-sm font-medium text-gray-700 mb-2">Einschalten ≤ °C</label>
                 <input
                   type="number"
-                  value={localParameterSettings.mode_1_switchon ?? '--'}
+                  value={localSettings.mode_1_switchon ?? '--'}
                   onChange={(e) => {
                     const value = parseFloat(e.target.value)
-                    setLocalParameterSettings(prev => ({ ...prev, mode_1_switchon: value }))
+                    setLocalSettings(prev => ({ ...prev, mode_1_switchon: value }))
                   }}
                   onBlur={(e) => {
                     const value = parseFloat(e.target.value)
-                    if (value !== parameterSettings?.mode_1_switchon?.value) {
-                      updateParameterSetting('mode_1_switchon', value)
+                    if (value !== einstellungen?.mode_1_switchon?.value) {
+                      updateSetting('mode_1_switchon', value)
                     }
                   }}
                   className="input text-gray-900 w-full"
@@ -63,22 +63,22 @@ export default function OperationModeControls({
                   max="70"
                   step="0.1"
                   placeholder="--"
-                  disabled={isSaving || parameterLoading}
+                  disabled={isSaving || einstellungenLoading}
                 />
               </div>
               <div className="flex-1">
                 <label className="block text-sm font-medium text-gray-700 mb-2">Ausschalten ≥ °C</label>
                 <input
                   type="number"
-                  value={localParameterSettings.mode_1_switchoff ?? '--'}
+                  value={localSettings.mode_1_switchoff ?? '--'}
                   onChange={(e) => {
                     const value = parseFloat(e.target.value)
-                    setLocalParameterSettings(prev => ({ ...prev, mode_1_switchoff: value }))
+                    setLocalSettings(prev => ({ ...prev, mode_1_switchoff: value }))
                   }}
                   onBlur={(e) => {
                     const value = parseFloat(e.target.value)
-                    if (value !== parameterSettings?.mode_1_switchoff?.value) {
-                      updateParameterSetting('mode_1_switchoff', value)
+                    if (value !== einstellungen?.mode_1_switchoff?.value) {
+                      updateSetting('mode_1_switchoff', value)
                     }
                   }}
                   className="input text-gray-900 w-full"
@@ -86,7 +86,7 @@ export default function OperationModeControls({
                   max="80"  
                   step="0.1"
                   placeholder="--"
-                  disabled={isSaving || parameterLoading}
+                  disabled={isSaving || einstellungenLoading}
                 />
               </div>
             </div>
@@ -105,14 +105,14 @@ export default function OperationModeControls({
               <input
                 type="checkbox"
                 id="mode_1_coldstart_enabled"
-                checked={localParameterSettings.mode_1_coldstart_enabled ?? false}
+                checked={localSettings.mode_1_coldstart_enabled ?? false}
                 onChange={(e) => {
                   const value = e.target.checked
-                  setLocalParameterSettings(prev => ({ ...prev, mode_1_coldstart_enabled: value }))
-                  updateParameterSetting('mode_1_coldstart_enabled', value)
+                  setLocalSettings(prev => ({ ...prev, mode_1_coldstart_enabled: value }))
+                  updateSetting('mode_1_coldstart_enabled', value)
                 }}
                 className="w-4 h-4 text-primary-600 bg-gray-100 border-gray-300 rounded focus:ring-primary-500"
-                disabled={isSaving || parameterLoading}
+                disabled={isSaving || einstellungenLoading}
               />
               <label htmlFor="mode_1_coldstart_enabled" className="text-sm font-medium text-gray-700 cursor-pointer">
                 Booster aktivieren
@@ -120,7 +120,7 @@ export default function OperationModeControls({
             </div>
 
             {/* Kaltstart-Boost Einstellungen */}
-            {localParameterSettings.mode_1_coldstart_enabled && (
+            {localSettings.mode_1_coldstart_enabled && (
               <div className="pl-7 space-y-3">
                 <div className="flex items-center gap-4">
                   <div className="flex-1">
@@ -128,22 +128,22 @@ export default function OperationModeControls({
                       <span className="text-sm text-gray-600">Boosten bis Vorlauftemperatur</span>
                       <input
                         type="number"
-                        value={localParameterSettings.mode_1_coldstart_target_temp ?? 45}
+                        value={localSettings.mode_1_coldstart_target_temp ?? 45}
                         onChange={(e) => {
                           const value = parseFloat(e.target.value)
-                          setLocalParameterSettings(prev => ({ ...prev, mode_1_coldstart_target_temp: value }))
+                          setLocalSettings(prev => ({ ...prev, mode_1_coldstart_target_temp: value }))
                         }}
                         onBlur={(e) => {
                           const value = parseFloat(e.target.value)
-                          if (value !== parameterSettings?.mode_1_coldstart_target_temp?.value) {
-                            updateParameterSetting('mode_1_coldstart_target_temp', value)
+                          if (value !== einstellungen?.mode_1_coldstart_target_temp?.value) {
+                            updateSetting('mode_1_coldstart_target_temp', value)
                           }
                         }}
                         className="input text-gray-900 w-28"
                         min="30"
                         max="70"
                         step="0.5"
-                        disabled={isSaving || parameterLoading}
+                        disabled={isSaving || einstellungenLoading}
                       />
                       <span className="text-sm text-gray-600">°C erreicht ist</span>
                     </div>
@@ -152,7 +152,7 @@ export default function OperationModeControls({
 
                 <div className="mt-2 p-2 bg-green-50 rounded border border-green-200">
                   <p className="text-xs text-green-800">
-                    <strong>⚡ Funktion:</strong> Die Heizung startet mit allen drei Heizstäben (4,5kW gesamt) und heizt auf, bis die Vorlauftemperatur {localParameterSettings.mode_1_coldstart_target_temp ?? 45}°C erreicht hat. Danach schaltet das System automatisch auf die normale Regelung um.
+                    <strong>⚡ Funktion:</strong> Die Heizung startet mit allen drei Heizstäben (4,5kW gesamt) und heizt auf, bis die Vorlauftemperatur {localSettings.mode_1_coldstart_target_temp ?? 45}°C erreicht hat. Danach schaltet das System automatisch auf die normale Regelung um.
                   </p>
                 </div>
               </div>
@@ -171,15 +171,15 @@ export default function OperationModeControls({
                 <span className="text-xs text-gray-600">Nach</span>
                 <input
                   type="number"
-                  value={localParameterSettings.mode_1_l2_boost_time ?? '--'}
+                  value={localSettings.mode_1_l2_boost_time ?? '--'}
                   onChange={(e) => {
                     const value = parseInt(e.target.value)
-                    setLocalParameterSettings(prev => ({ ...prev, mode_1_l2_boost_time: value }))
+                    setLocalSettings(prev => ({ ...prev, mode_1_l2_boost_time: value }))
                   }}
                   onBlur={(e) => {
                     const value = parseInt(e.target.value)
-                    if (value !== parameterSettings?.mode_1_l2_boost_time?.value) {
-                      updateParameterSetting('mode_1_l2_boost_time', value)
+                    if (value !== einstellungen?.mode_1_l2_boost_time?.value) {
+                      updateSetting('mode_1_l2_boost_time', value)
                     }
                   }}
                   className="input text-gray-900 w-24"
@@ -187,7 +187,7 @@ export default function OperationModeControls({
                   max="60"
                   step="1"
                   placeholder="--"
-                  disabled={isSaving || parameterLoading}
+                  disabled={isSaving || einstellungenLoading}
                   style={{
                     MozAppearance: 'textfield',
                     WebkitAppearance: 'none'
@@ -202,15 +202,15 @@ export default function OperationModeControls({
                 <span className="text-xs text-gray-600">Nach</span>
                 <input
                   type="number"
-                  value={localParameterSettings.mode_1_l3_boost_time ?? '--'}
+                  value={localSettings.mode_1_l3_boost_time ?? '--'}
                   onChange={(e) => {
                     const value = parseInt(e.target.value)
-                    setLocalParameterSettings(prev => ({ ...prev, mode_1_l3_boost_time: value }))
+                    setLocalSettings(prev => ({ ...prev, mode_1_l3_boost_time: value }))
                   }}
                   onBlur={(e) => {
                     const value = parseInt(e.target.value)
-                    if (value !== parameterSettings?.mode_1_l3_boost_time?.value) {
-                      updateParameterSetting('mode_1_l3_boost_time', value)
+                    if (value !== einstellungen?.mode_1_l3_boost_time?.value) {
+                      updateSetting('mode_1_l3_boost_time', value)
                     }
                   }}
                   className="input text-gray-900 w-24"
@@ -218,7 +218,7 @@ export default function OperationModeControls({
                   max="60"
                   step="1"
                   placeholder="--"
-                  disabled={isSaving || parameterLoading}
+                  disabled={isSaving || einstellungenLoading}
                   style={{
                     MozAppearance: 'textfield',
                     WebkitAppearance: 'none'
@@ -246,22 +246,22 @@ export default function OperationModeControls({
                     <span className="text-sm text-gray-600">Zieltemperatur minus</span>
                     <input
                       type="number"
-                      value={localParameterSettings.mode_1_downshift_l3_offset ?? 3.0}
+                      value={localSettings.mode_1_downshift_l3_offset ?? 3.0}
                       onChange={(e) => {
                         const value = parseFloat(e.target.value)
-                        setLocalParameterSettings(prev => ({ ...prev, mode_1_downshift_l3_offset: value }))
+                        setLocalSettings(prev => ({ ...prev, mode_1_downshift_l3_offset: value }))
                       }}
                       onBlur={(e) => {
                         const value = parseFloat(e.target.value)
-                        if (value !== parameterSettings?.mode_1_downshift_l3_offset?.value) {
-                          updateParameterSetting('mode_1_downshift_l3_offset', value)
+                        if (value !== einstellungen?.mode_1_downshift_l3_offset?.value) {
+                          updateSetting('mode_1_downshift_l3_offset', value)
                         }
                       }}
                       className="input text-gray-900 w-28"
                       min="0"
                       max="10"
                       step="0.5"
-                      disabled={isSaving || parameterLoading}
+                      disabled={isSaving || einstellungenLoading}
                     />
                     <span className="text-sm text-gray-600">°C</span>
                     <span className="text-xs text-gray-500 ml-2">
@@ -280,22 +280,22 @@ export default function OperationModeControls({
                     <span className="text-sm text-gray-600">Zieltemperatur minus</span>
                     <input
                       type="number"
-                      value={localParameterSettings.mode_1_downshift_l2_offset ?? 1.5}
+                      value={localSettings.mode_1_downshift_l2_offset ?? 1.5}
                       onChange={(e) => {
                         const value = parseFloat(e.target.value)
-                        setLocalParameterSettings(prev => ({ ...prev, mode_1_downshift_l2_offset: value }))
+                        setLocalSettings(prev => ({ ...prev, mode_1_downshift_l2_offset: value }))
                       }}
                       onBlur={(e) => {
                         const value = parseFloat(e.target.value)
-                        if (value !== parameterSettings?.mode_1_downshift_l2_offset?.value) {
-                          updateParameterSetting('mode_1_downshift_l2_offset', value)
+                        if (value !== einstellungen?.mode_1_downshift_l2_offset?.value) {
+                          updateSetting('mode_1_downshift_l2_offset', value)
                         }
                       }}
                       className="input text-gray-900 w-28"
                       min="0"
                       max="10"
                       step="0.5"
-                      disabled={isSaving || parameterLoading}
+                      disabled={isSaving || einstellungenLoading}
                     />
                     <span className="text-sm text-gray-600">°C</span>
                     <span className="text-xs text-gray-500 ml-2">
@@ -314,7 +314,7 @@ export default function OperationModeControls({
                     <span className="text-sm text-gray-600">Zieltemperatur</span>
                     <input
                       type="number"
-                      value={localParameterSettings.mode_1_switchoff ?? 45}
+                      value={localSettings.mode_1_switchoff ?? 45}
                       className="input text-gray-400 w-28 cursor-not-allowed"
                       disabled={true}
                     />
@@ -330,11 +330,11 @@ export default function OperationModeControls({
               <div className="mt-4 p-3 bg-white rounded border border-blue-300">
                 <p className="text-xs font-semibold text-blue-900 mb-2">📊 Beispiel-Berechnung:</p>
                 <div className="text-xs text-gray-700 space-y-1">
-                  <div>Zieltemperatur (Ausschalten): <strong>{localParameterSettings.mode_1_switchoff ?? 45}°C</strong></div>
+                  <div>Zieltemperatur (Ausschalten): <strong>{localSettings.mode_1_switchoff ?? 45}°C</strong></div>
                   <div className="mt-2 space-y-1 pl-4 border-l-2 border-blue-400">
-                    <div>🔴 L3 abschalten bei: <strong>{((localParameterSettings.mode_1_switchoff ?? 45) - (localParameterSettings.mode_1_downshift_l3_offset ?? 3.0)).toFixed(1)}°C</strong> (Ziel - {localParameterSettings.mode_1_downshift_l3_offset ?? 3.0}°C)</div>
-                    <div>🟡 L2 abschalten bei: <strong>{((localParameterSettings.mode_1_switchoff ?? 45) - (localParameterSettings.mode_1_downshift_l2_offset ?? 1.5)).toFixed(1)}°C</strong> (Ziel - {localParameterSettings.mode_1_downshift_l2_offset ?? 1.5}°C)</div>
-                    <div>🟢 L1 abschalten bei: <strong>{(localParameterSettings.mode_1_switchoff ?? 45).toFixed(1)}°C</strong> (Ziel erreicht)</div>
+                    <div>🔴 L3 abschalten bei: <strong>{((localSettings.mode_1_switchoff ?? 45) - (localSettings.mode_1_downshift_l3_offset ?? 3.0)).toFixed(1)}°C</strong> (Ziel - {localSettings.mode_1_downshift_l3_offset ?? 3.0}°C)</div>
+                    <div>🟡 L2 abschalten bei: <strong>{((localSettings.mode_1_switchoff ?? 45) - (localSettings.mode_1_downshift_l2_offset ?? 1.5)).toFixed(1)}°C</strong> (Ziel - {localSettings.mode_1_downshift_l2_offset ?? 1.5}°C)</div>
+                    <div>🟢 L1 abschalten bei: <strong>{(localSettings.mode_1_switchoff ?? 45).toFixed(1)}°C</strong> (Ziel erreicht)</div>
                   </div>
                 </div>
               </div>
@@ -356,12 +356,12 @@ export default function OperationModeControls({
 
         {/* Modus 2 - Booster Einstellungen */}
         <BoosterSettings
-          localParameterSettings={localParameterSettings}
-          setLocalParameterSettings={setLocalParameterSettings}
-          parameterSettings={parameterSettings}
-          updateParameterSetting={updateParameterSetting}
+          localSettings={localSettings}
+          setLocalSettings={setLocalSettings}
+          einstellungen={einstellungen}
+          updateSetting={updateSetting}
           isSaving={isSaving}
-          parameterLoading={parameterLoading}
+          einstellungenLoading={einstellungenLoading}
         />
       </div>
 

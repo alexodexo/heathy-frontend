@@ -2,12 +2,12 @@
 import { ArrowPathIcon } from '@heroicons/react/24/outline'
 
 export default function PumpSettings({
-  localParameterSettings,
-  setLocalParameterSettings,
-  parameterSettings,
-  updateParameterSetting,
+  localSettings,
+  setLocalSettings,
+  einstellungen,
+  updateSetting,
   isSaving,
-  parameterLoading
+  einstellungenLoading
 }) {
   return (
     <div className="bg-white p-6 rounded-lg border border-gray-200 shadow-sm">
@@ -25,15 +25,15 @@ export default function PumpSettings({
           <div className="flex items-center gap-2">
             <input
               type="number"
-              value={localParameterSettings.pump_overrun_time ?? 10}
+              value={localSettings.pump_overrun_time ?? 10}
               onChange={(e) => {
                 const value = parseInt(e.target.value)
-                setLocalParameterSettings(prev => ({ ...prev, pump_overrun_time: value }))
+                setLocalSettings(prev => ({ ...prev, pump_overrun_time: value }))
               }}
               onBlur={(e) => {
                 const value = parseInt(e.target.value)
-                if (value !== parameterSettings?.pump_overrun_time?.value) {
-                  updateParameterSetting('pump_overrun_time', value)
+                if (value !== einstellungen?.pump_overrun_time?.value) {
+                  updateSetting('pump_overrun_time', value)
                 }
               }}
               className="input text-gray-900 w-28"
@@ -41,7 +41,7 @@ export default function PumpSettings({
               max="60"
               step="1"
               placeholder="10"
-              disabled={isSaving || parameterLoading}
+              disabled={isSaving || einstellungenLoading}
             />
             <span className="text-sm font-medium text-gray-700">min</span>
           </div>
@@ -60,19 +60,19 @@ export default function PumpSettings({
             <span className="text-xs text-gray-600">Täglich um</span>
             <input
               type="time"
-              value={localParameterSettings.pump_protection_time ?? '12:00'}
+              value={localSettings.pump_protection_time ?? '12:00'}
               onChange={(e) => {
                 const value = e.target.value
-                setLocalParameterSettings(prev => ({ ...prev, pump_protection_time: value }))
+                setLocalSettings(prev => ({ ...prev, pump_protection_time: value }))
               }}
               onBlur={(e) => {
                 const value = e.target.value
-                if (value !== parameterSettings?.pump_protection_time?.value) {
-                  updateParameterSetting('pump_protection_time', value)
+                if (value !== einstellungen?.pump_protection_time?.value) {
+                  updateSetting('pump_protection_time', value)
                 }
               }}
               className="input text-gray-900 w-28"
-              disabled={isSaving || parameterLoading}
+              disabled={isSaving || einstellungenLoading}
             />
           </div>
           <div className="mt-3 p-3 bg-green-50 rounded-lg">

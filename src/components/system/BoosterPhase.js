@@ -4,12 +4,12 @@ export default function BoosterPhase({
   title,
   description,
   color,
-  localParameterSettings,
-  setLocalParameterSettings,
-  parameterSettings,
-  updateParameterSetting,
+  localSettings,
+  setLocalSettings,
+  einstellungen,
+  updateSetting,
   isSaving,
-  parameterLoading
+  einstellungenLoading
 }) {
   const durationKey = `phase${phase}_duration`
   const powerKey = `phase${phase}_power`
@@ -72,22 +72,22 @@ export default function BoosterPhase({
           <div className="flex items-center gap-2">
             <input
               type="number"
-              value={localParameterSettings[durationKey] ?? (phase === 1 ? 10 : phase === 2 ? 12 : 8)}
+              value={localSettings[durationKey] ?? (phase === 1 ? 10 : phase === 2 ? 12 : 8)}
               onChange={(e) => {
                 const value = parseInt(e.target.value)
-                setLocalParameterSettings(prev => ({ ...prev, [durationKey]: value }))
+                setLocalSettings(prev => ({ ...prev, [durationKey]: value }))
               }}
               onBlur={(e) => {
                 const value = parseInt(e.target.value)
-                if (value !== parameterSettings?.[durationKey]?.value) {
-                  updateParameterSetting(durationKey, value)
+                if (value !== einstellungen?.[durationKey]?.value) {
+                  updateSetting(durationKey, value)
                 }
               }}
               className="input text-gray-900 w-28"
               min="0"
               max="120"
               step="1"
-              disabled={isSaving || parameterLoading}
+              disabled={isSaving || einstellungenLoading}
             />
             <span className="text-xs font-medium text-gray-700">min</span>
           </div>

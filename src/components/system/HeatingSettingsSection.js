@@ -5,14 +5,14 @@ import OperationModeControls from './OperationModeControls'
 import PumpSettings from './PumpSettings'
 
 export default function HeatingSettingsSection({
-  localParameterSettings,
-  setLocalParameterSettings,
-  parameterSettings,
-  updateParameterSetting,
+  localSettings,
+  setLocalSettings,
+  einstellungen,
+  updateSetting,
   timeSlots,
   updateTimeSlot,
   isSaving,
-  parameterLoading
+  einstellungenLoading
 }) {
   return (
     <motion.div
@@ -34,24 +34,24 @@ export default function HeatingSettingsSection({
         <div className="space-y-6">
           {/* Betriebsmodus Steuerung - enthält jetzt Modi 1, 2, 4, 5, 6 */}
           <OperationModeControls
-            localParameterSettings={localParameterSettings}
-            setLocalParameterSettings={setLocalParameterSettings}
-            parameterSettings={parameterSettings}
-            updateParameterSetting={updateParameterSetting}
+            localSettings={localSettings}
+            setLocalSettings={setLocalSettings}
+            einstellungen={einstellungen}
+            updateSetting={updateSetting}
             timeSlots={timeSlots}
             updateTimeSlot={updateTimeSlot}
             isSaving={isSaving}
-            parameterLoading={parameterLoading}
+            einstellungenLoading={einstellungenLoading}
           />
 
           {/* Pump Settings */}
           <PumpSettings
-            localParameterSettings={localParameterSettings}
-            setLocalParameterSettings={setLocalParameterSettings}
-            parameterSettings={parameterSettings}
-            updateParameterSetting={updateParameterSetting}
+            localSettings={localSettings}
+            setLocalSettings={setLocalSettings}
+            einstellungen={einstellungen}
+            updateSetting={updateSetting}
             isSaving={isSaving}
-            parameterLoading={parameterLoading}
+            einstellungenLoading={einstellungenLoading}
           />
         </div>
       </div>

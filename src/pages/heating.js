@@ -7,7 +7,7 @@ import {
   useCurrentData, 
   useHeatingStatus, 
   useSystemStats,
-  useParameterSettings
+  useEinstellungen
 } from '@/hooks/useBackendData'
 import { useTemperatureData } from '@/hooks/useRealtimeData'
 import { backendAPI } from '@/lib/api'
@@ -21,50 +21,55 @@ export default function HeatingControl() {
   const { data: heatingStatus, isLoading: statusLoading } = useHeatingStatus()
   const { data: systemStats } = useSystemStats()
   const { data: temperatureData, isLoading: temperatureLoading } = useTemperatureData()
-  const { data: parameterSettings, isLoading: parameterLoading, refresh: refreshParameterSettings } = useParameterSettings()
+  const { data: einstellungen, isLoading: einstellungenLoading, refresh: refreshEinstellungen } = useEinstellungen()
   
   const [isSaving, setIsSaving] = useState(false)
-  const [localParameterSettings, setLocalParameterSettings] = useState({})
+  const [localSettings, setLocalSettings] = useState({})
   const [timeSlots, setTimeSlots] = useState([
     { id: 0, start: '06:00', end: '22:00' },
     { id: 1, start: '06:00', end: '22:00' }
   ])
 
-  // Update local parameter settings when data changes
+  // Update local settings when data changes
   useEffect(() => {
-    if (parameterSettings) {
-      const localParams = {}
-      Object.keys(parameterSettings).forEach(key => {
-        localParams[key] = parameterSettings[key].value
+    if (einstellungen) {
+      const newLocalSettings = {}
+      Object.keys(einstellungen).forEach(key => {
+        newLocalSettings[key] = einstellungen[key].value
       })
-      const hasChanged = JSON.stringify(localParams) !== JSON.stringify(localParameterSettings)
-      if (hasChanged && Object.keys(localParameterSettings).length > 0) {
-        setLocalParameterSettings(localParams)
-      } else if (Object.keys(localParameterSettings).length === 0) {
-        setLocalParameterSettings(localParams)
+      const hasChanged = JSON.stringify(newLocalSettings) !== JSON.stringify(localSettings)
+      if (hasChanged && Object.keys(localSettings).length > 0) {
+        setLocalSettings(newLocalSettings)
+      } else if (Object.keys(localSettings).length === 0) {
+        setLocalSettings(newLocalSettings)
       }
     }
-  }, [parameterSettings]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [einstellungen]) // eslint-disable-line react-hooks/exhaustive-deps
 
-  // Update parameter setting
-  const updateParameterSetting = useCallback(async (key, value) => {
+  // Update setting
+  const updateSetting = useCallback(async (key, value, description = null) => {
     setIsSaving(true)
     try {
-      const response = await backendAPI.updateParameterSetting(key, value)
-      if (response.success) {
+      const response = await fetch(`/api/einstellungen/${key}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ value, description }),
+      })
+      const data = await response.json()
+      if (response.ok && data.success) {
         toast.success(`Einstellung erfolgreich aktualisiert`)
-        setLocalParameterSettings(prev => ({ ...prev, [key]: value }))
-        await refreshParameterSettings()
+        setLocalSettings(prev => ({ ...prev, [key]: value }))
+        await refreshEinstellungen()
       } else {
         toast.error(`Fehler beim Aktualisieren der Einstellung`)
       }
     } catch (error) {
-      console.error(`Error updating parameter setting ${key}:`, error)
+      console.error(`Error updating setting ${key}:`, error)
       toast.error(`Fehler beim Aktualisieren der Einstellung`)
     } finally {
       setIsSaving(false)
     }
-  }, [refreshParameterSettings])
+  }, [refreshEinstellungen])
 
   // Update time slot
   const updateTimeSlot = useCallback((slotId, field, value) => {
@@ -143,7 +148,7 @@ export default function HeatingControl() {
 
   const consumptionData = calculateHeatingConsumption()
 
-  if (currentLoading && statusLoading && parameterLoading) {
+  if (currentLoading && statusLoading && einstellungenLoading) {
     return (
       <div className="max-w-7xl mx-auto p-6">
         <div className="text-center py-12">
@@ -185,14 +190,14 @@ export default function HeatingControl() {
 
         {/* Heating Settings */}
         <HeatingSettingsSection
-          localParameterSettings={localParameterSettings}
-          setLocalParameterSettings={setLocalParameterSettings}
-          parameterSettings={parameterSettings}
-          updateParameterSetting={updateParameterSetting}
+          localSettings={localSettings}
+          setLocalSettings={setLocalSettings}
+          einstellungen={einstellungen}
+          updateSetting={updateSetting}
           timeSlots={timeSlots}
           updateTimeSlot={updateTimeSlot}
           isSaving={isSaving}
-          parameterLoading={parameterLoading}
+          einstellungenLoading={einstellungenLoading}
         />
 
         {/* Save Status */}
