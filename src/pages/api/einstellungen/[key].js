@@ -25,16 +25,21 @@ export default async function handler(req, res) {
     try {
       const { value, description } = req.body
 
+      // Build update object - only include fields that are provided
+      const updateData = {
+        value,
+        updated_at: new Date().toISOString()
+      }
+
+      // Only update description if it's explicitly provided
+      if (description !== undefined) {
+        updateData.description = description
+      }
+
       const { data, error } = await supabase
         .from('einstellungen')
-        .upsert({
-          key,
-          value,
-          description,
-          updated_at: new Date().toISOString()
-        }, {
-          onConflict: 'key'
-        })
+        .update(updateData)
+        .eq('key', key)
         .select()
         .single()
 
