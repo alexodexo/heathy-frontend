@@ -1,8 +1,9 @@
 // src/components/dashboard/DashboardStatusCards.js
 import StatusCard from '@/components/StatusCard'
+import WeatherIcon from '@/components/WeatherIcon'
 import { BeakerIcon, FireIcon } from '@heroicons/react/24/outline'
 
-export default function DashboardStatusCards({ currentData, currentLoading, fritzDevices, fritzLoading, weatherData, weatherLoading }) {
+export default function DashboardStatusCards({ currentData, currentLoading, fritzDevices, fritzLoading, weatherData, weatherLoading, temperatureData, temperatureLoading }) {
   // Extract temperature values from Fritz devices
   const roomAlexTemp = fritzDevices?.zimmer_alex?.temperature
   const roomBueroTemp = fritzDevices?.buero?.temperature
@@ -12,19 +13,19 @@ export default function DashboardStatusCards({ currentData, currentLoading, frit
   const minTemp = weatherData?.min_temp_today != null ? weatherData.min_temp_today : null
   const maxTemp = weatherData?.max_temp_today != null ? weatherData.max_temp_today : null
   const sunshineHours = weatherData?.sunshine_hours_today
+  
+  // Extract heating temperature data from temperature_data (t2 = Vorlauf, t3 = Rücklauf)
+  const vorlaufTemp = temperatureData?.t2
+  const ruecklaufTemp = temperatureData?.t3
   return (
     <div className="grid grid-cols-2 gap-4 md:gap-6">
       <StatusCard
         title="Vorlauf Heizung"
-        value={currentData?.temperatures?.vorlauf_temp?.toFixed(1) || '--'}
+        value={vorlaufTemp?.toFixed(1) || '--'}
         unit="°C"
-        secondaryValue={
-          currentData?.temperatures?.vorlauf_temp && currentData?.temperatures?.ruecklauf_temp
-            ? (currentData.temperatures.vorlauf_temp - currentData.temperatures.ruecklauf_temp).toFixed(1)
-            : '--'
-        }
+        secondaryValue={ruecklaufTemp?.toFixed(1) || '--'}
         secondaryUnit="°C"
-        secondaryTitle="Temperaturdifferenz"
+        secondaryTitle="Rücklauf Heizung"
         tertiaryValue={currentData?.heating?.power_kw?.toFixed(1) || '--'}
         tertiaryUnit="kW"
         tertiaryTitle="aktuelle Heizleistung"
@@ -33,7 +34,7 @@ export default function DashboardStatusCards({ currentData, currentLoading, frit
         quaternaryTitle="Heizungskosten letzte 7 Tage"
         icon={FireIcon}
         color="warning"
-        loading={currentLoading}
+        loading={currentLoading || temperatureLoading}
       />
       <StatusCard
         title="Warmwasser"
@@ -66,13 +67,7 @@ export default function DashboardStatusCards({ currentData, currentLoading, frit
         tertiaryValue={sunshineHours !== null && sunshineHours !== undefined ? sunshineHours.toFixed(1) : '--'}
         tertiaryUnit="h"
         tertiaryTitle="Sonnenstunden heute"
-        icon={() => (
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6">
-            <circle cx="12" cy="12" r="5"/>
-            <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
-            <path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z" opacity="0.3"/>
-          </svg>
-        )}
+        icon={(props) => <WeatherIcon icon={weatherData?.icon} {...props} />}
         color="primary"
         loading={weatherLoading}
       />
