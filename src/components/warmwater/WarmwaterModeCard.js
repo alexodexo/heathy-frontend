@@ -33,7 +33,7 @@ export default function WarmwaterModeCard({
           animate={{ scale: 1 }}
           className="absolute top-4 right-4"
         >
-          <CheckCircleIcon className="w-6 h-6 text-primary-500" />
+          <CheckCircleIcon className="w-8 h-8 text-primary-500" />
         </motion.div>
       )}
       
@@ -46,19 +46,19 @@ export default function WarmwaterModeCard({
       )}
       
       <div className="flex items-center gap-3 mb-3">
-        <div className={`p-2 rounded-xl ${
+        <div className={`p-3 rounded-xl ${
           isActive
             ? 'bg-primary-500 text-white'
             : 'bg-gray-100 text-gray-600'
         }`}>
           {mode.active_heating ? (
-            <FireIcon className="w-5 h-5" />
+            <FireIcon className="w-8 h-8" />
           ) : (
-            <PowerIcon className="w-5 h-5" />
+            <PowerIcon className="w-8 h-8" />
           )}
         </div>
         <div>
-          <h3 className="font-semibold text-gray-900">{mode.name}</h3>
+          <h3 className="font-semibold text-lg text-gray-900">{mode.name}</h3>
         </div>
       </div>
       
