@@ -82,7 +82,9 @@ export default function WarmwaterControlCenter() {
 
   // Get available modes from backend
   const availableModes = heatingModes?.modes ? Object.values(heatingModes.modes) : []
-  const activeMode = heatingModes?.active_mode
+  // Aktiver Modus kommt aus einstellungen.warmwasser_modus (0=AUS/modeId 2, 1=EIN/modeId 1)
+  const warmwasserModusValue = einstellungen?.warmwasser_modus?.value
+  const activeMode = warmwasserModusValue === 1 ? 1 : 2
 
   // Kombiniere echte Modi mit Dummy-Modi
   // Vermeide Duplikate (falls Backend später gleiche IDs liefert)
@@ -92,17 +94,31 @@ export default function WarmwaterControlCenter() {
   })
   const allModes = Array.from(byId.values())
 
-  // Mode change handler
+  // Mode change handler - steuert warmwasser_modus in einstellungen Tabelle
   const handleModeChange = useCallback(async (modeId) => {
     if (isChangingMode) return // Prevent double-clicks
     
     setIsChangingMode(true)
     try {
-      const response = await backendAPI.activateMode(modeId)
-      if (response.success) {
-        toast.success(`Modus ${response.data.mode_name} aktiviert`)
-        // Refresh data in parallel
-        await Promise.all([refreshModes(), refreshStatus()])
+      // modeId 1 = EIN, modeId 2 = AUS
+      const newValue = modeId === 1 ? 1 : 0
+      
+      const response = await fetch('/api/einstellungen/warmwasser_modus', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          value: newValue, 
+          description: 'Warmwasser-Modus: 0=AUS, 1=EIN' 
+        }),
+      })
+      
+      const data = await response.json()
+      
+      if (response.ok && data.success) {
+        const modeName = modeId === 1 ? 'Vollständig EIN' : 'Vollständig AUS'
+        toast.success(`Modus ${modeName} aktiviert`)
+        // Refresh einstellungen
+        await refreshEinstellungen()
       } else {
         toast.error('Modus konnte nicht aktiviert werden')
       }
@@ -113,7 +129,7 @@ export default function WarmwaterControlCenter() {
       // Ensure state is always reset, even if an error occurs
       setTimeout(() => setIsChangingMode(false), 100)
     }
-  }, [isChangingMode, refreshModes, refreshStatus])
+  }, [isChangingMode, refreshEinstellungen])
 
   // Calculate minimal data needed for display
   const getDisplayData = () => {
