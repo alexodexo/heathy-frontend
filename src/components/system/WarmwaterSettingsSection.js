@@ -144,14 +144,36 @@ export default function WarmwaterSettingsSection({
                 <span className="w-1 h-1 rounded-full bg-orange-500"></span>
                 Maximale Leistung des Heizstabs in Watt
               </p>
-              
-              {/* Info Box */}
-              <div className="mt-6 p-4 bg-orange-50 border border-orange-100 rounded-xl">
-                <p className="text-sm text-orange-900 font-medium">💡 Hinweis</p>
-                <p className="text-xs text-orange-700 mt-1">
-                  Standardwert liegt bei 380W. Höhere Werte führen zu schnellerer Erwärmung bei höherem Stromverbrauch.
-                </p>
-              </div>
+            </div>
+            
+            <div className="mt-6 pt-6 border-t border-gray-100">
+              <label className="block text-sm font-semibold text-gray-700 mb-2.5">
+                Update-Frequenz (Sekunden)
+              </label>
+              <input
+                type="number"
+                value={localSettings.warmwasser_update_frequenz ?? 60}
+                onChange={(e) => {
+                  const value = parseFloat(e.target.value)
+                  setLocalSettings(prev => ({ ...prev, warmwasser_update_frequenz: value }))
+                }}
+                onBlur={(e) => {
+                  const value = parseFloat(e.target.value)
+                  if (value !== einstellungen?.warmwasser_update_frequenz?.value) {
+                    updateSetting('warmwasser_update_frequenz', value, 'Warmwasser Update-Frequenz in Sekunden (wie oft Warmwasserwerte überprüft werden)')
+                  }
+                }}
+                className="w-full px-4 py-3 text-lg font-semibold text-gray-900 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all"
+                min="10"
+                max="300"
+                step="1"
+                placeholder="60"
+                disabled={isSaving || einstellungenLoading}
+              />
+              <p className="text-xs text-gray-500 mt-2 flex items-center gap-1.5">
+                <span className="w-1 h-1 rounded-full bg-orange-500"></span>
+                Wie oft Warmwasserwerte überprüft werden (in Sekunden)
+              </p>
             </div>
           </div>
         </div>
