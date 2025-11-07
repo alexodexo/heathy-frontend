@@ -10,6 +10,7 @@ import {
   useSystemStats,
   useEinstellungen,
 } from '@/hooks/useBackendData'
+import { useTemperatureData } from '@/hooks/useRealtimeData'
 import { backendAPI } from '@/lib/api'
 import WarmwaterStatusCards from '@/components/warmwater/WarmwaterStatusCards'
 import WarmwaterModeSelection from '@/components/warmwater/WarmwaterModeSelection'
@@ -23,6 +24,7 @@ export default function WarmwaterControlCenter() {
   const { data: warmwaterSettings, isLoading: settingsLoading } = useWarmwaterSettings()
   const { data: systemStats } = useSystemStats()
   const { data: einstellungen, isLoading: einstellungenLoading, refresh: refreshEinstellungen } = useEinstellungen()
+  const { data: temperatureData, isLoading: temperatureLoading } = useTemperatureData()
   
   const [isChangingMode, setIsChangingMode] = useState(false)
   const [isSaving, setIsSaving] = useState(false)
@@ -115,9 +117,10 @@ export default function WarmwaterControlCenter() {
 
   // Calculate minimal data needed for display
   const getDisplayData = () => {
-    if (!currentData || !heatingStatus) return null
+    if (!currentData || !heatingStatus || !temperatureData) return null
     
-    const waterTemp = currentData.temperatures?.water_temp || 0
+    // Get water temperature from temperature_data table (t1)
+    const waterTemp = temperatureData.t1 || 0
     
     // Berechne aktuelle Heizleistung basierend auf aktiven Heizstäben
     // Jeder Heizstab = 1500W
@@ -201,12 +204,12 @@ export default function WarmwaterControlCenter() {
         </div>
 
         {/* Live Status Cards */}
-        <WarmwaterStatusCards
-          waterTemp={displayData?.waterTemp}
-          heatingPower={displayData?.heatingPower}
-          currentLoading={currentLoading}
-          statusLoading={statusLoading}
-        />
+      <WarmwaterStatusCards 
+        waterTemp={displayData?.waterTemp}
+        heatingPower={displayData?.heatingPower}
+        currentLoading={currentLoading || temperatureLoading}
+        statusLoading={statusLoading}
+      />
 
         {/* Mode Selection Control Center */}
         <WarmwaterModeSelection

@@ -14,7 +14,8 @@ export default function DashboardStatusCards({ currentData, currentLoading, frit
   const maxTemp = weatherData?.max_temp_today != null ? weatherData.max_temp_today : null
   const sunshineHours = weatherData?.sunshine_hours_today
   
-  // Extract heating temperature data from temperature_data (t2 = Vorlauf, t3 = Rücklauf, t4 = Wohnzimmer)
+  // Extract heating temperature data from temperature_data (t1 = Warmwasser, t2 = Vorlauf, t3 = Rücklauf, t4 = Wohnzimmer)
+  const warmwasserTemp = temperatureData?.t1
   const vorlaufTemp = temperatureData?.t2
   const ruecklaufTemp = temperatureData?.t3
   const wohnzimmerTemp = temperatureData?.t4
@@ -39,7 +40,7 @@ export default function DashboardStatusCards({ currentData, currentLoading, frit
       />
       <StatusCard
         title="Warmwasser"
-        value={currentData?.temperatures?.water_temp?.toFixed(1) || '--'}
+        value={warmwasserTemp?.toFixed(1) || '--'}
         unit="°C"
         secondaryValue={currentData?.warmwater?.target_temp?.toFixed(1) || '--'}
         secondaryUnit="°C"
@@ -52,7 +53,7 @@ export default function DashboardStatusCards({ currentData, currentLoading, frit
         quaternaryTitle="Warmwasserkosten letzte 7 Tage"
         icon={BeakerIcon}
         color="primary"
-        loading={currentLoading}
+        loading={currentLoading || temperatureLoading}
       />
       <StatusCard
         title="Außentemperatur"
