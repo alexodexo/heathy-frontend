@@ -8,3 +8,4 @@ VALUES
   ('warmwasser_heizstab_leistung', 380, 'Maximale Leistung des Heizstabs in Watt', NOW())
 ON CONFLICT (key) DO NOTHING;
 
+
