@@ -3,7 +3,7 @@ import StatusCard from '@/components/StatusCard'
 import WeatherIcon from '@/components/WeatherIcon'
 import { BeakerIcon, FireIcon } from '@heroicons/react/24/outline'
 
-export default function DashboardStatusCards({ currentData, currentLoading, fritzDevices, fritzLoading, weatherData, weatherLoading, temperatureData, temperatureLoading }) {
+export default function DashboardStatusCards({ currentData, currentLoading, fritzDevices, fritzLoading, weatherData, weatherLoading, temperatureData, temperatureLoading, einstellungen, einstellungenLoading }) {
   // Extract temperature values from Fritz devices
   const roomAlexTemp = fritzDevices?.zimmer_alex?.temperature
   const roomBueroTemp = fritzDevices?.buero?.temperature
@@ -19,6 +19,10 @@ export default function DashboardStatusCards({ currentData, currentLoading, frit
   const vorlaufTemp = temperatureData?.t2
   const ruecklaufTemp = temperatureData?.t3
   const wohnzimmerTemp = temperatureData?.t4
+  
+  // Get target temperature from einstellungen
+  const targetTemp = einstellungen?.warmwasser_ausschalt_temperatur?.value
+  
   return (
     <div className="grid grid-cols-2 gap-4 md:gap-6">
       <StatusCard
@@ -46,7 +50,7 @@ export default function DashboardStatusCards({ currentData, currentLoading, frit
         title="Warmwasser"
         value={warmwasserTemp?.toFixed(1) || '--'}
         unit="°C"
-        secondaryValue={currentData?.warmwater?.target_temp?.toFixed(1) || '--'}
+        secondaryValue={targetTemp?.toFixed(1) || '--'}
         secondaryUnit="°C"
         secondaryTitle="Ziel-Temperatur"
         tertiaryValue={currentData?.warmwater?.power_w?.toFixed(0) || '--'}
@@ -61,7 +65,7 @@ export default function DashboardStatusCards({ currentData, currentLoading, frit
           </svg>
         )}
         color="primary"
-        loading={currentLoading || temperatureLoading}
+        loading={currentLoading || temperatureLoading || einstellungenLoading}
       />
       <StatusCard
         title="Außentemperatur"

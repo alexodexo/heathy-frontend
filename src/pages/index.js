@@ -1,7 +1,7 @@
 // src/pages/index.js
 import Head from 'next/head'
 import React, { useState, useEffect } from 'react'
-import { useCurrentData, useHeatingStatus, useHeatingModes, useSystemHealth, usePlugsData, useFritzDevices, useWeatherData } from '@/hooks/useBackendData'
+import { useCurrentData, useHeatingStatus, useHeatingModes, useSystemHealth, usePlugsData, useFritzDevices, useWeatherData, useEinstellungen } from '@/hooks/useBackendData'
 import { useTemperatureData } from '@/hooks/useRealtimeData'
 import DashboardStatusCards from '@/components/dashboard/DashboardStatusCards'
 import EnergyMonitoring from '@/components/dashboard/EnergyMonitoring'
@@ -24,6 +24,7 @@ export default function Dashboard() {
   const { data: fritzDevices, isLoading: fritzLoading } = useFritzDevices()
   const { data: weatherData, isLoading: weatherLoading } = useWeatherData()
   const { data: temperatureData, isLoading: temperatureLoading } = useTemperatureData()
+  const { data: einstellungen, isLoading: einstellungenLoading } = useEinstellungen()
 
   // Get current active mode info
   const getActiveModeInfo = () => {
@@ -116,6 +117,8 @@ export default function Dashboard() {
           weatherLoading={weatherLoading}
           temperatureData={temperatureData}
           temperatureLoading={temperatureLoading}
+          einstellungen={einstellungen}
+          einstellungenLoading={einstellungenLoading}
         />
 
         {/* Current Power Usage */}
