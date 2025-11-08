@@ -127,9 +127,13 @@ export default function WarmwaterControlCenter() {
   // Get water temperature from temperature_data table (t1)
   const waterTemp = temperatureData?.t1 || 0
   
-  // Calculate heating power based on warmwasser_modus
-  // 0 = AUS (0W), 1 = EIN (warmwasser_heizstab_leistung)
-  const heatingPower = warmwasserModusValue === 1 
+  // Calculate heating power based on warmwasser_modus and temperature
+  // Heizstab ist nur aktiv wenn:
+  // 1. warmwasser_modus = 1 (EIN)
+  // 2. aktuelle Temperatur (t1) < ausschalt_temperatur
+  const ausschaltTemp = einstellungen?.warmwasser_ausschalt_temperatur?.value || 0
+  const isHeating = warmwasserModusValue === 1 && waterTemp < ausschaltTemp
+  const heatingPower = isHeating 
     ? (einstellungen?.warmwasser_heizstab_leistung?.value || 0) 
     : 0
 
