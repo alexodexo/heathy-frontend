@@ -18,23 +18,14 @@ export default async function handler(req, res) {
 
     if (error) throw error
 
-    // Return null for power values to show "--" in frontend
-    const result = data ? { 
-      ...data, 
+    res.status(200).json(data || { 
       total_power: null,
       a_power: null,
       b_power: null,
       c_power: null
-    } : { 
-      total_power: null,
-      a_power: null,
-      b_power: null,
-      c_power: null
-    }
-    res.status(200).json(result)
+    })
   } catch (error) {
     console.error('Error fetching EM3 data:', error)
-    // Return null data instead of error to show "--" in frontend
     res.status(200).json({ 
       total_power: null,
       a_power: null,

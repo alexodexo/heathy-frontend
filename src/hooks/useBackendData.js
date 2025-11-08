@@ -200,3 +200,25 @@ export function useAblesungen() {
     refresh: mutate,
   }
 }
+
+export function useEM3Data() {
+  const { data, error, isLoading, mutate } = useSWR(
+    'em3-data',
+    async () => {
+      const response = await fetch('/api/em3/latest')
+      if (!response.ok) throw new Error('Failed to fetch em3 data')
+      return response.json()
+    },
+    {
+      refreshInterval: API_CONFIG.REFRESH_INTERVALS.CURRENT_DATA,
+      // revalidateOnFocus und revalidateOnReconnect werden global deaktiviert
+    }
+  )
+
+  return {
+    data: data || null,
+    isLoading,
+    isError: error,
+    refresh: mutate,
+  }
+}
