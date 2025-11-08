@@ -3,11 +3,6 @@ import { useState, useCallback, useEffect } from 'react'
 import Head from 'next/head'
 import { toast } from 'react-hot-toast'
 import { 
-  useCurrentData, 
-  useHeatingStatus, 
-  useHeatingModes, 
-  useWarmwaterSettings,
-  useSystemStats,
   useEinstellungen,
 } from '@/hooks/useBackendData'
 import { useTemperatureData } from '@/hooks/useRealtimeData'
@@ -17,11 +12,6 @@ import WarmwaterCostOverview from '@/components/warmwater/WarmwaterCostOverview'
 import WarmwaterSettingsSection from '@/components/system/WarmwaterSettingsSection'
 
 export default function WarmwaterControlCenter() {
-  const { data: currentData, isLoading: currentLoading, refresh: refreshCurrent } = useCurrentData()
-  const { data: heatingStatus, isLoading: statusLoading, refresh: refreshStatus } = useHeatingStatus()
-  const { data: heatingModes, isLoading: modesLoading, refresh: refreshModes } = useHeatingModes()
-  const { data: warmwaterSettings, isLoading: settingsLoading } = useWarmwaterSettings()
-  const { data: systemStats } = useSystemStats()
   const { data: einstellungen, isLoading: einstellungenLoading, refresh: refreshEinstellungen } = useEinstellungen()
   const { data: temperatureData, isLoading: temperatureLoading } = useTemperatureData()
   
@@ -79,19 +69,23 @@ export default function WarmwaterControlCenter() {
     }
   }, [refreshEinstellungen])
 
-  // Get available modes from backend
-  const availableModes = heatingModes?.modes ? Object.values(heatingModes.modes) : []
   // Aktiver Modus kommt aus einstellungen.warmwasser_modus (0=AUS/modeId 2, 1=EIN/modeId 1)
   const warmwasserModusValue = einstellungen?.warmwasser_modus?.value
   const activeMode = warmwasserModusValue === 1 ? 1 : 2
 
-  // Kombiniere echte Modi mit Dummy-Modi
-  // Vermeide Duplikate (falls Backend später gleiche IDs liefert)
-  const byId = new Map()
-  ;[...availableModes].forEach(m => {
-    if (!byId.has(m.id)) byId.set(m.id, m)
-  })
-  const allModes = Array.from(byId.values())
+  // Define modes directly (no backend needed)
+  const allModes = [
+    {
+      id: 1,
+      name: 'Vollständig EIN',
+      active_heating: true,
+    },
+    {
+      id: 2,
+      name: 'Vollständig AUS',
+      active_heating: false,
+    },
+  ]
 
   // Mode change handler - steuert warmwasser_modus in einstellungen Tabelle
   const handleModeChange = useCallback(async (modeId) => {
@@ -130,71 +124,15 @@ export default function WarmwaterControlCenter() {
     }
   }, [isChangingMode, refreshEinstellungen])
 
-  // Calculate minimal data needed for display
-  const getDisplayData = () => {
-    if (!currentData || !heatingStatus || !temperatureData) return null
-    
-    // Get water temperature from temperature_data table (t1)
-    const waterTemp = temperatureData.t1 || 0
-    
-    // Berechne aktuelle Heizleistung basierend auf aktiven Heizstäben
-    // Jeder Heizstab = 1500W
-    let heatingPower = 0
-    if (currentData.plugs) {
-      const plug1Active = currentData.plugs.plug_1?.state === 'on' || currentData.plugs.plug_1?.state === true
-      const plug2Active = currentData.plugs.plug_2?.state === 'on' || currentData.plugs.plug_2?.state === true
-      const plug3Active = currentData.plugs.plug_3?.state === 'on' || currentData.plugs.plug_3?.state === true
-      
-      if (plug1Active) heatingPower += 1500
-      if (plug2Active) heatingPower += 1500
-      if (plug3Active) heatingPower += 1500
-    }
-    
-    return {
-      waterTemp,
-      heatingPower,
-    }
-  }
+  // Get water temperature from temperature_data table (t1)
+  const waterTemp = temperatureData?.t1 || 0
+  const heatingPower = 0 // TODO: Calculate from actual power data if available
 
-  const displayData = getDisplayData()
+  // Cost calculation for warmwater (simplified)
+  const costData = { today: '0.00', week: '0.00', month: '0.00', year: '0.00' }
+  const consumptionData = { today: '0.0', week: '0.0', month: '0.0', year: '0.0' }
 
-  // Cost calculation for warmwater
-  const calculateWarmwaterCosts = () => {
-    if (!systemStats) return { today: '0.00', week: '0.00', month: '0.00', year: '0.00' }
-    
-    const hoursRunning = (systemStats.performance?.uptime_seconds || 0) / 3600
-    const costPerHour = 0
-    const totalCost = hoursRunning * costPerHour
-    
-    return {
-      today: (totalCost * 0.1).toFixed(2), // Rough estimation
-      week: (totalCost * 0.7).toFixed(2),
-      month: (totalCost * 3).toFixed(2),
-      year: totalCost.toFixed(2),
-    }
-  }
-
-  // Consumption calculation for warmwater (in kWh)
-  const calculateWarmwaterConsumption = () => {
-    if (!systemStats) return { today: '0.0', week: '0.0', month: '0.0', year: '0.0' }
-    
-    // Example calculation - Alex needs to implement real data from backend
-    const hoursRunning = (systemStats.performance?.uptime_seconds || 0) / 3600
-    const averagePower = 2.0 // kW - average warmwater heating power
-    const totalConsumption = hoursRunning * averagePower
-    
-    return {
-      today: (totalConsumption * 0.1).toFixed(1), // Rough estimation
-      week: (totalConsumption * 0.7).toFixed(1),
-      month: (totalConsumption * 3).toFixed(1),
-      year: totalConsumption.toFixed(1),
-    }
-  }
-
-  const costData = calculateWarmwaterCosts()
-  const consumptionData = calculateWarmwaterConsumption()
-
-  if (currentLoading && statusLoading && modesLoading) {
+  if (einstellungenLoading || temperatureLoading) {
     return (
       <div className="max-w-7xl mx-auto p-6">
         <div className="text-center py-12">
@@ -220,10 +158,10 @@ export default function WarmwaterControlCenter() {
 
         {/* Live Status Cards */}
       <WarmwaterStatusCards 
-        waterTemp={displayData?.waterTemp}
-        heatingPower={displayData?.heatingPower}
-        currentLoading={currentLoading || temperatureLoading}
-        statusLoading={statusLoading}
+        waterTemp={waterTemp}
+        heatingPower={heatingPower}
+        currentLoading={temperatureLoading}
+        statusLoading={false}
       />
 
         {/* Mode Selection Control Center */}
