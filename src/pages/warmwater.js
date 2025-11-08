@@ -126,7 +126,12 @@ export default function WarmwaterControlCenter() {
 
   // Get water temperature from temperature_data table (t1)
   const waterTemp = temperatureData?.t1 || 0
-  const heatingPower = 0 // TODO: Calculate from actual power data if available
+  
+  // Calculate heating power based on warmwasser_modus
+  // 0 = AUS (0W), 1 = EIN (warmwasser_heizstab_leistung)
+  const heatingPower = warmwasserModusValue === 1 
+    ? (einstellungen?.warmwasser_heizstab_leistung?.value || 0) 
+    : 0
 
   // Cost calculation for warmwater (simplified)
   const costData = { today: '0.00', week: '0.00', month: '0.00', year: '0.00' }
