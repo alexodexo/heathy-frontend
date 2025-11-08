@@ -1,7 +1,7 @@
 // src/pages/index.js
 import Head from 'next/head'
 import React, { useState, useEffect } from 'react'
-import { useCurrentData, useHeatingStatus, useHeatingModes, useSystemHealth, usePlugsData, useFritzDevices, useWeatherData, useEinstellungen } from '@/hooks/useBackendData'
+import { useCurrentData, useHeatingStatus, useHeatingModes, useSystemHealth, usePlugsData, useFritzDevices, useWeatherData, useEinstellungen, useEM3Data } from '@/hooks/useBackendData'
 import { useTemperatureData } from '@/hooks/useRealtimeData'
 import DashboardStatusCards from '@/components/dashboard/DashboardStatusCards'
 import EnergyMonitoring from '@/components/dashboard/EnergyMonitoring'
@@ -25,6 +25,7 @@ export default function Dashboard() {
   const { data: weatherData, isLoading: weatherLoading } = useWeatherData()
   const { data: temperatureData, isLoading: temperatureLoading } = useTemperatureData()
   const { data: einstellungen, isLoading: einstellungenLoading } = useEinstellungen()
+  const { data: em3Data, isLoading: em3Loading } = useEM3Data()
 
   // Get current active mode info
   const getActiveModeInfo = () => {
@@ -125,7 +126,9 @@ export default function Dashboard() {
         <EnergyMonitoring 
           currentData={currentData} 
           plugsData={plugsData} 
-          currentLoading={currentLoading} 
+          currentLoading={currentLoading}
+          em3Data={em3Data}
+          em3Loading={em3Loading}
         />
 
         {/* Active Mode Display */}
