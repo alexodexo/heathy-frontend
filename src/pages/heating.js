@@ -10,7 +10,6 @@ import {
   useEinstellungen
 } from '@/hooks/useBackendData'
 import { useTemperatureData } from '@/hooks/useRealtimeData'
-import { backendAPI } from '@/lib/api'
 import HeatingStatusCards from '@/components/heating/HeatingStatusCards'
 import HeatingModeSelection from '@/components/heating/HeatingModeSelection'
 import HeatingCostOverview from '@/components/heating/HeatingCostOverview'

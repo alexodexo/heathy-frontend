@@ -11,7 +11,6 @@ import {
   useEinstellungen,
 } from '@/hooks/useBackendData'
 import { useTemperatureData } from '@/hooks/useRealtimeData'
-import { backendAPI } from '@/lib/api'
 import WarmwaterStatusCards from '@/components/warmwater/WarmwaterStatusCards'
 import WarmwaterModeSelection from '@/components/warmwater/WarmwaterModeSelection'
 import WarmwaterCostOverview from '@/components/warmwater/WarmwaterCostOverview'
