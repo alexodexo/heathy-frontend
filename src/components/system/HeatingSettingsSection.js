@@ -9,8 +9,6 @@ export default function HeatingSettingsSection({
   setLocalSettings,
   einstellungen,
   updateSetting,
-  timeSlots,
-  updateTimeSlot,
   isSaving,
   einstellungenLoading
 }) {
@@ -32,14 +30,12 @@ export default function HeatingSettingsSection({
       
       <div className="p-4 md:p-6 space-y-6 md:space-y-8">
         <div className="space-y-6">
-          {/* Betriebsmodus Steuerung - enthält jetzt Modi 1, 2, 4, 5, 6 */}
+          {/* Betriebsmodus Steuerung */}
           <OperationModeControls
             localSettings={localSettings}
             setLocalSettings={setLocalSettings}
             einstellungen={einstellungen}
             updateSetting={updateSetting}
-            timeSlots={timeSlots}
-            updateTimeSlot={updateTimeSlot}
             isSaving={isSaving}
             einstellungenLoading={einstellungenLoading}
           />

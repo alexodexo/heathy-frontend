@@ -24,10 +24,6 @@ export default function HeatingControl() {
   
   const [isSaving, setIsSaving] = useState(false)
   const [localSettings, setLocalSettings] = useState({})
-  const [timeSlots, setTimeSlots] = useState([
-    { id: 0, start: '06:00', end: '22:00' },
-    { id: 1, start: '06:00', end: '22:00' }
-  ])
 
   // Update local settings when data changes
   useEffect(() => {
@@ -69,13 +65,6 @@ export default function HeatingControl() {
       setIsSaving(false)
     }
   }, [refreshEinstellungen])
-
-  // Update time slot
-  const updateTimeSlot = useCallback((slotId, field, value) => {
-    setTimeSlots(prev => prev.map(slot => 
-      slot.id === slotId ? { ...slot, [field]: value } : slot
-    ))
-  }, [])
 
   // Calculate heating-specific data
   const getHeatingData = () => {
@@ -182,7 +171,10 @@ export default function HeatingControl() {
         />
 
         {/* Mode Selection Control Center */}
-        <HeatingModeSelection />
+        <HeatingModeSelection 
+          einstellungen={einstellungen}
+          refreshEinstellungen={refreshEinstellungen}
+        />
 
         {/* Cost & Consumption Overview */}
         <HeatingCostOverview costData={costData} consumptionData={consumptionData} />
@@ -193,8 +185,6 @@ export default function HeatingControl() {
           setLocalSettings={setLocalSettings}
           einstellungen={einstellungen}
           updateSetting={updateSetting}
-          timeSlots={timeSlots}
-          updateTimeSlot={updateTimeSlot}
           isSaving={isSaving}
           einstellungenLoading={einstellungenLoading}
         />

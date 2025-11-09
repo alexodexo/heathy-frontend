@@ -8,8 +8,6 @@ export default function OperationModeControls({
   setLocalSettings,
   einstellungen,
   updateSetting,
-  timeSlots,
-  updateTimeSlot,
   isSaving,
   einstellungenLoading
 }) {
@@ -22,9 +20,12 @@ export default function OperationModeControls({
           {/* Zeitsteuerung für Modus 1 - kommt ZUERST */}
           <div className="mb-4">
             <TimeSlotControls
-              timeSlots={timeSlots}
-              updateTimeSlot={updateTimeSlot}
+              localSettings={localSettings}
+              setLocalSettings={setLocalSettings}
+              einstellungen={einstellungen}
+              updateSetting={updateSetting}
               isSaving={isSaving}
+              einstellungenLoading={einstellungenLoading}
             />
           </div>
 
