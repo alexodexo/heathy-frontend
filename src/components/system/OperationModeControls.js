@@ -316,32 +316,11 @@ export default function OperationModeControls({
                 </div>
               </div>
 
-              {/* Visueller Bereich */}
-              <div className="mt-4 p-3 bg-white rounded border border-blue-300">
-                <p className="text-xs font-semibold text-blue-900 mb-2">📊 Beispiel-Berechnung:</p>
-                <div className="text-xs text-gray-700 space-y-1">
-                  <div>Zieltemperatur (Ausschalten): <strong>{localSettings.heizung_switchoff ?? 45}°C</strong></div>
-                  <div className="mt-2 space-y-1 pl-4 border-l-2 border-blue-400">
-                    <div>🔴 L3 abschalten bei: <strong>{((localSettings.heizung_switchoff ?? 45) - (localSettings.heizung_downshift_l3_offset ?? 3.0)).toFixed(1)}°C</strong> (Ziel - {localSettings.heizung_downshift_l3_offset ?? 3.0}°C)</div>
-                    <div>🟡 L2 abschalten bei: <strong>{((localSettings.heizung_switchoff ?? 45) - (localSettings.heizung_downshift_l2_offset ?? 1.5)).toFixed(1)}°C</strong> (Ziel - {localSettings.heizung_downshift_l2_offset ?? 1.5}°C)</div>
-                    <div>🟢 L1 abschalten bei: <strong>{(localSettings.heizung_switchoff ?? 45).toFixed(1)}°C</strong> (Ziel erreicht)</div>
-                  </div>
-                </div>
-              </div>
+        
             </div>
           </div>
 
-          {/* Zusammenfassung der kompletten Logik */}
-          <div className="mt-4 p-3 bg-green-50 rounded-lg border border-green-200">
-            <p className="text-xs font-semibold text-green-900 mb-2">🧠 Intelligente Regellogik - Zusammenfassung:</p>
-            <ul className="text-xs text-green-800 space-y-1 list-disc list-inside">
-              <li><strong>Zeitfenster:</strong> Heizung läuft nur in den konfigurierten Zeitslots</li>
-              <li><strong>Kaltstart-Boost:</strong> Gezieltes Aufheizen zur Wunschzeit mit allen Heizstäben (L1+L2+L3 = 4,5kW) bis Zieltemperatur (optional)</li>
-              <li><strong>Hochschalten:</strong> L1 (1,5kW) → L1+L2 (3,0kW) → L1+L2+L3 (4,5kW) wenn Zieltemperatur verzögert erreicht wird</li>
-              <li><strong>Runterschalten:</strong> Konfigurierbare Schwellen zum stufenweisen Abschalten (L1+L2+L3 → L1+L2 → L1 → AUS)</li>
-              <li><strong>Energieeffizienz:</strong> Nur so viele Heizstäbe wie nötig, so wenig wie möglich</li>
-            </ul>
-          </div>
+       
         </div>
 
       {/* Modus 2 - Booster Einstellungen */}
