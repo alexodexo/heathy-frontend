@@ -21,7 +21,7 @@ export default async function handler(req, res) {
   } else if (req.method === 'POST') {
     // Neue Ablesung hinzufügen
     try {
-      const { ablesedatum, ht_zaehlerstand_kwh, nt_zaehlerstand_kwh, warmwasser_zaehlerstand_kwh, notizen } = req.body
+      const { ablesedatum, ht_zaehlerstand_kwh, nt_zaehlerstand_kwh, warmwasser_zaehlerstand_kwh, heizung_zaehlerstand_kwh, notizen } = req.body
 
       const { data, error } = await supabase
         .from('ablesungen')
@@ -30,6 +30,7 @@ export default async function handler(req, res) {
           ht_zaehlerstand_kwh,
           nt_zaehlerstand_kwh,
           warmwasser_zaehlerstand_kwh,
+          heizung_zaehlerstand_kwh,
           notizen,
         })
         .select()

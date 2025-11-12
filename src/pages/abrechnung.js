@@ -20,6 +20,7 @@ export default function Abrechnung() {
     ht_zaehlerstand_kwh: '',
     nt_zaehlerstand_kwh: '',
     warmwasser_zaehlerstand_kwh: '',
+    heizung_zaehlerstand_kwh: '',
     notizen: '',
   })
 
@@ -74,6 +75,7 @@ export default function Abrechnung() {
           ht_zaehlerstand_kwh: parseFloat(newAblesung.ht_zaehlerstand_kwh) || 0,
           nt_zaehlerstand_kwh: parseFloat(newAblesung.nt_zaehlerstand_kwh) || 0,
           warmwasser_zaehlerstand_kwh: parseFloat(newAblesung.warmwasser_zaehlerstand_kwh) || 0,
+          heizung_zaehlerstand_kwh: parseFloat(newAblesung.heizung_zaehlerstand_kwh) || 0,
           notizen: newAblesung.notizen || null,
         }),
       })
@@ -86,6 +88,7 @@ export default function Abrechnung() {
           ht_zaehlerstand_kwh: '',
           nt_zaehlerstand_kwh: '',
           warmwasser_zaehlerstand_kwh: '',
+          heizung_zaehlerstand_kwh: '',
           notizen: '',
         })
         await refreshAblesungen()
@@ -220,7 +223,7 @@ export default function Abrechnung() {
                 <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
                   <div className="flex items-center gap-2 mb-4">
                     <FireIcon className="w-5 h-5 text-orange-600" />
-                    <h3 className="text-lg font-bold text-gray-900">Heizung (HT/NT)</h3>
+                    <h3 className="text-lg font-bold text-gray-900">Haus (HT/NT)</h3>
                   </div>
                   
                   <div className="space-y-4">
@@ -256,26 +259,43 @@ export default function Abrechnung() {
                   </div>
                 </div>
 
-                {/* Warmwasser */}
+                {/* Warmwasser und Heizung */}
                 <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
                   <div className="flex items-center gap-2 mb-4">
                     <BeakerIcon className="w-5 h-5 text-blue-600" />
-                    <h3 className="text-lg font-bold text-gray-900">Warmwasser</h3>
+                    <h3 className="text-lg font-bold text-gray-900">Warmwasser & Heizung</h3>
                   </div>
                   
-                  <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">
-                      Zählerstand (kWh)
-                    </label>
-                    <input
-                      type="number"
-                      value={newAblesung.warmwasser_zaehlerstand_kwh}
-                      onChange={(e) => setNewAblesung(prev => ({ ...prev, warmwasser_zaehlerstand_kwh: e.target.value }))}
-                      className="w-full px-4 py-2.5 text-base font-medium text-gray-900 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-                      step="0.1"
-                      min="0"
-                      placeholder="0.0"
-                    />
+                  <div className="space-y-4">
+                    <div>
+                      <label className="block text-sm font-semibold text-gray-700 mb-2">
+                        Warmwasser Zählerstand (kWh)
+                      </label>
+                      <input
+                        type="number"
+                        value={newAblesung.warmwasser_zaehlerstand_kwh}
+                        onChange={(e) => setNewAblesung(prev => ({ ...prev, warmwasser_zaehlerstand_kwh: e.target.value }))}
+                        className="w-full px-4 py-2.5 text-base font-medium text-gray-900 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                        step="0.1"
+                        min="0"
+                        placeholder="0.0"
+                      />
+                    </div>
+                    
+                    <div>
+                      <label className="block text-sm font-semibold text-gray-700 mb-2">
+                        Heizung Zählerstand (kWh)
+                      </label>
+                      <input
+                        type="number"
+                        value={newAblesung.heizung_zaehlerstand_kwh}
+                        onChange={(e) => setNewAblesung(prev => ({ ...prev, heizung_zaehlerstand_kwh: e.target.value }))}
+                        className="w-full px-4 py-2.5 text-base font-medium text-gray-900 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all"
+                        step="0.1"
+                        min="0"
+                        placeholder="0.0"
+                      />
+                    </div>
                   </div>
                 </div>
               </div>
@@ -388,7 +408,7 @@ export default function Abrechnung() {
                       </div>
 
                       {/* Zählerstände */}
-                      <div className="grid grid-cols-3 gap-4">
+                      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
                         <div className="text-center">
                           <p className="text-xs text-gray-500 mb-1">HT</p>
                           <p className="font-semibold text-gray-900">
@@ -405,6 +425,12 @@ export default function Abrechnung() {
                           <p className="text-xs text-gray-500 mb-1">Warmwasser</p>
                           <p className="font-semibold text-gray-900">
                             {ablesung.warmwasser_zaehlerstand_kwh?.toFixed(1) || '0.0'} kWh
+                          </p>
+                        </div>
+                        <div className="text-center">
+                          <p className="text-xs text-gray-500 mb-1">Heizung</p>
+                          <p className="font-semibold text-gray-900">
+                            {ablesung.heizung_zaehlerstand_kwh?.toFixed(1) || '0.0'} kWh
                           </p>
                         </div>
                       </div>
